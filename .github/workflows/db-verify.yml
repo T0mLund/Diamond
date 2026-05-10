@@ -51,7 +51,9 @@ jobs:
           }
 
           run_check "postgis_extension"   "select count(*) from pg_extension where extname='postgis';" "1"
-          run_check "public_table_count"  "select count(*) from information_schema.tables where table_schema='public' and table_type='BASE TABLE';" "9"
+          # Exclude PostGIS housekeeping tables (spatial_ref_sys, geometry_columns, geography_columns).
+          # On Supabase, enabling PostGIS installs spatial_ref_sys into public.
+          run_check "public_table_count"  "select count(*) from information_schema.tables where table_schema='public' and table_type='BASE TABLE' and table_name not in ('spatial_ref_sys','geometry_columns','geography_columns');" "9"
           run_check "axes_seeded"         "select count(*) from public.axes;"        "3"
           run_check "shells_seeded"       "select count(*) from public.shells;"      "5"
           run_check "coordinates_seeded"  "select count(*) from public.coordinates;" "13"
