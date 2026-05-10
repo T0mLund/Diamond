@@ -1,0 +1,81 @@
+name: agent-push
+
+# Option A: short-lived App-token push pipeline.
+#
+# This workflow is what makes the "Perplexity Computer commits, you click
+# Merge in the GitHub UI" loop work. It does NOT run on regular pushes —
+# it's invoked manually (workflow_dispatch) by Computer to:
+#   1. Mint a short-lived installation token from the perplexity-diamond-build
+#      App using APP_ID, APP_INSTALLATION_ID, APP_PRIVATE_KEY (Actions secrets).
+#   2. Push a branch containing whatever changes Computer wants to propose.
+#   3. Open a pull request against main.
+#
+# The App private key never leaves Actions. The minted installation token
+# expires in ≤1 hour. You review the PR and click Merge.
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch name to push (e.g. 'agent/phase-2-directus-cloud')"
+        required: true
+        type: string
+      title:
+        description: "PR title"
+        required: true
+        type: string
+      body:
+        description: "PR body (markdown)"
+        required: false
+        type: string
+        default: "Automated proposal from Perplexity Computer."
+      base:
+        description: "Base branch"
+        required: false
+        type: string
+        default: "main"
+
+permissions:
+  contents: read
+
+jobs:
+  open-pr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Mint installation token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          # The App is single-installation; we pin the installation explicitly.
+          owner: T0mLund
+          repositories: Diamond
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          fetch-depth: 0
+
+      - name: Confirm branch exists locally (Computer pushed it)
+        run: |
+          set -euo pipefail
+          git fetch origin "${{ inputs.branch }}":"${{ inputs.branch }}"
+          git rev-parse --verify "${{ inputs.branch }}"
+
+      - name: Open pull request
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PR_TITLE: ${{ inputs.title }}
+          PR_BODY:  ${{ inputs.body }}
+          PR_HEAD:  ${{ inputs.branch }}
+          PR_BASE:  ${{ inputs.base }}
+        run: |
+          set -euo pipefail
+          gh pr create \
+            --title "$PR_TITLE" \
+            --body  "$PR_BODY" \
+            --head  "$PR_HEAD" \
+            --base  "$PR_BASE"

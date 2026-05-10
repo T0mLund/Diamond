@@ -1,0 +1,61 @@
+name: db-verify
+
+# Sanity-checks the live Supabase schema after a db-push.
+# Confirms the four invariants the roadmap calls out:
+#   * PostGIS extension present
+#   * 9 tables exist in public
+#   * 3 axes seeded
+#   * 5 shells seeded (3 inner + sphere + φ-tier)
+#   * 13 coordinates seeded (BEING + 6 poles + 6 inner-tier names)
+#
+# Runs on workflow_dispatch (so you or Computer can re-verify any time)
+# and after every successful db-push run.
+
+on:
+  workflow_dispatch: {}
+  workflow_run:
+    workflows: ["db-push"]
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install psql client
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends postgresql-client
+
+      - name: Run verification queries
+        env:
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          set -euo pipefail
+          run_check () {
+            local label="$1" sql="$2" expected="$3"
+            local got
+            got=$(psql "$DB_URL" -At -c "$sql")
+            if [ "$got" != "$expected" ]; then
+              echo "::error::$label: expected '$expected', got '$got'"
+              return 1
+            fi
+            echo "✓ $label = $got"
+          }
+
+          run_check "postgis_extension"   "select count(*) from pg_extension where extname='postgis';" "1"
+          run_check "public_table_count"  "select count(*) from information_schema.tables where table_schema='public' and table_type='BASE TABLE';" "9"
+          run_check "axes_seeded"         "select count(*) from public.axes;"        "3"
+          run_check "shells_seeded"       "select count(*) from public.shells;"      "5"
+          run_check "coordinates_seeded"  "select count(*) from public.coordinates;" "13"
+          run_check "exactly_one_origin"  "select count(*) from public.coordinates where is_origin=true;" "1"
+          run_check "six_poles"           "select count(*) from public.coordinates where is_pole=true;"   "6"
+
+          echo "All invariants hold."

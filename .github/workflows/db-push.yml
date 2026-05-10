@@ -1,0 +1,59 @@
+name: db-push
+
+# Applies SQL migrations under db/migrations/ to the Supabase project.
+# Triggered automatically on pushes to main that touch db/migrations/.
+# Idempotent: each migration is wrapped in a transaction; psql exits
+# non-zero on the first error and the workflow fails loudly.
+#
+# Required secrets:
+#   SUPABASE_DB_URL  — full Postgres connection string with password.
+#                      Stored only as an Actions secret. Never echoed.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "db/migrations/**.sql"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  # One migration run at a time per branch — never two pushes racing.
+  group: db-push-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install psql client
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends postgresql-client
+
+      - name: Apply migrations in lexical order
+        env:
+          PGPASSWORD_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          files=(db/migrations/*.sql)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No migrations to apply."; exit 0
+          fi
+          IFS=$'\n' sorted=($(sort <<<"${files[*]}")); unset IFS
+          for f in "${sorted[@]}"; do
+            echo "::group::Applying $f"
+            psql "$PGPASSWORD_DB_URL" \
+                 --single-transaction \
+                 --set ON_ERROR_STOP=1 \
+                 --file "$f"
+            echo "::endgroup::"
+          done
+          echo "All migrations applied."
