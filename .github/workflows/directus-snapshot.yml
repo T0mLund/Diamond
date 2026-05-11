@@ -1,0 +1,110 @@
+name: directus-snapshot
+
+# Capture the live Directus schema as a YAML snapshot in the repo.
+#
+# How it works:
+#   1. Call the Directus REST endpoint `/schema/snapshot?export=yaml` using
+#      DIRECTUS_AGENT_TOKEN (already in repo secrets).
+#   2. Save the response to `directus/snapshot.yaml`.
+#   3. Mint a short-lived App token (same pattern as agent-push.yml).
+#   4. Commit the file to a fresh branch and open a PR you can review/merge.
+#
+# Invoke this manually from the Actions tab whenever you've finished a round
+# of schema changes in the Directus admin UI and want to capture them.
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch name to push the snapshot to"
+        required: true
+        type: string
+        default: "agent/directus-snapshot"
+      title:
+        description: "PR title"
+        required: false
+        type: string
+        default: "chore(directus): refresh schema snapshot"
+      body:
+        description: "PR body (markdown)"
+        required: false
+        type: string
+        default: "Captured live Directus schema via `/schema/snapshot?export=yaml`."
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Mint installation token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: T0mLund
+          repositories: Diamond
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          fetch-depth: 0
+
+      - name: Fetch live Directus schema as YAML
+        env:
+          DIRECTUS_URL:   ${{ secrets.DIRECTUS_URL }}
+          DIRECTUS_TOKEN: ${{ secrets.DIRECTUS_AGENT_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir -p directus
+          # /schema/snapshot returns the current schema. ?export=yaml asks for YAML output.
+          curl --fail-with-body --silent --show-error \
+            -H "Authorization: Bearer ${DIRECTUS_TOKEN}" \
+            -H "Accept: application/yaml" \
+            "${DIRECTUS_URL%/}/schema/snapshot?export=yaml" \
+            -o directus/snapshot.yaml
+          # Sanity check: the file should mention 'zones' and 'sub_zones' if those tables were registered.
+          test -s directus/snapshot.yaml
+          echo "First 30 lines of captured snapshot:"
+          head -n 30 directus/snapshot.yaml
+
+      - name: Commit and push if changed
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          set -euo pipefail
+          git config user.name  "perplexity-diamond-build[bot]"
+          git config user.email "perplexity-diamond-build[bot]@users.noreply.github.com"
+
+          if git diff --quiet -- directus/snapshot.yaml; then
+            echo "No schema changes since last snapshot — nothing to commit."
+            exit 0
+          fi
+
+          git checkout -B "${{ inputs.branch }}"
+          git add directus/snapshot.yaml
+          git commit -m "${{ inputs.title }}"
+          git push --force-with-lease origin "${{ inputs.branch }}"
+
+      - name: Open pull request
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PR_TITLE: ${{ inputs.title }}
+          PR_BODY:  ${{ inputs.body }}
+          PR_HEAD:  ${{ inputs.branch }}
+        run: |
+          set -euo pipefail
+          # Don't fail if a PR already exists for this branch (idempotent).
+          if gh pr view "$PR_HEAD" >/dev/null 2>&1; then
+            echo "PR for $PR_HEAD already exists — skipping create."
+          else
+            gh pr create \
+              --title "$PR_TITLE" \
+              --body  "$PR_BODY" \
+              --head  "$PR_HEAD" \
+              --base  "main"
+          fi
