@@ -61,7 +61,17 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p directus
+
+          # Diagnostic: confirm who the token authenticates as and which role.
+          echo "--- /users/me probe ---"
+          http_status=$(curl -s -o /tmp/me.json -w "%{http_code}" \
+            -H "Authorization: Bearer ${DIRECTUS_TOKEN}" \
+            "${DIRECTUS_URL%/}/users/me?fields=id,email,role.name,role.admin_access")
+          echo "HTTP $http_status"
+          cat /tmp/me.json; echo
+
           # /schema/snapshot returns the current schema. ?export=yaml asks for YAML output.
+          echo "--- /schema/snapshot probe ---"
           curl --fail-with-body --silent --show-error \
             -H "Authorization: Bearer ${DIRECTUS_TOKEN}" \
             -H "Accept: application/yaml" \
