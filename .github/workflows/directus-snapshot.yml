@@ -32,7 +32,8 @@ on:
         default: "Captured live Directus schema via `/schema/snapshot?export=yaml`."
 
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
 
 jobs:
   snapshot:
@@ -83,6 +84,7 @@ jobs:
           head -n 30 directus/snapshot.yaml
 
       - name: Commit and push if changed
+        id: commit
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
@@ -90,17 +92,21 @@ jobs:
           git config user.name  "perplexity-diamond-build[bot]"
           git config user.email "perplexity-diamond-build[bot]@users.noreply.github.com"
 
-          if git diff --quiet -- directus/snapshot.yaml; then
-            echo "No schema changes since last snapshot — nothing to commit."
-            exit 0
-          fi
-
+          # Branch first, then stage. `git diff --quiet` only sees tracked files;
+          # for a brand-new snapshot.yaml we must `git add` and check the index.
           git checkout -B "${{ inputs.branch }}"
           git add directus/snapshot.yaml
+          if git diff --cached --quiet -- directus/snapshot.yaml; then
+            echo "No schema changes since last snapshot — nothing to commit."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "changed=true" >> "$GITHUB_OUTPUT"
           git commit -m "${{ inputs.title }}"
           git push --force-with-lease origin "${{ inputs.branch }}"
 
       - name: Open pull request
+        if: steps.commit.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PR_TITLE: ${{ inputs.title }}
