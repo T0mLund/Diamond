@@ -1,0 +1,43 @@
+-- 0014_phase_1_5c_rls_remediation_phase_d2.sql
+-- Vegar's Diamond — Phase 1.5c RLS Remediation, Phase D2
+--
+-- Background
+-- ----------
+-- The Supabase advisor flagged two ours-owned views with the lint
+-- `security_definer_view`:
+--
+--   - public.current_items
+--   - public.points_with_zones
+--
+-- Inspection showed `reloptions IS NULL` on both, meaning neither had an
+-- explicit `security_invoker` setting and both therefore inherited
+-- PostgreSQL's default definer-style behaviour (queries through the view
+-- run with the view owner's privileges, not the caller's).
+--
+-- This migration switches both views to `security_invoker = true`. Queries
+-- now run with the caller's permissions and underlying-table grants apply.
+--
+-- Behavioural impact (now)
+-- ------------------------
+-- Functionally identical in the current setup. The only roles with access
+-- after Phases A/A2/B are `postgres` (table owner; full access) and
+-- `service_role` (BYPASSRLS; full access). Both bypass the
+-- definer-vs-invoker distinction because they have all underlying grants
+-- regardless.
+--
+-- Behavioural impact (future)
+-- ---------------------------
+-- Once we introduce per-role read policies for invited collaborators
+-- (Decision D6, 6–12 months out per 2026-05-15 user direction), the views
+-- will correctly enforce the caller's policies rather than silently
+-- bypassing them. This is the structurally correct posture and composes
+-- cleanly with any future authenticated-role policy work.
+--
+-- Reversibility
+-- -------------
+-- `ALTER VIEW ... SET (security_invoker = false)` restores prior behaviour.
+--
+-- Applied to Supabase on 2026-05-15 15:01 UTC as version 20260515140120.
+
+ALTER VIEW public.current_items SET (security_invoker = true);
+ALTER VIEW public.points_with_zones SET (security_invoker = true);
