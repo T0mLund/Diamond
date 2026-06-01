@@ -1,13 +1,12 @@
-# Vegar's Diamond — Summary v3.0 (draft)
+# Vegar's Diamond — Summary v3.0
 
-> **Status:** In formation — v3.0-draft, as of 2026-05-16. Sets the scope and
-> posture of the v3.0 iteration. **This iteration is directed at deployment.**
+> **Status:** Committed — **v3.0** (committed 2026-06-01 under PR #8).
+> Sets the scope and posture of the v3.0 iteration. **This iteration is
+> directed at deployment.**
 >
 > **Filename convention:** see `Diamond_Versioning_Convention_v1.1.md`.
-> Supersedes the v2.0/v2.1 draft cycle in its entirety. v1.0 remains the
-> *committed* baseline; v3.0-draft is the in-formation next baseline and is
-> **meant to commit** (no decimal drafts are planned between v3.0-draft and
-> v3.0).
+> Supersedes the v1.0 baseline and the archived v2.0 / v2.1 draft cycle
+> in its entirety. v3.0 is now the project's committed baseline.
 >
 > **Standalone.** This document does not require the v2-draft documents to be
 > read. The substantive material that was developed in the v2-draft cycle is
@@ -18,17 +17,17 @@
 
 ---
 
-## 0. Changes from previous baseline (v1.0 → v3.0-draft)
+## 0. Changes from previous baseline (v1.0 → v3.0)
 
 Per `Diamond_Versioning_Convention_v1.1.md` §7, every iteration's Summary
 registers its changes relative to the immediately previous *committed*
 baseline. The v2-draft cycle never committed; per Convention §4.4, the
-relevant un-committed v2-draft commitments are folded forward into v3.0-draft
+relevant un-committed v2-draft commitments are folded forward into v3.0
 and the v2 drafts themselves are archived under `/docs/archive/v2-drafts/`.
 
-At commitment of v3.0, the entries below will fold into the repo CHANGELOG.
+These entries are the v3.0 entry in the repo `CHANGELOG.md`.
 
-### New commitments (added in v3.0-draft, folded forward from the v2-draft cycle)
+### New commitments (added in v3.0, folded forward from the v2-draft cycle)
 
 - **Spec §4.6** — Exactness rule for geometric quantities (analytic /
   bounded / dated-measured with declared precision). Adopted as rule.
@@ -58,10 +57,13 @@ At commitment of v3.0, the entries below will fold into the repo CHANGELOG.
 - **Spec §10** — Hypothesis register extended with H8–H13. H8, H9 closed as
   theorems; H10–H13 adopted as rules / commitments rather than open
   conjectures.
-- **Containment Note (standalone document)** — R1, R2, R3 reframed as
-  containment questions at different scales. Includes Appendix A "User as
-  Inhabitant" (canonical two-perspective camera regime: 3rd-person orbital
-  outside Z1, 1st-person cone through BEING inside Z1, Shell 1 transition).
+- **Containment Note (standalone document)** — R1 and R3 reframed as
+  containment questions at different scales. (R2 — the M3 super-structure
+  for multiple Diamonds — was disregarded on 2026-06-01 as hypothetical
+  speculation; see `docs/decision-notes/2026-06-01_r1_route_b_closure.md`.)
+  Includes Appendix A "User as Inhabitant" (canonical two-perspective
+  camera regime: 3rd-person orbital outside Z1, 1st-person cone through
+  BEING inside Z1, Shell 1 transition).
 - **Roadmap I.1 – I.10** — Cross-cutting questions. I.8 (linear vs scattered
   perspective), I.9 (color in spatial representation; **architecture locked
   in v3.0** — see §4.4 below), I.10 (active-zone semantics; **architecture
@@ -72,7 +74,7 @@ At commitment of v3.0, the entries below will fold into the repo CHANGELOG.
   migration (`0001_baseline.sql`); Phase 1.5c shipped as the fully-private
   RLS-remediation migrations (`0010`–`0014`). CI `db-push` is green on main.
 
-### New commitments unique to v3.0-draft (deployment direction)
+### New commitments unique to v3.0 (deployment direction)
 
 - **Roadmap Part IV — Deployment** *(new Part)*. v3.0 is the first iteration
   with deployment in scope. Deployment is staged:
@@ -173,12 +175,14 @@ of the v2-draft cycle is preserved verbatim; the difference is that v3.0 is
 
 ## 2. What v3.0 is not
 
-v3.0 is **not** a schema migration. No migration `0015` or later is written,
-planned, or pre-committed in v3.0. The R1 thread may eventually justify one;
-v3.0 does not assume that outcome.
+v3.0 is **not** a live schema migration. A blueprint for migration `0015`
+(splitting Z3's 26 sub-zones into inner/outer halves under Route B; see §4.5)
+is committed in this iteration but **not applied** to the live database.
+Application waits for the implementation phase of Stage 1.
 
-v3.0 is **not** an answer to R1, R2, or R3. The threads remain open and are
-carried forward in the Roadmap with their current state.
+v3.0 **closes R1** under Route B. R2 has been disregarded. R3 is deferred
+until the first item insertion in Z3. See §4.5 and the decision memo at
+`docs/decision-notes/2026-06-01_r1_route_b_closure.md`.
 
 v3.0 is **not** a relaxation of the §4.5 scope guards (per-subject, static
 positions). Those remain in force.
@@ -197,10 +201,10 @@ questions but not committed.
 
 | Document | Role |
 |---|---|
-| `Diamond_Summary_v3.0-draft.md` *(this document)* | Scope and posture. Read first. |
-| `Diamond_Containment_Note_v3.0-draft.md` | Standalone reframe of R1 / R2 / R3 and the canonical UX camera regime. Read before any individual thread or any UX work. |
-| `Diamond_Spec_v3.0-draft.md` | The full specification — geometry, axes, zones, bipyramid, time axis, exactness rule, triage rule, items / relations, hypothesis register. Standalone (does not require v1.0 Roadmap to be read). |
-| `Diamond_Roadmap_v3.0-draft.md` | The research phases, decision points, infrastructure history, **deployment ladder (new Part IV)**, and tracked open questions. |
+| `Diamond_Summary_v3.0.md` *(this document)* | Scope and posture. Read first. |
+| `Diamond_Containment_Note_v3.0.md` | Standalone reframe of R1 and R3 and the canonical UX camera regime. (R2 disregarded 2026-06-01.) Read before any individual thread or any UX work. |
+| `Diamond_Spec_v3.0.md` | The full specification — geometry, axes, zones, bipyramid, time axis, exactness rule, triage rule, items / relations, hypothesis register. Standalone (does not require v1.0 Roadmap to be read). |
+| `Diamond_Roadmap_v3.0.md` | The research phases, decision points, infrastructure history, **deployment ladder (new Part IV)**, and tracked open questions. |
 
 The *committed* `Diamond_Roadmap_v1.0.md` remains in the active Space as the
 historical baseline; it migrates to `/docs/archive/v1/` only when v3.0
@@ -217,9 +221,11 @@ The substantive editorial work of the v2-draft cycle is folded in. See §0
 above for the enumeration. The most consequential of these:
 
 - **Bipyramid as convex hull of the six landmarks** (canonical reframe;
-  Spec §6.22, H8 theorem).
+  Spec §6.22, H8 theorem). **As of 2026-06-01 also the second containment
+  system** (Route B; H5 ADOPTED).
 - **Measured-geometry table** for the four zones (Spec §6.23; H9 theorem
-  for Z1 and Z2; Z4 row remains open).
+  for Z1 and Z2; under Route B, Z3 row splits into inner/outer and the
+  Z4 row becomes the two polar caps).
 - **Time axis as nested horizons** (Spec §6.7; H13 adopted).
 - **Exactness rule** and **triage rule** (Spec §4.6 and §4.7; H10 and H11
   adopted as governance).
@@ -327,20 +333,30 @@ What is **open in v3.0** (carried in the Roadmap):
   asks for it) or an *ontological* feature (the framework always has one
   active zone).
 
-### 4.5 R1 / R2 / R3 — carried forward open
+### 4.5 R1 closed (Route B); R2 disregarded; R3 deferred
 
-The three reserved research threads are carried forward open, with the
-state set during the v2-draft cycle:
+State as of 2026-06-01. See `docs/decision-notes/2026-06-01_r1_route_b_closure.md`
+for the full dialogue and rationale.
 
-- **R1.1** (Zone 4 volumetric split) — open deliverable. Same method as
-  the Z3 measurement (MC + grid cross-check).
-- **R1.2 / R1.3** — open. The container-vs-inhabitant decision framework
-  remains a research question.
-- **R2** (M3 super-structure) — slowest thread; carried forward at the
-  survey level only.
-- **R3** (dynamic positions) — `effective_period` is already in the schema
-  (since migration 0009); R3.1 (editorial policy for `effective_period`)
-  is the only in-scope v3.0 deliverable.
+- **R1** — **CLOSED under Route B**. The bipyramid is a *second containment
+  system* operating alongside the spheres. Zone 3's 26 angular sub-zones
+  split into inner (inside the bipyramid) and outer (outside) halves. The
+  label "Zone 4" is retired and demoted to **the polar caps**: two named
+  regions defined as the parts of the φ-shell *inside* the bipyramid;
+  the rest of the φ-shell is undefined space. Total defined sub-zones:
+  80 → **106**. H5 is **ADOPTED** in the register.
+- **R1.1** (Zone 4 volumetric split) — retained as a *verification*
+  deliverable for the polar-cap geometry; no longer gates anything.
+- **R1.2 / R1.3** — closed by the Route B decision; the decision memo
+  is the artefact that R1.2 would have produced.
+- **R2** (M3 super-structure across multiple Diamonds) — **disregarded**
+  as hypothetical speculation. Removed from the v3.0 docs. H6's status
+  is recorded in the register as *disregarded* with a one-line rationale.
+- **R3** (dynamic positions and trajectories) — **deferred until the
+  first item insertion in Z3**. The schema affordance
+  (`items.effective_period`) is in place since migration 0009; R3.1
+  (editorial policy) will be written when an item with a multi-period
+  history is actually about to be inserted. R3.2 stays parked for v4.0+.
 
 ## 5. Exit criteria for v3.0
 
@@ -356,7 +372,8 @@ v3.0 is *complete* (i.e., ready to commit and drop the `-draft` suffix) when:
    and into any prose the Stage 1 surface presents.
 4. The exactness rule (§4.6) has been applied at least once retroactively
    (already happened: "≈88%" → 32.21% / 67.79%).
-5. The Zone 4 volumetric split has either been computed or has a tracked
+5. The polar-cap geometry (formerly the "Zone 4 volumetric split") has
+   either been computed as a verification of Route B or has a tracked
    owner and target date.
 6. **The triage rule (§4.7)** has been applied at least once to a
    substantive paragraph of prose (the Containment Note Appendix A is
@@ -368,9 +385,10 @@ v3.0 is *complete* (i.e., ready to commit and drop the `-draft` suffix) when:
 9. **Convention v1.1** is committed to the repo (this Summary's
    commitment-to-commit applies to the Convention as well).
 
-v3.0 is *not* gated on R1, R2, or R3 reaching a decision. Those threads
-remain deliberately open. The frame is what v3.0 commits to; the answers
-stay deferred.
+v3.0 is **gated on R1 being closed (under Route B; see §4.5)**. R2 is
+disregarded and contributes no gate. R3 is deferred until first item
+insertion and likewise contributes no gate to v3.0's exit. The frame is
+what v3.0 commits to; R1 is now part of that frame.
 
 ## 6. Posture and pacing
 
@@ -409,9 +427,9 @@ For continuity with the v1.0 hypothesis register and the v2-draft cycle:
 | H2 — *(carried from v1.0, unchanged)* | open | v1.0 §10 |
 | H3 — *(carried from v1.0, unchanged)* | open | v1.0 §10 |
 | H4 — Radial progression mechanism (five readings suspended) | open; suspension carried forward | v1.0 §6.13; v3.0 Spec §6.13 unchanged |
-| H5 — Bipyramid as zone-defining surface | reframed under containment | R1 |
-| H6 — M3 super-structure | reframed under containment | R2 |
-| H7 — Dynamic positions | reframed under containment | R3 |
+| **H5** — Bipyramid as zone-defining surface | **ADOPTED 2026-06-01 (Route B closure of R1)** | Spec §6.22; decision memo |
+| H6 — M3 super-structure | **DISREGARDED 2026-06-01** (hypothetical speculation; R2 removed from v3.0) | — |
+| H7 — Dynamic positions | reframed under containment; deferred until first item insertion | R3 |
 | **H8** — Bipyramid is identically the convex hull of the six landmarks | **CLOSED as theorem** | Spec §6.22 |
 | **H9** — Zones 1 and 2 are 100% inside the bipyramid | **CLOSED as theorem** | Spec §6.23 |
 | **H10** — Exactness rule for geometric quantities | **ADOPTED as rule (§4.6)** | Spec §4.6 |

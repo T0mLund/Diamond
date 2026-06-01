@@ -1,18 +1,22 @@
-# Vegar's Diamond — Containment Note v3.0 (draft)
+# Vegar's Diamond — Containment Note v3.0
 
-> **Status:** In formation — v3.0-draft, as of 2026-05-16. Standalone
-> reframe document. Authoritative for the framing of the three reserved
-> research threads R1, R2, R3, and (per Appendix A) for the canonical UX
-> camera regime.
+> **Status:** Committed — **v3.0** (committed 2026-06-01 under PR #8;
+> R1 closed by Route B; R2 hard-deleted; R3 deferred). Drafted from
+> 2026-05-16. Standalone
+> reframe document. Authoritative for the framing of the reserved
+> research threads R1 (closed under Route B, 2026-06-01) and R3 (deferred,
+> 2026-06-01), and (per Appendix A) for the canonical UX camera regime.
+> R2 was hard-deleted 2026-06-01 as hypothetical speculation; see
+> `docs/decision-notes/2026-06-01_r1_route_b_closure.md`.
 >
 > **Filename convention:** see `Diamond_Versioning_Convention_v1.1.md`.
 > Carried forward from the archived `Diamond_Containment_Note_v2.0-draft.md`
 > with §A.3 refined for v3.0 deployment readiness (the camera regime is
 > now the spec for Stage 1 / Stage 2 of the deployment ladder).
 >
-> **Reading order:** This note sits *under* `Diamond_Summary_v3.0-draft.md`
+> **Reading order:** This note sits *under* `Diamond_Summary_v3.0.md`
 > and *above* the threads themselves. Read it after the Summary, before
-> consulting any individual R1 / R2 / R3 section in the Roadmap.
+> consulting any individual R1 / R3 section in the Roadmap.
 
 ---
 
@@ -22,63 +26,65 @@ In v1.0 the three reserved research threads were enumerated as separate
 appendices:
 
 - **R1** — interstitial geometry and zone partition revision (does the
-  bipyramid promote to a zone-defining surface?)
-- **R2** — M3 containing structure for multiple Diamonds (what holds a
-  community of subjects?)
+  bipyramid promote to a zone-defining surface?) — **CLOSED under Route B,
+  2026-06-01**: the bipyramid is now a second containment system.
+- **R2** — ~~M3 containing structure for multiple Diamonds~~ —
+  **HARD-DELETED 2026-06-01** as hypothetical speculation. Disregarded.
 - **R3** — M2 dynamic positions and animated trajectories (what holds a
-  subject moving through time?)
+  subject moving through time?) — **DEFERRED 2026-06-01** until the first
+  item is inserted into a Z3 sub-zone.
 
-Read in isolation, each looks like a different problem. Read together,
-they share a single underlying form. **All three are containment
-questions**, asked at three different scales:
+Read in isolation, each looked like a different problem. Read together,
+R1 and R3 share a single underlying form. **They are containment
+questions**, asked at two different scales:
 
-| Thread | Scale | Question (one sentence each) |
-|---|---|---|
-| R1 | Within one Diamond | Is the bipyramid a *container* (a zoning surface that partitions interior from exterior) or an *inhabitant* (a structural landmark surface that lives inside the existing zones)? |
-| R2 | Across Diamonds | What structure *contains* a community of per-subject Diamonds such that shapes seen differently from different vantage points are recognisably the same shape? |
-| R3 | Across time within one Diamond | What structure *contains* a single Diamond as the subject moves, so that positions at \(t_1\) and \(t_2\) are recognisably the same subject's positions? |
+| Thread | Scale | Question (one sentence each) | Status |
+|---|---|---|---|
+| R1 | Within one Diamond | Is the bipyramid a *container* (a zoning surface that partitions interior from exterior) or an *inhabitant* (a structural landmark surface that lives inside the existing zones)? | **Closed under Route B**, 2026-06-01: container (second containment system) |
+| R3 | Across time within one Diamond | What structure *contains* a single Diamond as the subject moves, so that positions at \(t_1\) and \(t_2\) are recognisably the same subject's positions? | **Deferred** until first item insertion in Z3 |
 
-The three threads are **not coincidentally related**. They are three
-faces of the same problem: *what is the model containing and what is
-contained by the model?* This note records that observation and uses it
-to structure how the threads should be approached.
+R1 and R3 are **not coincidentally related**. They are two faces of the
+same problem: *what is the model containing and what is contained by
+the model?* This note records that observation and uses it to structure
+how the remaining open thread (R3) should be approached when it is
+reopened.
 
 ## 2. The pattern: container–inhabitant ambiguity
 
 Each thread, at its own scale, contains a structural object whose status
 as container or inhabitant is undecided.
 
-### 2.1 R1's ambiguous object: the bipyramid
+### 2.1 R1's resolved object: the bipyramid as second containment system
+
+**R1 closed 2026-06-01 under Route B.** Full rationale:
+`docs/decision-notes/2026-06-01_r1_route_b_closure.md`.
 
 The anisotropic bipyramid \(|x|+|y|+|z|/\varphi \le 1\) — equivalently
-the convex hull of the six landmarks (Spec §6.22) — currently has the
-structural role of a **landmark surface**: it passes through the six
-named landmark coordinates and serves as a visual cue, but it is not a
-zone boundary. The zones are defined from the φ-cascade of shells, not
-from the bipyramid. So the bipyramid is currently an **inhabitant** of
-the zone structure, not a **container** for sub-regions of zones.
+the convex hull of the six landmarks (Spec §6.22) — is now treated as a
+**second containment system** operating alongside the φ-spheres. It is
+not a replacement for the shell structure; it is a parallel partition
+that operates on Z3 (splitting the 26 angular sub-zones into 52 inner /
+outer halves) and on the φ-shell formerly called Z4 (defining the two
+polar caps as the only named regions; equatorial belt undefined).
 
-The R1 question is whether to *promote* it to container status — to let
-it partition Zone 3 into "axial-octant Zone 3" and "interstitial Zone 3",
-and similarly for Zone 4. The 2026-05-11 measurement (32.21% inside /
-67.79% outside, for Z3) showed that this would not be a trivial
-partition: roughly two-thirds of Zone 3 lives in the interstitial
-pockets. The Z4 split remains uncomputed (Roadmap R1.1).
+The 2026-05-11 measurement (32.21% inside / 67.79% outside, for Z3) is
+now the volumetric weighting of `.inner` vs `.outer` halves. The polar
+cap split of the φ-shell remains uncomputed but is now informational
+only (Roadmap R1.1 verification deliverable; no longer gates anything).
 
-### 2.2 R2's ambiguous object: the M3 super-structure
+No Stage 1 render consequences: the bipyramid is already part of the
+v3.0 render as a translucent skin; the Z3 partition is invisible until
+items are inserted into Z3.
 
-The v1.0 baseline §6.21 introduces M3 as a hypothesised structure
-containing many per-subject Diamonds. M3 is currently described as
-"a containing structure" — but the **nature** of the containment is left
-open. Is M3 a manifold in which Diamonds float as points? A bundle in
-which each Diamond is a fibre? A lattice of vantage points that mutually
-project? Each reading entails different structural commitments.
+### 2.2 [Deleted] R2 — hard-deleted 2026-06-01
 
-The R2 question is whether to commit to a specific containment topology
-for M3 — to decide, in effect, whether M3 is *the* container or whether
-"M3" names a placeholder for a still-undecided container.
+The v1.0-era hypothesis of M3 as a containing structure for multiple
+Diamonds is **hard-deleted** as of 2026-06-01 under user instruction:
+"that was a hypothetical speculation and irrelevant". H6 in the
+hypothesis register is marked DISREGARDED. The archived v2-draft
+Containment Note retains the original §2.2 text for historical reference.
 
-### 2.3 R3's ambiguous object: the time dimension
+### 2.3 R3's deferred object: the time dimension
 
 Spec §4.5 declares that the model uses **static positions** — items live
 at a single coordinate. The geometry already has a time-relevant axis
@@ -96,6 +102,13 @@ different rendering and storage commitments.
 
 The R3 question is what structure *contains* a subject's trajectory such
 that the trajectory has identity.
+
+**R3 status (2026-06-01):** DEFERRED until the first item is inserted
+into a Z3 sub-zone. Rationale: no items currently occupy any sub-zone,
+so the trajectory-identity question has no concrete instances on which
+to be tested. Reopening trigger: the first row in `items` with a Z3
+sub-zone in its `effective_period`. The `effective_period` column stays
+in the schema (Migration 0009).
 
 ### 2.4 Historical provenance: the container/inhabitant problem is the oldest problem in spatial representation
 
@@ -140,23 +153,20 @@ three instances of one question.
 
 This has two practical consequences for how the threads are structured.
 
-**First**, the threads are sequenced. R1 is approached first because it
-is geometrically the smallest containment question — it lives entirely
-within one Diamond. R3 is approached second because it extends one
-Diamond through time while keeping the spatial structure fixed. R2 is
-approached last because it is the largest containment question — it
-requires R1 and R3 to be settled before "what contains the Diamonds" has
-a stable referent.
+**First**, the threads were sequenced. R1 was approached first because
+it is geometrically the smallest containment question — it lives entirely
+within one Diamond. R1 is now closed (2026-06-01). R3 is the remaining
+open thread, deferred until first item insertion in Z3.
 
 **Second**, the threads inherit a shared vocabulary. Each thread answers
 the same four questions in its own register:
 
-| Question | R1 | R3 | R2 |
-|---|---|---|---|
-| What is the candidate container? | the bipyramid (as a partitioning surface) | a temporal structure over one Diamond | M3 |
-| What is the candidate inhabitant? | items in axial vs interstitial regions of zones | items at different `effective_period`s | individual Diamonds |
-| What is the test for container–inhabitant status? | does the surface change *zone identity* of items it bisects? | does the temporal structure change *subject identity* across time slices? | does M3 change *Diamond identity* across vantage points? |
-| What is the fall-back if the candidate stays an inhabitant? | bipyramid stays a landmark surface, zones stay shell-defined | items keep static positions; trajectories live as relations | each Diamond is independent; M3 is a façon de parler |
+| Question | R1 (closed) | R3 (deferred) |
+|---|---|---|
+| What is the candidate container? | the bipyramid (as a partitioning surface) | a temporal structure over one Diamond |
+| What is the candidate inhabitant? | items in inner vs outer halves of Z3 sub-zones | items at different `effective_period`s |
+| What is the test for container–inhabitant status? | does the surface change *zone identity* of items it bisects? | does the temporal structure change *subject identity* across time slices? |
+| What is the resolution? | **Container** (second containment system, Route B, 2026-06-01) | Open; deferred until first item insertion in Z3 |
 
 This table is the **interpretive grid** for the threads in v3.0. Every
 R-thread answer should fit one row of it.
@@ -245,8 +255,8 @@ Whether containment is *the* organising question of the Diamond — as
 opposed to, say, intersubjectivity, or temporality, or progression — is
 itself a future-iteration question (carried in Roadmap Part I). This
 note does not answer that larger question. It does the smaller job of
-making the structural parallel visible so that R1, R2, R3 can be
-approached with shared vocabulary.
+making the structural parallel visible so that R1 and R3 can be
+approached with shared vocabulary. (R2 was hard-deleted 2026-06-01.)
 
 ---
 
@@ -263,8 +273,10 @@ For reference, since the R1 thread leans on it:
 
 Zone 1 and Zone 2 are therefore 100% inside the bipyramid (provable
 analytically; H9 theorem). Zone 3 is split 32.21% / 67.79% (measured,
-2026-05-11, MC + grid; Spec §6.23). Zone 4 is split, percentages not
-yet computed (open R1.1 deliverable in `Diamond_Roadmap_v3.0-draft.md`).
+2026-05-11, MC + grid; Spec §6.23) — under Route B this is the volumetric
+weighting between `.inner` and `.outer` halves of the 52 Z3 sub-zones.
+The φ-shell formerly called Z4: polar cap / equatorial belt split not
+yet computed (R1.1 verification deliverable; informational only).
 
 ---
 
@@ -273,7 +285,7 @@ yet computed (open R1.1 deliverable in `Diamond_Roadmap_v3.0-draft.md`).
 *Carried forward from the v2-draft cycle (Gemini 3.1 Pro Thinking
 finding, refined with the user's specification of the camera regime).
 v3.0 elevates this appendix to the spec for Stage 1 / Stage 2 of the
-deployment ladder; see `Diamond_Roadmap_v3.0-draft.md` Part IV.*
+deployment ladder; see `Diamond_Roadmap_v3.0.md` Part IV.*
 
 ### A.1 — The observation
 
@@ -346,7 +358,7 @@ Z1).
 
 **Stage 1 of the v3.0 deployment ships exactly this mode** — orbital
 camera, seven Class-H landmarks, bipyramid skin, no cone-mode. See
-`Diamond_Roadmap_v3.0-draft.md` Part IV.
+`Diamond_Roadmap_v3.0.md` Part IV.
 
 #### A.3.2 — 1st-person mode: central light-cone *through* the aperture
 
@@ -397,7 +409,7 @@ regime flips. BEING's role changes from locus to **aperture**.
     UX or document that depicts the cone-deformation behaviour.
 
 **Stage 2 of the v3.0 deployment ships cone-mode and the Shell-1
-transition.** See `Diamond_Roadmap_v3.0-draft.md` Part IV.
+transition.** See `Diamond_Roadmap_v3.0.md` Part IV.
 
 **A.3.2 supplement — Class H vocabulary for *kinds of looking* in
 cone-mode (Spec §4.7 tag: *borrowed*).** Independent of how *wide* the
@@ -507,8 +519,9 @@ the user is engaging.
   operational: the first thing a user sees is the diagram.
 - **Spec §4.5 (per-subject scope guard)** is honoured because the camera
   is always positioned within one subject's Diamond — there is no view
-  that shows multiple subjects' Diamonds simultaneously. R2 may
-  revisit this.
+  that shows multiple subjects' Diamonds simultaneously. (Note: R2 was
+  hard-deleted 2026-06-01; multi-subject views are no longer on the
+  roadmap.)
 - **Spec §4.7 (epistemic-class triage)** is honoured because the camera
   regime is declared, not silent. The regime itself is a stipulation in
   the §4.7 sense and is tagged as such here. The cone-width-as-attention
@@ -576,8 +589,8 @@ the user is engaging.
   terminal or momentary threshold is open.
 - **Multi-subject views.** The §4.5 per-subject scope guard rules out
   any third-person view of multiple Diamonds simultaneously at this
-  iteration. If R2 ever relaxes that guard, the camera regime needs
-  revisiting.
+  iteration. R2 (which would have relaxed that guard) was hard-deleted
+  2026-06-01. Multi-subject view is no longer on the roadmap.
 - **Model-side focal depth (depth-of-field).** Deferred per §A.7.
 
 These questions are carried as part of Roadmap I.7 (*what does the

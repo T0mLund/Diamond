@@ -1,17 +1,21 @@
-# Vegar's Diamond — Roadmap v3.0 (draft)
+# Vegar's Diamond — Roadmap v3.0
 
-> **Status:** In formation — v3.0-draft, as of 2026-05-16. The
-> research-and-deployment programme for the v3.0 baseline.
+> **Status:** Committed — **v3.0** (committed 2026-06-01 under PR #8;
+> R1 closed by Route B; R2 hard-deleted; R3 deferred). Drafted from
+> 2026-05-16. The research-and-deployment programme for the v3.0 baseline.
 >
 > **Filename convention:** see `Diamond_Versioning_Convention_v1.1.md`.
 > Supersedes the v1.0 Roadmap (which becomes historical baseline only)
 > and the archived v2-draft Roadmap cycle (v2.0 + v2.1, both archived
 > under `/docs/archive/v2-drafts/`).
 >
-> **Reads alongside:** `Diamond_Summary_v3.0-draft.md` (posture),
-> `Diamond_Containment_Note_v3.0-draft.md` (shared frame for R1 / R2 /
-> R3 and the canonical UX camera regime), `Diamond_Spec_v3.0-draft.md`
-> (the canonical specification).
+> **Reads alongside:** `Diamond_Summary_v3.0.md` (posture),
+> `Diamond_Containment_Note_v3.0.md` (shared frame for R1 — closed
+> 2026-06-01 under Route B — and R3 — deferred 2026-06-01 — and the
+> canonical UX camera regime), `Diamond_Spec_v3.0.md` (the
+> canonical specification),
+> `docs/decision-notes/2026-06-01_r1_route_b_closure.md` (R1 close-out
+> memo: includes the R2 hard-delete and R3 defer).
 
 ---
 
@@ -29,31 +33,35 @@ infrastructure tail closed**. It enumerates:
   object; Stages 2 – 4 introduce UX modalities one at a time.
 - Decision points and ordering (Part V).
 
-The Roadmap is **non-blocking** for the research threads (R1 / R2 / R3
-can be picked up in any order and at any pace), and **strictly
-sequential** for the deployment ladder (each stage depends on its
-predecessor being live and stable).
+The Roadmap is **non-blocking** for the remaining research thread (R3,
+deferred until first item insertion in Z3), and **strictly sequential**
+for the deployment ladder (each stage depends on its predecessor being
+live and stable). R1 was closed under Route B on 2026-06-01; R2 was
+hard-deleted on the same date.
 
 ---
 
 ## Part I — Cross-cutting research questions
 
-These questions cut across R1, R2, R3 and the editorial work. Each is
+These questions cut across R1 (closed) and R3 (deferred) and the
+editorial work. Each is
 enumerated separately so it can be reasoned about independently of any
 one thread.
 
 ### I.1 — Is containment the right organising question for the next iteration?
 
-The Containment Note proposes that R1, R2, R3 share a single underlying
+The Containment Note proposes that R1 and R3 share a single underlying
 form. This is itself a hypothesis about the structure of the open
 questions, not about the Diamond's geometry or metaphysics.
 
 **Test for "yes":** Approaches to R1 that use the container–inhabitant
 vocabulary produce sharper questions than approaches that don't.
 
-**Test for "no":** R1 yields a clean answer using purely geometric
-vocabulary; R2 and R3 turn out to be about *different* things (e.g.,
-representation rather than containment).
+**Test for "no":** R1 yielded a clean answer using purely geometric
+vocabulary (Route B, 2026-06-01); R3 turns out to be about *different*
+things (e.g., representation rather than containment). The Route B
+decision used a mix of geometric and posture-level vocabulary; the
+"yes"/"no" outcome here is not yet decided.
 
 **When to ask:** As soon as any R-thread starts to be worked seriously.
 The answer to I.1 should fall out of the first thread engaged.
@@ -284,80 +292,75 @@ AZ.6, AZ.7 can be settled during or shortly after Stage 3.
 
 ## Part II — The three reserved threads (under containment frame)
 
-### R1 — Interstitial geometry and zone partition revision
+### R1 — Interstitial geometry and zone partition revision (CLOSED 2026-06-01)
 
-**Frame:** Is the bipyramid a *container* (zone-defining) or an
-*inhabitant* (landmark)?
+**Status:** **CLOSED under Route B**, 2026-06-01.
 
-**Current status (v3.0):**
+**Decision:** The bipyramid is promoted to a **second containment
+system** operating alongside the φ-spheres. It partitions each of the 26
+Z3 angular sub-zones into an inner and outer half (52 total) and defines
+the two polar caps (the parts of the φ-shell formerly called Z4 that lie
+inside the bipyramid) as the only named regions of the φ-shell. The
+equatorial belt of the φ-shell is undefined / blank space (conservative
+Reading, chosen 2026-06-01).
 
-- Bipyramid is documented as an **inhabitant** in Spec §6.22.4.
-- Three-row evidence in the measured-geometry table (Spec §6.23):
-  Zone 1 (100% inside, analytic; H9 theorem), Zone 2 (100% inside,
-  analytic; H9 theorem), Zone 3 (32.21% / 67.79%, measured 2026-05-11).
-- Zone 4 row is open.
+**Full rationale:** `docs/decision-notes/2026-06-01_r1_route_b_closure.md`.
 
-**Deliverables (in priority order):**
+**Documents updated under this decision:**
 
-1. **R1.1 — Compute the Zone 4 volumetric split.** Same method as
-   Zone 3 (MC + grid cross-check). Estimated effort: ~10 minutes of
-   compute, ~30 minutes to write up. Output: a single row added to
-   Spec §6.23 and to the Containment Note Appendix.
-   **This is the only quantitative gap remaining for R1.**
-   Owner: open. Target: before any R1 decision discussion.
+- Spec §6.1, §6.2, §6.22.4, §6.22.5, §6.23 table, §6.23.2
+- Spec §10 hypothesis register: H5 ADOPTED, H6 DISREGARDED, H7 deferred
+- Containment Note §2.1 (rewritten under Route B), §2.2 (hard-deleted),
+  §2.3 (R3 defer note added)
+- Summary R-thread table and hypothesis-register summary
+- This Roadmap (Part II R1 section, Part IV note)
 
-2. **R1.2 — Container-vs-inhabitant decision framework.** A short
-   document (~3 pages) listing the consequences of each route:
-   - Route A: keep bipyramid as inhabitant; consequences for zone
-     prose, sub-zone naming, item anchoring.
-   - Route B: promote bipyramid to zone-defining surface; consequences
-     for a hypothetical `migration 0015`, sub-zone re-enumeration,
-     Directus collection updates, anchor schema.
-   - Route C: change the bipyramid to a regular octahedron of
-     circumradius φ (the "Zone 3 cleanly bisected" reading); consequences
-     for landmark coordinates (Heaven / Hell / Past / Future shift to
-     Shell 4), Spec §6.22 rewrite, all prior renders.
-   Owner: open. Target: when I.1 is answered "yes".
+**Stage 1 render consequences:** None. The bipyramid is already part of
+the v3.0 render as a translucent skin; the Z3 partition is invisible
+until items are inserted into Z3 sub-zones (no items currently in Z3).
 
-3. **R1.3 — Trial prose passage.** Write one or two paragraphs of
-   Zone 3 zone-prose under each of Routes A and B. The author's
-   experience writing each is data for R1.2. Output: comparison memo.
-   Owner: Vegar or collaborator. Target: after R1.2.
+**Verification deliverable (no longer gating anything):**
 
-**Out of scope for R1 in v3.0:** Migration `0015` SQL or any later
-migration. No migration is written until at least Routes A vs B is
-resolved.
+- **R1.1 — Polar-cap volumetric split.** Compute the volumetric split of
+  the φ-shell formerly called Z4 into polar caps (inside bipyramid) and
+  equatorial belt (outside bipyramid). Same method as Z3 (MC + grid
+  cross-check). Informational only; the R1 decision does not depend on
+  this figure. Owner: open. Target: when convenient.
 
----
+**Blueprint (not applied):**
 
-### R2 — M3 super-structure for multiple Diamonds
-
-**Frame:** What structure *contains* a community of per-subject
-Diamonds?
-
-**Current status:** Carried over from v1.0 §6.21 unchanged. M3 remains
-a placeholder name. No new geometric or schema commitments in v3.0.
-
-**Deliverables (low priority for v3.0; this thread is the slowest):**
-
-1. **R2.1 — Survey of candidate containment topologies.** A short
-   document listing options:
-   - Manifold (Diamonds as points)
-   - Fibre bundle (Diamonds as fibres over a shared base)
-   - Lattice of vantage points (Diamonds as mutual projections)
-   - Other / placeholder
-   Each option gets one paragraph. Owner: open. Target: no urgency.
-
-2. **R2.2 — Identification criterion.** Under any candidate topology,
-   *what makes a shape seen differently from two vantage points the
-   same shape?* Owner: open. Target: after R2.1.
-
-**Out of scope:** Any commitment to a particular M3 structure. R2 in
-v3.0 stays at the survey level.
+- `db/migrations/0015_route_b_zone_partition.sql` — drafted as a
+  blueprint for the eventual schema update that splits Z3 sub-zones into
+  `.inner` / `.outer` variants. **Not applied.** Application is gated on:
+  (i) first item insertion into Z3, and (ii) explicit user approval per
+  standing directive "DO NOT use v3.1 files to build anything without
+  consulting me".
 
 ---
 
-### R3 — Dynamic positions and animated trajectories
+### R2 — [HARD-DELETED 2026-06-01]
+
+**Status:** Hard-deleted 2026-06-01 under user instruction: "that was a
+hypothetical speculation and irrelevant". H6 in the hypothesis register
+(Spec §10) is marked DISREGARDED. No further work tracked.
+
+The archived v2-draft Roadmap retains the original R2 section for
+historical reference. No multi-subject / multi-Diamond commitments are
+carried forward into v3.0+.
+
+---
+
+### R3 — Dynamic positions and animated trajectories (DEFERRED 2026-06-01)
+
+**Status:** **DEFERRED 2026-06-01** until the first item is inserted
+into a Z3 sub-zone. Rationale: no items currently occupy any sub-zone,
+so the trajectory-identity question has no concrete instances on which
+to be tested. Reopening trigger: the first row in `items` with a Z3
+sub-zone in its `effective_period`. The `effective_period` column stays
+in the schema (Migration 0009).
+
+Deliverables below are preserved verbatim as the work that will resume
+when R3 is reopened.
 
 **Frame:** What structure *contains* one subject's trajectory through
 their Diamond over time?
@@ -392,6 +395,27 @@ those rows mean*.
 
 **Out of scope:** Animation. Rendering of time evolution. The "subject
 as moving point" abstraction. All deferred beyond v3.0.
+
+---
+
+## Part II-bis — Note on R1 close-out (no Stage 1 render consequences)
+
+The R1 closure under Route B (2026-06-01) has **no consequences for the
+Stage 1 render**:
+
+- The bipyramid is already a translucent skin in v3.0 Stage 1.
+- The Z3 partition into `.inner` / `.outer` halves is *invisible* until
+  items are inserted into Z3, and no items currently populate Z3.
+- The polar-cap regions of the φ-shell are already implicitly present
+  (the bipyramid intersects the φ-shell along ±Z at the Awakening and
+  Obliteration landmarks).
+
+This means R1's close-out is a **prose-and-schema-blueprint** event, not
+a render event. Stage 1 ships unchanged.
+
+Migration 0015 is drafted as a blueprint only and is not applied. It
+will be applied (after user approval) when the first item is inserted
+into Z3 and the inner/outer distinction has a concrete instance.
 
 ---
 
@@ -703,39 +727,43 @@ the work.
 
 ### V.1 — Recommended ordering of work
 
-1. **Convention v1.1 committed** (already drafted; commit with this
-   v3.0-draft set).
+1. **Convention v1.1 committed** (already drafted; committed alongside
+   the v3.0 set on 2026-06-01).
 2. **Stage 1 deployment** (the geometric object). Smallest, most
    visible, most likely to ground subsequent stages.
-3. **R1.1 (Zone 4 volumetric split).** Smallest research item; closes
-   a tracked unknown. Do alongside Stage 1 if appetite is there;
-   otherwise after Stage 1 is live.
+3. **R1.1 (Polar-cap volumetric split).** Verification deliverable for
+   the now-closed R1. Smallest research item; informational only.
+   Do alongside Stage 1 if appetite is there; otherwise after Stage 1
+   is live.
 4. **I.4 (does the convex-hull reframe make prose easier?)** —
    empirical, answered by writing. Do whenever the next zone-prose
    chunk is written.
 5. **Stage 2 deployment** (cone-mode + Shell-1 transition). Surfaces
    I.7 questions for the first time.
-6. **R1.2 + R1.3 (container-vs-inhabitant framework + trial prose).**
-   The substantive R1 work. Do when contemplation has settled on what
-   the bipyramid is *for*.
-7. **R3.1 (effective_period editorial policy).** Cheap, prevents drift.
-   Do before any multi-row item is inserted by any surface.
+6. **[R1.2 / R1.3 removed]** — R1 closed under Route B 2026-06-01; the
+   container-vs-inhabitant framework and trial-prose deliverables are
+   superseded by the decision memo at
+   `docs/decision-notes/2026-06-01_r1_route_b_closure.md`.
+7. **R3 reopening (if triggered).** R3 deferred 2026-06-01 until first
+   item insertion in Z3. R3.1 (effective_period editorial policy) is
+   still preserved as the first deliverable when R3 is reopened.
+   Until then, cheap and prevents drift if written speculatively.
 8. **AZ.2 / AZ.3 resolution.** Before Stage 3 ships.
 9. **Stage 3 deployment** (active-zone fade).
 10. **I.9 sub-questions** (default palette, accessibility, interaction
     with active-zone fade). Before Stage 4 ships.
 11. **Stage 4 deployment** (color palettes).
-12. **R2.1 (M3 topology survey).** Slow thread; do when there is
-    appetite for it.
-13. **Convention v1.1 + v3.0-draft set commits to v3.0** (no more
-    drafts, per Convention §4.3).
+12. **[R2 removed]** — R2 hard-deleted 2026-06-01. No M3 topology work
+    is tracked.
+13. ~~Convention v1.1 + v3.0-draft set commits to v3.0~~ — **DONE
+    2026-06-01** (PR #8). v3.0 is the committed baseline.
 
 ### V.2 — Decision points
 
 | Decision | Gating | Resolves |
 |---|---|---|
-| D1 — Container or inhabitant? | R1.1 done; R1.2 written; R1.3 prose-test complete | R1 closes or migrates to a future commitment |
-| D2 — Is containment the right organising frame? | At least one of R1, R3 substantively engaged | Containment Note's editorial status; possibly I.1 |
+| D1 — Container or inhabitant? | **RESOLVED 2026-06-01**: container (Route B) | R1 closed; see decision memo |
+| D2 — Is containment the right organising frame? | At least one of R1 (now closed), R3 (deferred) substantively engaged | Containment Note's editorial status; possibly I.1 |
 | D3 — Stage 1 live? | Acceptance criteria IV.1 met | The framework moves from research to deployment |
 | D4 — Stage 2 live? | Acceptance criteria IV.2 met; I.7 questions surfaced | The framework's apophatic centre becomes UX |
 | D5 — AZ.2 / AZ.3 committed? | Active-zone semantics design complete | Stage 3 ready to ship |
@@ -747,17 +775,21 @@ the work.
 
 ### V.3 — What v3.0 explicitly does *not* decide
 
-- Whether to ever write `migration 0015` (or any later migration).
-- Whether M3 has a definite topology.
-- Whether subjects can have time-varying positions.
+- Whether to *apply* `migration 0015` (the blueprint is drafted under
+  Route B 2026-06-01; application is gated on first Z3 item + user
+  approval).
+- Whether subjects can have time-varying positions (R3 deferred).
 - Whether progression has a unified mechanism.
 - Which WYSIWYG surfaces ship at which Stage 5+.
 - Whether the project ever opens a public link.
 - Whether the project ever opens write access to others.
 
-All seven of the above are **deliberately left open**. v3.0 is the
+All six of the above are **deliberately left open**. v3.0 is the
 iteration where the frame becomes deployment-ready; the answers come
 later.
+
+**Closed in v3.0:** R1 (container/inhabitant) and R2 (M3 topology) are
+no longer open questions. R1 resolved by Route B adoption; R2 disregarded.
 
 ---
 
@@ -766,11 +798,15 @@ later.
 A short list of every figure or claim the Roadmap names as not-yet-
 resolved, for easy auditing later:
 
-1. Zone 4 volumetric split (R1.1).
-2. Whether the bipyramid is container or inhabitant (D1).
-3. The topology of M3 (R2.1 survey, R2.2 identification criterion).
-4. The editorial policy for `effective_period` (R3.1).
-5. The trajectory data model (R3.2 — v4.0+).
+1. Polar-cap / equatorial-belt volumetric split of the φ-shell
+   (R1.1 — verification deliverable; informational only since R1
+   closed 2026-06-01).
+2. ~~Whether the bipyramid is container or inhabitant (D1).~~
+   **Resolved 2026-06-01: second containment system (Route B).**
+3. ~~The topology of M3.~~ **Hard-deleted 2026-06-01.**
+4. The editorial policy for `effective_period` (R3.1 — deferred until
+   first item insertion in Z3).
+5. The trajectory data model (R3.2 — v4.0+; deferred with R3).
 6. Whether containment is the right organising frame (I.1).
 7. Whether the progression mechanism stays suspended (I.2).
 8. The relationship between containment and progression (I.3).
@@ -844,8 +880,10 @@ lineage), Roadmap I.8 (scattered perspective), Containment Note §A.9
 
 ---
 
-*End of Roadmap. v3.0-draft carries 10 cross-cutting questions
-(I.1 – I.10), 3 reserved research threads (R1, R2, R3), 1 infrastructure
+*End of Roadmap. v3.0 carries 10 cross-cutting questions
+(I.1 – I.10), 1 remaining reserved research thread (R3, deferred;
+R1 closed under Route B 2026-06-01, R2 hard-deleted 2026-06-01),
+1 infrastructure
 history Part (Phase 1.5b + 1.5c, both CLOSED), 1 deployment ladder Part
 (Stages 1 – 4 in scope; Stages 5+ enumerated as tracked decisions),
 10 decision points (D1 – D10), 17 tracked unknowns, and 1 deferred

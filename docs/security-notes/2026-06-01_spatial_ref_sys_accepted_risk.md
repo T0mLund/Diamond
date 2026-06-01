@@ -116,4 +116,4 @@ the request.
 - Supabase advisor rule 0013: <https://supabase.com/docs/guides/database/database-linter?lint=0013_rls_disabled_in_public>
 - PostGIS schema relocation (Supabase docs, "Troubleshooting" section): <https://supabase.com/docs/guides/database/extensions/postgis>
 - Community thread: <https://github.com/orgs/supabase/discussions/26302>
-- Related project doc: `docs/Diamond_Containment_Note_v3.0-draft.md` (private-mode posture)
+- Related project doc: `docs/Diamond_Containment_Note_v3.0.md` (private-mode posture)
