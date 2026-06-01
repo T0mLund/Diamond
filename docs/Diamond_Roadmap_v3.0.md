@@ -1,17 +1,18 @@
-# Vegar's Diamond — Roadmap v3.0 (draft)
+# Vegar's Diamond — Roadmap v3.0
 
-> **Status:** In formation — v3.0-draft, as of 2026-05-16. The
-> research-and-deployment programme for the v3.0 baseline.
+> **Status:** Committed — **v3.0** (committed 2026-06-01 under PR #8;
+> R1 closed by Route B; R2 hard-deleted; R3 deferred). Drafted from
+> 2026-05-16. The research-and-deployment programme for the v3.0 baseline.
 >
 > **Filename convention:** see `Diamond_Versioning_Convention_v1.1.md`.
 > Supersedes the v1.0 Roadmap (which becomes historical baseline only)
 > and the archived v2-draft Roadmap cycle (v2.0 + v2.1, both archived
 > under `/docs/archive/v2-drafts/`).
 >
-> **Reads alongside:** `Diamond_Summary_v3.0-draft.md` (posture),
-> `Diamond_Containment_Note_v3.0-draft.md` (shared frame for R1 — closed
+> **Reads alongside:** `Diamond_Summary_v3.0.md` (posture),
+> `Diamond_Containment_Note_v3.0.md` (shared frame for R1 — closed
 > 2026-06-01 under Route B — and R3 — deferred 2026-06-01 — and the
-> canonical UX camera regime), `Diamond_Spec_v3.0-draft.md` (the
+> canonical UX camera regime), `Diamond_Spec_v3.0.md` (the
 > canonical specification),
 > `docs/decision-notes/2026-06-01_r1_route_b_closure.md` (R1 close-out
 > memo: includes the R2 hard-delete and R3 defer).
@@ -726,8 +727,8 @@ the work.
 
 ### V.1 — Recommended ordering of work
 
-1. **Convention v1.1 committed** (already drafted; commit with this
-   v3.0-draft set).
+1. **Convention v1.1 committed** (already drafted; committed alongside
+   the v3.0 set on 2026-06-01).
 2. **Stage 1 deployment** (the geometric object). Smallest, most
    visible, most likely to ground subsequent stages.
 3. **R1.1 (Polar-cap volumetric split).** Verification deliverable for
@@ -754,8 +755,8 @@ the work.
 11. **Stage 4 deployment** (color palettes).
 12. **[R2 removed]** — R2 hard-deleted 2026-06-01. No M3 topology work
     is tracked.
-13. **Convention v1.1 + v3.0-draft set commits to v3.0** (no more
-    drafts, per Convention §4.3).
+13. ~~Convention v1.1 + v3.0-draft set commits to v3.0~~ — **DONE
+    2026-06-01** (PR #8). v3.0 is the committed baseline.
 
 ### V.2 — Decision points
 
@@ -879,7 +880,7 @@ lineage), Roadmap I.8 (scattered perspective), Containment Note §A.9
 
 ---
 
-*End of Roadmap. v3.0-draft carries 10 cross-cutting questions
+*End of Roadmap. v3.0 carries 10 cross-cutting questions
 (I.1 – I.10), 1 remaining reserved research thread (R3, deferred;
 R1 closed under Route B 2026-06-01, R2 hard-deleted 2026-06-01),
 1 infrastructure

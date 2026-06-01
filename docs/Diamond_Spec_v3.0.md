@@ -1,6 +1,8 @@
-# Vegar's Diamond — Specification v3.0 (draft)
+# Vegar's Diamond — Specification v3.0
 
-> **Status:** In formation — v3.0-draft, as of 2026-05-16. Standalone
+> **Status:** Committed — **v3.0** (committed 2026-06-01 under PR #8;
+> closes R1 by Route B, hard-deletes R2, defers R3). Drafted from
+> 2026-05-16. Standalone
 > specification: this document does not require the v1.0 Roadmap or the
 > archived v2-draft Spec to be read.
 >
@@ -10,9 +12,9 @@
 > to `/docs/archive/v1/`, and this file becomes
 > `Diamond_Spec_v3.0.md`.
 >
-> **Reading order.** Read `Diamond_Summary_v3.0-draft.md` first. Then the
-> `Diamond_Containment_Note_v3.0-draft.md`. Then this Spec. Then the
-> `Diamond_Roadmap_v3.0-draft.md`.
+> **Reading order.** Read `Diamond_Summary_v3.0.md` first. Then the
+> `Diamond_Containment_Note_v3.0.md`. Then this Spec. Then the
+> `Diamond_Roadmap_v3.0.md`.
 >
 > **Conventions used throughout.**
 > - φ = (1 + √5) / 2 ≈ 1.6180339887498949 is the golden ratio.
@@ -79,7 +81,7 @@ zone level). It does *not* re-label the axes themselves.
 
 These seven landmarks are the **canonical Class-H labels** of v3.0
 (see §6.24). They are the only seven labels guaranteed to appear in Stage 1
-of the deployment (see `Diamond_Roadmap_v3.0-draft.md` Part IV).
+of the deployment (see `Diamond_Roadmap_v3.0.md` Part IV).
 
 ### 3.2 Beyond-bipyramid landmarks (Shell 5)
 

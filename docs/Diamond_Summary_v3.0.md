@@ -1,13 +1,12 @@
-# Vegar's Diamond — Summary v3.0 (draft)
+# Vegar's Diamond — Summary v3.0
 
-> **Status:** In formation — v3.0-draft, as of 2026-05-16. Sets the scope and
-> posture of the v3.0 iteration. **This iteration is directed at deployment.**
+> **Status:** Committed — **v3.0** (committed 2026-06-01 under PR #8).
+> Sets the scope and posture of the v3.0 iteration. **This iteration is
+> directed at deployment.**
 >
 > **Filename convention:** see `Diamond_Versioning_Convention_v1.1.md`.
-> Supersedes the v2.0/v2.1 draft cycle in its entirety. v1.0 remains the
-> *committed* baseline; v3.0-draft is the in-formation next baseline and is
-> **meant to commit** (no decimal drafts are planned between v3.0-draft and
-> v3.0).
+> Supersedes the v1.0 baseline and the archived v2.0 / v2.1 draft cycle
+> in its entirety. v3.0 is now the project's committed baseline.
 >
 > **Standalone.** This document does not require the v2-draft documents to be
 > read. The substantive material that was developed in the v2-draft cycle is
@@ -18,17 +17,17 @@
 
 ---
 
-## 0. Changes from previous baseline (v1.0 → v3.0-draft)
+## 0. Changes from previous baseline (v1.0 → v3.0)
 
 Per `Diamond_Versioning_Convention_v1.1.md` §7, every iteration's Summary
 registers its changes relative to the immediately previous *committed*
 baseline. The v2-draft cycle never committed; per Convention §4.4, the
-relevant un-committed v2-draft commitments are folded forward into v3.0-draft
+relevant un-committed v2-draft commitments are folded forward into v3.0
 and the v2 drafts themselves are archived under `/docs/archive/v2-drafts/`.
 
-At commitment of v3.0, the entries below will fold into the repo CHANGELOG.
+These entries are the v3.0 entry in the repo `CHANGELOG.md`.
 
-### New commitments (added in v3.0-draft, folded forward from the v2-draft cycle)
+### New commitments (added in v3.0, folded forward from the v2-draft cycle)
 
 - **Spec §4.6** — Exactness rule for geometric quantities (analytic /
   bounded / dated-measured with declared precision). Adopted as rule.
@@ -75,7 +74,7 @@ At commitment of v3.0, the entries below will fold into the repo CHANGELOG.
   migration (`0001_baseline.sql`); Phase 1.5c shipped as the fully-private
   RLS-remediation migrations (`0010`–`0014`). CI `db-push` is green on main.
 
-### New commitments unique to v3.0-draft (deployment direction)
+### New commitments unique to v3.0 (deployment direction)
 
 - **Roadmap Part IV — Deployment** *(new Part)*. v3.0 is the first iteration
   with deployment in scope. Deployment is staged:
@@ -202,10 +201,10 @@ questions but not committed.
 
 | Document | Role |
 |---|---|
-| `Diamond_Summary_v3.0-draft.md` *(this document)* | Scope and posture. Read first. |
-| `Diamond_Containment_Note_v3.0-draft.md` | Standalone reframe of R1 and R3 and the canonical UX camera regime. (R2 disregarded 2026-06-01.) Read before any individual thread or any UX work. |
-| `Diamond_Spec_v3.0-draft.md` | The full specification — geometry, axes, zones, bipyramid, time axis, exactness rule, triage rule, items / relations, hypothesis register. Standalone (does not require v1.0 Roadmap to be read). |
-| `Diamond_Roadmap_v3.0-draft.md` | The research phases, decision points, infrastructure history, **deployment ladder (new Part IV)**, and tracked open questions. |
+| `Diamond_Summary_v3.0.md` *(this document)* | Scope and posture. Read first. |
+| `Diamond_Containment_Note_v3.0.md` | Standalone reframe of R1 and R3 and the canonical UX camera regime. (R2 disregarded 2026-06-01.) Read before any individual thread or any UX work. |
+| `Diamond_Spec_v3.0.md` | The full specification — geometry, axes, zones, bipyramid, time axis, exactness rule, triage rule, items / relations, hypothesis register. Standalone (does not require v1.0 Roadmap to be read). |
+| `Diamond_Roadmap_v3.0.md` | The research phases, decision points, infrastructure history, **deployment ladder (new Part IV)**, and tracked open questions. |
 
 The *committed* `Diamond_Roadmap_v1.0.md` remains in the active Space as the
 historical baseline; it migrates to `/docs/archive/v1/` only when v3.0

@@ -1,6 +1,8 @@
-# Vegar's Diamond — Containment Note v3.0 (draft)
+# Vegar's Diamond — Containment Note v3.0
 
-> **Status:** In formation — v3.0-draft, as of 2026-05-16. Standalone
+> **Status:** Committed — **v3.0** (committed 2026-06-01 under PR #8;
+> R1 closed by Route B; R2 hard-deleted; R3 deferred). Drafted from
+> 2026-05-16. Standalone
 > reframe document. Authoritative for the framing of the reserved
 > research threads R1 (closed under Route B, 2026-06-01) and R3 (deferred,
 > 2026-06-01), and (per Appendix A) for the canonical UX camera regime.
@@ -12,7 +14,7 @@
 > with §A.3 refined for v3.0 deployment readiness (the camera regime is
 > now the spec for Stage 1 / Stage 2 of the deployment ladder).
 >
-> **Reading order:** This note sits *under* `Diamond_Summary_v3.0-draft.md`
+> **Reading order:** This note sits *under* `Diamond_Summary_v3.0.md`
 > and *above* the threads themselves. Read it after the Summary, before
 > consulting any individual R1 / R3 section in the Roadmap.
 
@@ -283,7 +285,7 @@ yet computed (R1.1 verification deliverable; informational only).
 *Carried forward from the v2-draft cycle (Gemini 3.1 Pro Thinking
 finding, refined with the user's specification of the camera regime).
 v3.0 elevates this appendix to the spec for Stage 1 / Stage 2 of the
-deployment ladder; see `Diamond_Roadmap_v3.0-draft.md` Part IV.*
+deployment ladder; see `Diamond_Roadmap_v3.0.md` Part IV.*
 
 ### A.1 — The observation
 
@@ -356,7 +358,7 @@ Z1).
 
 **Stage 1 of the v3.0 deployment ships exactly this mode** — orbital
 camera, seven Class-H landmarks, bipyramid skin, no cone-mode. See
-`Diamond_Roadmap_v3.0-draft.md` Part IV.
+`Diamond_Roadmap_v3.0.md` Part IV.
 
 #### A.3.2 — 1st-person mode: central light-cone *through* the aperture
 
@@ -407,7 +409,7 @@ regime flips. BEING's role changes from locus to **aperture**.
     UX or document that depicts the cone-deformation behaviour.
 
 **Stage 2 of the v3.0 deployment ships cone-mode and the Shell-1
-transition.** See `Diamond_Roadmap_v3.0-draft.md` Part IV.
+transition.** See `Diamond_Roadmap_v3.0.md` Part IV.
 
 **A.3.2 supplement — Class H vocabulary for *kinds of looking* in
 cone-mode (Spec §4.7 tag: *borrowed*).** Independent of how *wide* the

@@ -24,11 +24,11 @@
 -- change that would realise that partition in `public.sub_zones`.
 --
 -- Spec references:
---   - Diamond_Spec_v3.0-draft.md §6.2  — 26→52 Z3 sub-zones
---   - Diamond_Spec_v3.0-draft.md §6.22.4 — Route B structural status
---   - Diamond_Spec_v3.0-draft.md §6.23 — measured-geometry table
---   - Diamond_Containment_Note_v3.0-draft.md §2.1 — R1 close-out
---   - Diamond_Roadmap_v3.0-draft.md Part II R1 — blueprint reference
+--   - Diamond_Spec_v3.0.md §6.2  — 26→52 Z3 sub-zones
+--   - Diamond_Spec_v3.0.md §6.22.4 — Route B structural status
+--   - Diamond_Spec_v3.0.md §6.23 — measured-geometry table
+--   - Diamond_Containment_Note_v3.0.md §2.1 — R1 close-out
+--   - Diamond_Roadmap_v3.0.md Part II R1 — blueprint reference
 --
 -- Naming convention
 -- -----------------
@@ -92,7 +92,7 @@
 -- If a future agent or human encounters this file during a routine
 -- migration sweep: SKIP IT. Verify that the docs in
 -- `docs/decision-notes/2026-06-01_r1_route_b_closure.md` and
--- `docs/Diamond_Roadmap_v3.0-draft.md` Part II R1 still document the
+-- `docs/Diamond_Roadmap_v3.0.md` Part II R1 still document the
 -- gating condition before considering application.
 
 -- =====================================================================

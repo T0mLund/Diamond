@@ -49,7 +49,7 @@ with an optional `-draft` suffix while in formation.
 
 - `Diamond_Spec_v1.0.md` — first committed baseline of the Spec.
 - `Diamond_Spec_v1.1.md` — within-baseline revision of v1.0.
-- `Diamond_Spec_v3.0-draft.md` — next iteration in formation (v2 was skipped per §4.4).
+- `Diamond_Spec_v3.0.md` — next iteration in formation (v2 was skipped per §4.4).
 - `Diamond_Spec_v3.0.md` — that iteration after commitment.
 
 ### 3.2 Sort behaviour
@@ -207,6 +207,17 @@ A second migration, on 2026-05-16, was forced by drift in the v2 draft cycle and
 | `Diamond_Roadmap_v2.1-draft.md` | `/docs/archive/v2-drafts/Diamond_Roadmap_v2.1-draft.md` | Un-committed draft, archived per §4.4. Note: the existence of this file is itself a §4.3 violation; archived as historical record. |
 
 The v2 cycle accumulated substantial work that is preserved (and accessible via git) but is not citable as v2.0. Commitments from v2 that survive the consolidation are restated cleanly in v3.0-draft and acquire their authoritative form there.
+
+A third event, on 2026-06-01, was the **commitment of v3.0** itself — the worked example for §5 (commitment process). The R1/R2/R3 close-out work performed on that date was substantive enough that overwriting `v3.0-draft` in place (per §4.3) reduced legibility for the human author. The recovery move was to invoke §5 and commit: drop the `-draft` suffix, fold the Summary §0 changes into the repo `CHANGELOG.md`, and treat all subsequent revisions as a fresh `v3.1-draft` (or `v4.0-draft` if substantive enough).
+
+| Prior name | New name | Notes |
+|---|---|---|
+| `Diamond_Summary_v3.0-draft.md` | `Diamond_Summary_v3.0.md` | Committed 2026-06-01 (PR #8). |
+| `Diamond_Spec_v3.0-draft.md` | `Diamond_Spec_v3.0.md` | Committed 2026-06-01 (PR #8). |
+| `Diamond_Containment_Note_v3.0-draft.md` | `Diamond_Containment_Note_v3.0.md` | Committed 2026-06-01 (PR #8). |
+| `Diamond_Roadmap_v3.0-draft.md` | `Diamond_Roadmap_v3.0.md` | Committed 2026-06-01 (PR #8). |
+
+No v1.0 archive move accompanied the v3.0 commitment because no `Diamond_*_v1.0.md` files were ever filed in the active workspace under that name; the v1.0 baseline existed only in git history before the v3.0-draft consolidation. The CHANGELOG entry on 2026-06-01 notes this irregularity.
 
 ---
 
