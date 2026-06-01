@@ -84,3 +84,37 @@ their drafts are archived under `/docs/archive/v2-drafts/`.
 [T0mLund/Diamond#8](https://github.com/T0mLund/Diamond/pull/8).
 
 ---
+
+## v3.0.1 — 2026-06-01 (patch, post-merge of PR #8)
+
+Scope: `db/migrations/0015_route_b_zone_partition.sql` blueprint only.
+No `Diamond_*_v3.0.md` doc was altered, so per Convention §4.4 this is
+a patch, not a draft cycle.
+
+### Fixed
+
+- **Migration 0015 schema drift.** The v1 blueprint shipped in PR #8
+  assumed `(slug, label, description)` columns on `public.sub_zones`.
+  The live schema has `(slug, name, ...)` plus NOT NULL `zone_id`,
+  `sign_x/y/z`, `kind`, and a `UNIQUE (zone_id, sign_x, sign_y, sign_z)`
+  composite constraint that the partition would have violated. The v2
+  blueprint:
+  - Uses `name` (not `label`).
+  - Copies `zone_id`, `sign_x`, `sign_y`, `sign_z`, `kind`,
+    `composite_quality` from parent to children.
+  - Adds a `bipyramid_side` column (`'inner'` / `'outer'` / NULL) with a
+    CHECK constraint.
+  - Drops the composite UNIQUE and replaces it with a unique expression
+    index that includes `COALESCE(bipyramid_side, '_self_')`, so a
+    deprecated parent row coexists with its two children.
+  - Adopts label convention "`(inside bipyramid)` / `(outside bipyramid)`"
+    (Option C from the 2026-06-01 council).
+- Migration is still a BLUEPRINT; guard variable preserved; application
+  remains gated on first Z3 item insertion + explicit user approval
+  (per R3 defer).
+
+### Documents
+
+- New: `docs/decision-notes/2026-06-01_0015_blueprint_schema_drift.md`.
+
+---
