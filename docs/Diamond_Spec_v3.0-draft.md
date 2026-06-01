@@ -285,23 +285,48 @@ The four zones are spherical shells of the Diamond:
 | Z3 | shell | \(\varphi^{-1}\) | \(1\) | \(\tfrac{4}{3}\pi(1-\varphi^{-3}) \approx 3.19995\) |
 | Z4 | shell | \(1\) | \(\varphi\) | \(\tfrac{4}{3}\pi(\varphi^{3}-1) \approx 13.65\) |
 
-Zones are **shell-defined**, not bipyramid-defined. The bipyramid (§6.22)
-*inhabits* the zone structure; it does not *define* it. Whether to promote
-the bipyramid to a zone-defining surface is the R1 question, deferred.
+Zones Z1, Z2 are **shell-defined**. Zone 3 is **jointly defined** by the
+φ-shell and by the bipyramid (§6.22), which under Route B (R1 close-out,
+2026-06-01) operates as a **second containment system** alongside the
+spheres. The bipyramid intersects the Z3 shell transversally, partitioning
+each Z3 angular sub-zone into an **inner half** (inside the bipyramid)
+and an **outer half** (outside). The φ-shell once labelled "Zone 4"
+is no longer treated as a uniform zone: only its two **polar caps** —
+the parts of the φ-shell that lie inside the bipyramid, projecting through
+the ±Z vertices — are defined regions in v3.0. The remainder of the
+φ-shell is **undefined / blank space**, structurally parallel to Shell 5
+(see §6.22.5).
 
-### 6.2 Sub-zones (26 per zone, schema-aligned)
+### 6.2 Sub-zones (schema and partition)
 
-Each of the three inner zones (Z1, Z2, Z3) carries 26 sub-zones:
+Z1 and Z2 each carry 26 sub-zones (unchanged from v2-draft):
 
 - **6 axial sub-zones** (one per ±X / ±Y / ±Z direction).
 - **12 plane sub-zones** (one per signed pair of axes; e.g., +X+Y / +X−Y /
   ... / −Y+Z).
 - **8 octant sub-zones** (one per signed triple of axes).
 
-Z4 carries 2 cap sub-zones (the +Z and −Z caps).
+Z1 and Z2 are 100% inside the bipyramid (H9, §6.23) so the bipyramid does
+not further partition them.
 
-Total: 80 sub-zones, as instantiated in the live schema (`sub_zones`
-table). The sub-zone labels are **Class T by default** under the
+Z3 carries **52 sub-zones**: the 26 angular sub-zones (6 axial, 12 plane,
+8 octant) are each split by the bipyramid surface into an `.inner` half
+and an `.outer` half. The naming convention extends the live-schema slugs
+by suffix (Option A, chosen 2026-06-01): e.g.,
+`zone-3.octant-ppp.inner` and `zone-3.octant-ppp.outer`.
+
+The label "Zone 4" is **retired in prose** in v3.0. The two regions
+formerly called Z4 caps are now called **polar caps** (north and south),
+defined as `polar-cap.north` and `polar-cap.south` in prose. For schema
+continuity the existing slugs `zone-4.north` and `zone-4.south` are
+**preserved** as their stable database identifiers; the prose rename is
+not a migration.
+
+Total defined sub-zones in v3.0: **106** (Z1: 26, Z2: 26, Z3: 52, polar
+caps: 2). The 80-sub-zone live schema (`sub_zones` table) is the v2-draft
+baseline; migration to the 106-sub-zone partition is drafted in
+`db/migrations/0015_route_b_zone_partition.sql` as a **blueprint only**,
+not applied. The sub-zone labels are **Class T by default** under the
 mixed-reading thesis of §6.24.
 
 ### 6.7 The time axis as nested horizons
@@ -435,37 +460,60 @@ one landmark moved, the bipyramid would deform to track it (the convex
 hull is determined by its vertices). The L¹ form makes the **scaling
 properties** legible: the bipyramid is a φ-stretched octahedron.
 
-#### 6.22.4 Structural status (inhabitant, not container)
+#### 6.22.4 Structural status (second containment system, Route B)
 
-The bipyramid is a **landmark surface**, not a zone-defining surface. It
-is an *inhabitant* of the zone structure (which is shell-defined),
-not a *container* for sub-regions of zones.
+**Updated 2026-06-01 under R1 close-out (Route B).** The bipyramid is a
+**second containment system** operating alongside the φ-spheres. It is
+**not** a replacement for the shell structure; it is a parallel partition
+that operates on Zone 3 and on the φ-shell formerly called Z4.
 
-Whether to promote the bipyramid to container status is the **R1
-question** — deferred for further research, informed by the
-measured-geometry table in §6.23 below.
+Under Route B:
 
-The v3.0 commitment is the same as the v1.0 / v2-draft commitment: the
-bipyramid stays an inhabitant. Any change requires its own iteration
-(v4.0 or later) and its own migration.
+- Z1, Z2 remain shell-defined; they are 100% inside the bipyramid so the
+  bipyramid imposes no further partition on them.
+- Z3 is jointly defined: the φ-shell defines the angular sub-zone
+  partition (26 angular regions); the bipyramid surface splits each into
+  inner / outer halves (52 total).
+- The φ-shell formerly labelled Z4 is no longer a zone in prose. Two
+  regions — the polar caps where the bipyramid penetrates the φ-shell
+  along ±Z — are defined; the equatorial belt is undefined / blank.
 
-#### 6.22.5 Verified containment facts
+This is a **conservative** instantiation of Route B (chosen 2026-06-01):
+the non-cap parts of the φ-shell are left undefined rather than carved
+into additional regions. Future iterations may revisit this. Promotion
+of the bipyramid to fully zone-defining (Route C) was ruled out
+2026-06-01.
+
+The v1.0 / v2-draft "inhabitant-only" commitment is **rescinded**.
+
+#### 6.22.5 Verified containment facts (Route B)
 
 From §6.23 (the measured-geometry table):
 
 - The bipyramid contains all of Zone 1 (analytically; Lagrange argument
-  on Shell 1).
+  on Shell 1). H9 closed as theorem.
 - The bipyramid contains all of Zone 2 (analytically; Lagrange argument
-  on Shell 2).
-- The bipyramid intersects Zone 3 transversally; 32.21% of Zone 3 lies
-  inside, 67.79% outside (measured, 2026-05-11).
-- The bipyramid intersects Zone 4 transversally; volumetric split **not
-  yet computed** (open R1.1 deliverable).
+  on Shell 2). H9 closed as theorem.
+- The bipyramid intersects the Zone 3 shell transversally; 32.21% of Z3
+  is inside (now the `.inner` halves of the 26 angular sub-zones), 67.79%
+  outside (the `.outer` halves). Measured 2026-05-11; sample size 64M;
+  95% CI ±0.011 pp.
+- The bipyramid intersects the φ-shell formerly called Z4 transversally;
+  the two polar caps (the inside-bipyramid parts) are defined, the
+  equatorial belt (outside-bipyramid) is **undefined / blank space** in
+  v3.0 under the conservative reading. The volumetric split of the
+  φ-shell into cap + belt is tracked as **verification deliverable R1.1**
+  in the Roadmap — informational only; no longer gates R1.
 
 The bipyramid touches Shell 3 at exactly four points (Heaven, Hell, Past,
-Future) and Shell 4 at exactly two points (Awakening, Obliteration).
+Future) and the φ-shell at exactly two points (Awakening, Obliteration).
 Everywhere else, the bipyramid surface lies strictly interior to the
 corresponding shell.
+
+**Stage 1 render consequence: none.** The bipyramid is already part of
+the v3.0 render as a translucent skin (§6.22 in the Roadmap). The
+partition of Z3 into inner / outer halves is *invisible* until items are
+inserted into sub-zones, because no items currently populate Z3.
 
 ### 6.23 Measured-geometry table
 
@@ -477,8 +525,9 @@ at the level the §4.6 exactness rule requires:
 |---|---|---|---|---|
 | Z1 | \(\tfrac{4}{3}\pi\varphi^{-6} \approx 0.2270\) | 100% | 0% | Analytic (Lagrange on max \(|x|+|y|+|z|/\varphi\) on shell of radius \(\varphi^{-2}\); maximum \(\approx 0.5895 < 1\)). |
 | Z2 | \(\tfrac{4}{3}\pi(\varphi^{-3} - \varphi^{-6}) \approx 0.7616\) | 100% | 0% | Analytic (Lagrange on max \(|x|+|y|+|z|/\varphi\) on shell of radius \(\varphi^{-1}\); maximum \(\approx 0.9539 < 1\)). |
-| Z3 | \(\tfrac{4}{3}\pi(1 - \varphi^{-3}) \approx 3.19995\) | **32.21%** | **67.79%** | Measured: Monte Carlo, 64,004,920 samples drawn uniformly in the Z3 shell, 95% CI ±0.011 pp; cross-checked against a 400³ uniform grid integration which returned 32.21% / 67.79% to the same precision. 2026-05-11. |
-| Z4 | \(\tfrac{4}{3}\pi(\varphi^3 - 1) \approx 13.65\) | open | open | Not yet computed. Tracked as deliverable R1.1 in `Diamond_Roadmap_v3.0-draft.md`. |
+| Z3.inner (the 32.21% of the Z3 shell inside B) | — (derived from Z3) | **100%** of Z3.inner | 0% | By construction. Measurement of the 32.21% / 67.79% Z3 split: Monte Carlo, 64,004,920 samples drawn uniformly in the Z3 shell, 95% CI ±0.011 pp; cross-checked against a 400³ uniform grid integration which returned 32.21% / 67.79% to the same precision. 2026-05-11. |
+| Z3.outer (the 67.79% of the Z3 shell outside B) | — (derived from Z3) | 0% | **100%** of Z3.outer | By construction; same measurement source. |
+| φ-shell (formerly Z4) | \(\tfrac{4}{3}\pi(\varphi^3 - 1) \approx 13.65\) | polar caps only (defined) | equatorial belt (undefined / blank) | Volumetric split into cap + belt: not yet computed. Tracked as R1.1 verification deliverable; informational only. |
 
 #### 6.23.1 Geometric reading
 
@@ -491,13 +540,20 @@ This is independent geometric evidence that the bipyramid is doing
 structural work even in its current inhabitant-only role: it marks the
 boundary between always-contained and partially-contained zones.
 
-#### 6.23.2 Implication for R1
+#### 6.23.2 R1 outcome (closed 2026-06-01)
 
-The R1 question — whether to promote the bipyramid to container status —
-now has measured grounding for Zones 1, 2, 3. The Zone 4 split is the
-remaining piece of evidence needed before R1 can be debated
-quantitatively. Until that figure is in hand, R1 remains open with one
-row of the table missing.
+**R1 closed under Route B** on 2026-06-01. Decision: the bipyramid is
+promoted to a **second containment system**, partitioning the Z3 shell
+into inner / outer halves (52 sub-zones) and defining the two polar caps
+as the only defined regions of the φ-shell formerly called Z4. The
+remainder of the φ-shell is undefined / blank space.
+
+Full rationale: `docs/decision-notes/2026-06-01_r1_route_b_closure.md`.
+
+The polar-cap volumetric split is retained as the R1.1 verification
+deliverable but no longer gates anything; it is informational only.
+Future iterations may revisit the equatorial-belt question (whether to
+define additional φ-shell regions outside the bipyramid).
 
 ### 6.24 Sub-zone labels: tags, states, and hybrids (mixed-reading)
 
@@ -713,7 +769,10 @@ Migration files on `main`:
 ## §10 — Hypothesis register
 
 v1.0 carried hypotheses H1–H4. v3.0 carries H4 forward unchanged,
-reframes H5–H7 under the containment frame, and adopts H8–H13.
+**closes H5 by adoption under Route B** (R1, 2026-06-01),
+**disregards H6** as hypothetical speculation (R2 hard-deleted, 2026-06-01),
+**defers H7** until first item insertion in Z3 (R3, 2026-06-01), and
+adopts H8–H13.
 
 | # | Hypothesis | Status | Where |
 |---|---|---|---|
@@ -721,9 +780,9 @@ reframes H5–H7 under the containment frame, and adopts H8–H13.
 | H2 | *(carried from v1.0, unchanged)* | open | v1.0 §10 |
 | H3 | *(carried from v1.0, unchanged)* | open | v1.0 §10 |
 | H4 | Radial progression has a unified mechanism (one of: intensification, transformation, development, thresholding, or no unified mechanism) | open; five readings held in suspension | §6.13 |
-| H5 | The bipyramid should be promoted to a zone-defining surface, partitioning Zone 3 and Zone 4 into interior / interstitial sub-zones | **reframed under containment**; see Containment Note §2.1 and R1 | R1 |
-| H6 | M3 is a containing structure for multiple per-subject Diamonds | **reframed under containment**; see Containment Note §2.2 and R2 | R2 |
-| H7 | Subjects move through their Diamonds over time; positions are not static | **reframed under containment**; see Containment Note §2.3 and R3 | R3 |
+| H5 | The bipyramid should be promoted to a second containment system partitioning Zone 3 into inner / outer halves and defining the polar caps of the φ-shell | **ADOPTED** under Route B (R1 closed 2026-06-01); see `docs/decision-notes/2026-06-01_r1_route_b_closure.md` | §6.22.4, §6.23.2 |
+| H6 | M3 is a containing structure for multiple per-subject Diamonds | **DISREGARDED** as hypothetical speculation (2026-06-01); R2 hard-deleted | — |
+| H7 | Subjects move through their Diamonds over time; positions are not static | **deferred** until first item insertion in Z3 (R3 deferred 2026-06-01) | R3 |
 | **H8** | The bipyramid is identically the convex hull of the six landmark coordinates | **CLOSED as theorem** | §6.22 |
 | **H9** | Zones 1 and 2 lie 100% inside the bipyramid | **CLOSED as theorem** | §6.23 |
 | **H10** | Every geometric quantity in v3.0+ documents is either analytic, bounded, or dated-measured with declared precision | **ADOPTED as rule (§4.6)** | §4.6 |
