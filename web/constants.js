@@ -1,6 +1,6 @@
 // The Diamond — constants.
 //
-// Every value is taken from Spec v3.1 and derived from φ at runtime
+// Every value is taken from Spec v3.2 and derived from φ at runtime
 // (exactness rule, Spec §4.6). Nothing here is a rounded literal.
 
 export const PHI = (1 + Math.sqrt(5)) / 2;

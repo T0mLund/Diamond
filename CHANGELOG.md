@@ -188,3 +188,111 @@ to 2026-10-14; this entry also records the revival clean-up.
   file and no framework document, so no version bump was needed. No
   `v3.0.1` filename was ever created. The entry is kept as written, as
   history.
+
+---
+
+## v3.2 — committed 2026-10-14 (PR #14)
+
+**Baseline transition:** v3.1 → v3.2, a within-baseline revision
+(minor bump, Convention §4.2). The v3.1 files are archived unchanged
+under `/docs/archive/v3/`, next to the v3.0 files.
+
+### User decisions recorded (2026-10-14, verbatim)
+
+- *"The zoom controls/perspective shift doesnt work (there's no inside
+  view of the diamond yet). There's a fourth, outer sphere visible. I
+  don't know where in the specs this comes from, but seems unrelated to
+  anything. In any case there should just be three nested spheres
+  visible. The axis lines shouldnt extend out past past/future and
+  heaven/hell. In the furthest zoomed out state the birth and death
+  points should both be visible. We also need to reinstate the torus
+  animation from graves diamond"*
+- *"The torus should "open" to become the diamond. The walls of its
+  central hole should come together at the center, fusing into a line of
+  no volume from which birth and death rises and descends, stretching
+  out the points of obliteration and awakening into the diamond shape.
+  The spheres should also have a texture, probaby very faint dots, to
+  indicate that it rotates together with the diamond shape"*
+- *"There shouldnt be an in/out zoom from the inside view. The vantage
+  point should be from the middle, looking out. Now you have the
+  perspective off of the BEING middle point so that is not correct. You
+  should be able to pan and tilt and zoom in and out, but as a light
+  cone emanating from the center of the diamond!"*
+- On how narrowing or widening the cone should look: *"Option 1 sounds
+  the closest to what I want: The field of view of the cone always fills
+  the entirety of the screen. Narrowing it magnifies what lies inside,
+  like a camera lens zooming in; widening it takes in more of the model,
+  up to 220 degrees to mimic human vision. This should be marked as a
+  design choice that makes a statement about experience. Additionally,
+  Obliteration/Death and Awakening/Birth should be kept apart until
+  viewed directly, where they merge to become Birth and Death
+  respectively"*
+- On how to move between the two views: *"Zoom through"*.
+- On the outer zoom limit (Birth and Death are both in view there only
+  from near-equatorial viewpoints): *"keep limit"*.
+
+### Revised commitments
+
+- **The view from BEING** (Containment Note §A.3, §A.3.2; Spec §4.2,
+  §6.25.2, §6.25.5). Inside Z1 the eye is at BEING, looking out through a
+  light cone that always fills the screen. Pan and tilt turn it; zoom
+  sets its angle from 24° to 220°.
+- **Cone width marked as a design choice** (Containment Note §A.3.2,
+  §A.6; Roadmap IV.2 criterion 5). Still a §4.7 *stipulation*; the
+  on-screen caption calls it "a design choice that makes a statement
+  about experience".
+- **Zoom through** (Containment Note §A.3.3). In: past Shell 1 the eye
+  travels to BEING. Out: widening past 220° carries it back to just
+  outside Shell 1.
+- **Merged pairs** (Containment Note §A.3.2). Obliteration / Death and
+  Awakening / Birth merge when viewed directly: Death straight up, Birth
+  straight down. The reverse reading of "respectively" is noted as open;
+  the user has been asked.
+- **Open questions resolved** (Containment Note §A.8; Roadmap I.7): the
+  widest cone is 220°; the eye never passes through BEING; \(r = 0\) is
+  where the whole 1st-person mode takes place.
+- **Stage 1 scope** (Roadmap IV.1): Shells 1–3 only, with very faint
+  dots (Shell 4 not drawn; latitude and longitude lines removed); X and Y
+  axes end at the four equatorial landmarks and Z runs to Birth and
+  Death; the outer zoom limit stays at Shell 5.
+- **Stages 1 and 2 ship together** (Roadmap IV.1, IV.2, V.1, V.2;
+  Containment Note §A.3.1, §A.7; Summary §4.3).
+- **The τ-deformation becomes the opening** (Spec §8.1, §11), in the two
+  stages the user described: closing into the Z axis, then stretching
+  into the diamond. Still auxiliary.
+- **Public status** (Roadmap IV.0 status note, IV.1, V.3). The site has
+  been public since 2026-10-14; merges and pull-request pushes both need
+  the user's approval.
+
+### Retired claims
+
+- Viewer behind BEING; BEING as an aperture looked through (Containment
+  Note §A.3, v3.0).
+- Depth behind the aperture sets the cone's width (Containment Note
+  §A.3.2, v3.0; Spec §6.25.5; Roadmap I.7, IV.2, IV.3).
+- Stage 1 is "orbital camera only" and must not enter Z1; Stage 1 draws
+  Shells 1–4 (Roadmap IV.1, v3.0).
+- The τ-deformation "is not in any deployment stage scope" (Spec §8.1,
+  v3.0).
+
+### Implementation choices (assisting agent; open to revision)
+
+- Equidistant (fisheye) projection for the cone, since an ordinary
+  perspective projection cannot exceed 180°.
+- Narrowest cone 24°; entry angle matched to the outside view's scale.
+- Pair separation 30 px off-axis, closing near the axis.
+- Caption wording; a first-entry hint that includes how to step back
+  out; outside-view names hide when their point is off screen or when a
+  nearer name overlaps them.
+- The opening's in-between shapes and timing (3.6 s; 0.6 s with reduced
+  motion).
+
+### Housekeeping
+
+- README, `docs/ARCHITECTURE.md` and the two archive READMEs updated
+  (hosting is now public; v3.1 files archived; what the torus reuses from
+  the May 2026 prototype).
+
+### Numerical values
+
+- New: the cone's range, 24° to 220°. No framework values changed.

@@ -1,13 +1,13 @@
 // The Diamond — the geometric object and its two perspectives.
 //
-// Roadmap v3.1 Part IV (Stages 1 and 2) and Containment Note Appendix A:
+// Roadmap v3.2 Part IV (Stages 1 and 2) and Containment Note Appendix A:
 // Shells 1–3 as translucent spheres, the X / Y / Z reference axes, the
 // bipyramid skin built as the convex hull of its six landmarks, and the
 // nine Class-H landmarks. One navigation, two perspectives keyed to
 // Shell 1: outside it the camera orbits BEING (§A.3.1); zooming in past
 // Shell 1 carries the eye into BEING, from where it looks out as a light
-// cone that fills the screen (cone.js; user decision 2026-10-14, replacing
-// the viewer behind an aperture of §A.3.2). The model opens as the
+// cone that fills the screen (cone.js; Containment Note §A.3.2–§A.3.3 as
+// revised in v3.2). The model opens as the
 // prototype's horn torus, which opens into the diamond on the first click
 // (torus.js). Faint dots on the shells show them turning with it.
 
