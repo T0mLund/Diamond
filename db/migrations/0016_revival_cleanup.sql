@@ -22,7 +22,8 @@
 --
 -- 3. Store the φ-cascade at full precision. The baseline (0001) seeded
 --    9-decimal truncations such as 1.618033989. `shells.radius`
---    (numeric) receives the closed forms to 30 decimals; the landmark
+--    (numeric; restored from a drifted numeric(12,9)) receives the
+--    closed forms to 30 decimals; the landmark
 --    `coordinates.z` values (double precision) receive the nearest
 --    double. Closed forms: φ⁻² = (3 − √5)/2, φ⁻¹ = (√5 − 1)/2,
 --    φ = (1 + √5)/2, φ² = (3 + √5)/2.
@@ -51,6 +52,12 @@ DROP POLICY IF EXISTS zones_public_read     ON public.zones;
 DROP POLICY IF EXISTS sub_zones_public_read ON public.sub_zones;
 
 -- 3 ─ Full-precision φ-cascade -----------------------------------------
+-- The live column had drifted to numeric(12,9), which rounds every value
+-- back to 9 decimals; the baseline (0001) declares plain numeric. Restore
+-- the baseline type first (no views or constraints depend on the column).
+-- Added 2026-10-14 after the first run of this file; idempotent.
+ALTER TABLE public.shells ALTER COLUMN radius TYPE numeric;
+
 UPDATE public.shells SET radius = CASE slug
     WHEN 'shell-1' THEN round((3 - sqrt(5.00000000000000000000000000000000000000000000000000)) / 2, 30)
     WHEN 'shell-2' THEN round((sqrt(5.00000000000000000000000000000000000000000000000000) - 1) / 2, 30)
