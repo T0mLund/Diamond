@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" stroke="#1c1e22" stroke-width="1.6" stroke-linejoin="round" aria-label="The Diamond">
+  <path d="M16 2 L26 16 L16 30 L6 16 Z"/>
+  <path d="M6 16 L13 18.5 L26 16 M13 18.5 L16 2 M13 18.5 L16 30" stroke-width="1.1" opacity="0.6"/>
+  <circle cx="16" cy="16" r="1.6" fill="#b88813" stroke="none"/>
+</svg>

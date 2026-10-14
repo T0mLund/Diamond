@@ -15,7 +15,7 @@ did.
 | Layer | Tool | Role |
 |---|---|---|
 | Source of truth | GitHub, `T0mLund/Diamond` | Framework documents, migrations, web app, history |
-| Web app | Static HTML/JS + Three.js (pinned CDN version, import map) | Stage 1 geometric object; no build step |
+| Web app | Static HTML/JS + Three.js r186, self-hosted in `web/vendor/` | Stage 1 geometric object; no build step, no third-party requests |
 | Hosting | Netlify | Serves `web/`; deploys on merge to `main` once linked |
 | Data | Supabase (Postgres 17 + PostGIS) | Schema for items and relations; used from Stage 5 |
 | Row editing | Supabase Table Editor | Owner edits rows directly; no separate CMS |

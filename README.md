@@ -28,10 +28,15 @@ CHANGELOG.md          accumulated changes per committed version
 
 ## How the pieces fit
 
-- **Web app.** `web/` is plain HTML, CSS and JavaScript. Three.js is loaded
-  from a pinned CDN version through an import map, so there is nothing to
-  install or build. Geometry comes from the Spec constants in
+- **Web app.** `web/` is plain HTML, CSS and JavaScript. Three.js (r186,
+  MIT) and the Inter font (OFL) are copied into `web/vendor/` and
+  `web/fonts/`, so the site loads nothing from other servers and there is
+  nothing to install or build. Geometry comes from the Spec constants in
   `web/constants.js`, computed exactly from φ at runtime.
+- **Security headers.** `netlify.toml` sets a strict Content Security
+  Policy (same-origin only), `noindex`, and related headers. If the import
+  map in `web/index.html` changes, its hash in `netlify.toml` must change
+  with it.
 - **Hosting.** Netlify serves `web/` (see `netlify.toml`). Once the Netlify
   site is linked to this repository, every merge to `main` deploys.
 - **Database.** Supabase (Postgres + PostGIS, project
