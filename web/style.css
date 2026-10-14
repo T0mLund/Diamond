@@ -13,7 +13,6 @@
   --ink: #1c1e22;
   --ink-2: #3f4248;
   --ink-3: #6c7077;
-  --gold: #8b6708;
   --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
@@ -58,7 +57,7 @@ html, body {
   transition: opacity 200ms linear;
 }
 .label--flipped { padding-left: 0; padding-right: 10px; }
-.label--being { color: var(--gold); font-weight: 500; letter-spacing: 0.06em; }
+.label--being { color: var(--ink); font-weight: 600; letter-spacing: 0.06em; }
 .label--axis {
   padding-left: 0;
   padding-right: 8px;

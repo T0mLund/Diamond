@@ -32,7 +32,6 @@ function webglAvailable() {
 function init() {
   const BG = 0xf1f1f1;
   const INK = 0x1c1e22;
-  const GOLD = 0xb88813;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // ── Renderers ────────────────────────────────────────────────────────
@@ -131,10 +130,11 @@ function init() {
   // ── The nine Class-H landmarks (Spec §3.1–§3.2) ──────────────────────
   const markerGeometry = new THREE.SphereGeometry(1, 32, 16);
   const inkMaterial = new THREE.MeshStandardMaterial({ color: INK, roughness: 0.55, metalness: 0 });
-  const goldMaterial = new THREE.MeshStandardMaterial({ color: GOLD, roughness: 0.4, metalness: 0.2 });
+  // Stage 1 is colour-neutral (Roadmap IV.1). BEING is set apart by a
+  // larger marker and a heavier label, not by colour.
   const landmarks = LANDMARKS.map((l) => {
     const isBeing = l.slug === 'being';
-    const marker = new THREE.Mesh(markerGeometry, isBeing ? goldMaterial : inkMaterial);
+    const marker = new THREE.Mesh(markerGeometry, inkMaterial);
     marker.position.set(...l.pos);
     const label = makeLabel(l.name, isBeing ? 'label label--being' : 'label');
     label.position.copy(marker.position);
