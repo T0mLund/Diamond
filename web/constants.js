@@ -36,16 +36,30 @@ export const AXIS_EXTENT = { x: shellRadius(3), y: shellRadius(3), z: shellRadiu
 
 // Containment Note §A.3 — one navigation, two perspectives, keyed to Shell 1.
 //   r > φ⁻²  3rd-person orbit around BEING (§A.3.1), out to Shell 5.
-//   r < φ⁻²  1st-person view through BEING (§A.3.2). BEING is approached
-//            but never reached or passed.
+//   r < φ⁻²  the view from BEING (user decision 2026-10-14, replacing the
+//            §A.3.2 viewer behind an aperture): zooming in past Shell 1
+//            carries the eye into BEING, at the origin, facing the way it
+//            was travelling. It returns along the same line to exitDistance.
 export const CAMERA = {
   maxDistance: shellRadius(5),
   threshold: shellRadius(1),
-  minDistance: shellRadius(1) / 12,
+  minDistance: shellRadius(1) * 0.8,
+  exitDistance: shellRadius(1) * 1.25,
 };
 
-// §A.3.2 — the aperture. The viewer looks through an opening of radius
-// APERTURE at BEING, so the cone's half-angle is atan(APERTURE / depth):
-// close → wide, far → narrow. The radius φ⁻³ (one step further down the
-// cascade than Shell 1) is a display choice, not a Spec value.
-export const APERTURE = PHI ** -3;
+// The light cone from BEING (user decision 2026-10-14). The cone fills the
+// screen; zoom sets its angle. maxAngle mimics human vision (the user's
+// figure). Both limits are design choices that make a statement about
+// experience, not measurements; minAngle is the narrowest magnification.
+export const CONE = {
+  minAngle: 24,
+  maxAngle: 220,
+};
+
+// Inside, Obliteration and Death (and Awakening and Birth) lie on one line
+// from BEING, so they would always coincide. They are drawn apart and merge
+// only when viewed directly; the merged point carries the outer name.
+export const MERGED_PAIRS = [
+  { inner: 'obliteration', outer: 'death' },
+  { inner: 'awakening', outer: 'birth' },
+];
