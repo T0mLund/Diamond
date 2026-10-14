@@ -119,7 +119,7 @@ a patch, not a draft cycle.
 
 ---
 
-## v3.1 — committed 2026-10-14
+## v3.1 — committed 2026-10-14 (PRs #10, #11, #12)
 
 **Baseline transition:** v3.0 → v3.1, a within-baseline revision
 (minor bump, Convention §4.2). The v3.0 files are archived unchanged
@@ -160,7 +160,11 @@ to 2026-10-14; this entry also records the revival clean-up.
   tables; drops the inert `zones_public_read` / `sub_zones_public_read`
   policies (never in a repo migration; contradicted Spec §9); stores
   shell radii and the four polar landmark coordinates at full φ
-  precision (previously 9-decimal truncations; Spec §4.6).
+  precision (previously 9-decimal truncations; Spec §4.6). Before the
+  update it restores `shells.radius` to plain `numeric`: the live column
+  had drifted to `numeric(12,9)`, which is not in any repo migration and
+  rounded the values back (found on the first run; fixed in PR #12).
+  After PR #12, `db-verify` passed all 15 checks (2026-10-14).
 - `db-verify` rewritten against Spec v3.1 §3, §5 and §9 (it still
   expected the May 2026 schema of 9 tables and 13 coordinates).
   `actions/checkout` bumped from v4 to v7 (Node 20 runners removed
@@ -172,7 +176,9 @@ to 2026-10-14; this entry also records the revival clean-up.
 - Archived: the May 2026 "Graves' Diamond" prototype at
   `docs/archive/prototype-2026-05/`, downloaded from the live site
   because it had never been committed.
-- Stage 1 web app added in `web/`, with `netlify.toml` (separate PR).
+- Stage 1 web app added in `web/`, with `netlify.toml` (PR #11). Not yet
+  linked to Netlify; linking publishes a URL and needs user approval
+  (Roadmap IV.0).
 
 ### Irregularity noted
 
