@@ -17,7 +17,7 @@ kept alive."
   (φ⁻³, φ⁻², φ⁻¹) inside a unit sphere, Awakening / Obliteration at ±1,
   Birth / Death at ±φ, Love–Hate and Past–Future as the horizontal axes,
   bipyramid tips at ±√φ, and a horn-torus τ slider. See
-  `docs/Diamond_Spec_v3.1.md` for the current geometry.
+  `docs/Diamond_Spec_v3.2.md` for the current geometry.
 - `content/sources.js`: 65 sources placed at prototype coordinates, with
   glosses and resonances. `content/readings.js`: about 6,000 words of
   readings. This is the only content the project has; it was never
@@ -29,4 +29,12 @@ kept alive."
 In May 2026 this prototype's content set was referred to as the "v3.1"
 files, and the standing directive "DO NOT use v3.1 files to build
 anything without consulting me" refers to them. That label is unrelated
-to the framework documents versioned v3.1 on 2026-10-14.
+to the framework documents versioned v3.1 (and v3.2) on 2026-10-14.
+
+## What was reused
+
+Only the horn-torus form (R = r = half the apex height), rebuilt at the
+v3 dimensions for the opening in `web/torus.js` (user
+decision 2026-10-14: "We also need to reinstate the torus animation from
+graves diamond"; see Spec v3.2 §8.1). The animation itself was rewritten
+to the user's description. Nothing from `content/` was used.

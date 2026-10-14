@@ -1,12 +1,12 @@
 # Architecture
 
-Current as of 2026-10-14 (framework v3.1). For what is in the repository,
+Current as of 2026-10-14 (framework v3.2). For what is in the repository,
 see the README.
 
 ## Principle
 
 Use the smallest stack that serves the next stage of the deployment
-ladder (Roadmap v3.1 Part IV). Every additional account is something that
+ladder (Roadmap v3.2 Part IV). Every additional account is something that
 can lapse while the project rests: between June and October 2026, four
 did.
 
@@ -15,17 +15,17 @@ did.
 | Layer | Tool | Role |
 |---|---|---|
 | Source of truth | GitHub, `T0mLund/Diamond` | Framework documents, migrations, web app, history |
-| Web app | Static HTML/JS + Three.js r186, self-hosted in `web/vendor/` | Stage 1 geometric object; no build step, no third-party requests |
-| Hosting | Netlify | Serves `web/`; deploys on merge to `main` once linked |
+| Web app | Static HTML/JS + Three.js r186, self-hosted in `web/vendor/` | Stages 1 and 2: the geometric object and the view from BEING; no build step, no third-party requests |
+| Hosting | Netlify | Serves `web/`; every merge to `main` deploys publicly to diamond.thoughtfree.com; pull-request Deploy Previews are publicly reachable |
 | Data | Supabase (Postgres 17 + PostGIS) | Schema for items and relations; used from Stage 5 |
 | Row editing | Supabase Table Editor | Owner edits rows directly; no separate CMS |
 | Agent access | GitHub CLI and the Supabase connector | Branches, pull requests, migrations |
 
 ## Data flow
 
-Stage 1 reads no database. The landmark coordinates, shell radii and
+The web app reads no database. The landmark coordinates, shell radii and
 bipyramid hull are computed in `web/constants.js` from
-φ = (1 + √5) / 2, exactly as Spec v3.1 §3 and §5 define them. The
+φ = (1 + √5) / 2, exactly as Spec v3.2 §3 and §5 define them. The
 database holds the same values (at full precision since migration 0016),
 and `db-verify` checks that the two agree with the Spec.
 
