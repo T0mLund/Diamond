@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>The Diamond</title>
+  <meta name="description" content="The Diamond: an interactive 3D model.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#f1f1f1">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./vendor/three/three.module.js",
+        "three/addons/": "./vendor/three/addons/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <main id="stage" role="img" aria-label="The Diamond, a 3D model. Drag to orbit; scroll or pinch to zoom; arrow keys orbit and plus or minus zoom."></main>
+  <p id="fallback" class="fallback" hidden>The Diamond needs a browser with WebGL enabled.</p>
+  <noscript><p class="fallback">The Diamond needs JavaScript and WebGL.</p></noscript>
+  <script type="module" src="main.js"></script>
+</body>
+</html>

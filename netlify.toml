@@ -1,0 +1,20 @@
+# The Diamond — Netlify configuration.
+# Stage 1 is a static site: Netlify serves web/ as-is. There is no build step.
+
+[build]
+  publish = "web"
+  # Deploy only when the site itself changed, so document-only merges do not
+  # spend deploys. A first build or a retry (same commit) always proceeds.
+  ignore = "if [ \"$CACHED_COMMIT_REF\" = \"$COMMIT_REF\" ]; then exit 1; fi; git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- web/ netlify.toml"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # No public link without explicit approval (Roadmap IV.0): keep it out of search engines.
+    X-Robots-Tag = "noindex, nofollow"
+    # Everything is served from this site; the only inline script is the import map.
+    # If index.html's import map changes, update its sha256 hash here.
+    Content-Security-Policy = "default-src 'none'; script-src 'self' 'sha256-Qvtpj9dqbDfT3CyUqh/xkOt4IWsXO+QZHOTOi7vn2Mo='; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"

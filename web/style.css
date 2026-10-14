@@ -1,0 +1,82 @@
+/* The Diamond — Stage 1. Full-frame, no chrome (Roadmap IV.1). */
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300 500;
+  font-display: swap;
+  src: url('fonts/inter-latin-var.woff2') format('woff2');
+}
+
+:root {
+  --bg: #f1f1f1;
+  --ink: #1c1e22;
+  --ink-2: #3f4248;
+  --ink-3: #6c7077;
+  --gold: #8b6708;
+  --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#stage {
+  position: fixed;
+  inset: 0;
+  touch-action: none;
+  cursor: grab;
+  outline: none;
+}
+#stage:active { cursor: grabbing; }
+#stage:focus-visible { box-shadow: inset 0 0 0 2px rgba(28, 30, 34, 0.25); }
+
+#stage canvas { display: block; }
+
+/* Label layer (CSS2DRenderer). Labels never intercept the pointer. */
+.labels { position: absolute; inset: 0; pointer-events: none; }
+
+.label {
+  padding-left: 10px;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  color: var(--ink-2);
+  white-space: nowrap;
+  user-select: none;
+  text-shadow: 0 0 3px var(--bg), 0 0 6px var(--bg);
+  transition: opacity 200ms linear;
+}
+.label--flipped { padding-left: 0; padding-right: 10px; }
+.label--being { color: var(--gold); font-weight: 500; letter-spacing: 0.06em; }
+.label--axis {
+  padding-left: 0;
+  padding-right: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+}
+
+.fallback {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 24px;
+  font-size: 15px;
+  color: var(--ink-3);
+  text-align: center;
+}
+.fallback[hidden] { display: none; }
