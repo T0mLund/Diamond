@@ -6,14 +6,15 @@
 // nine Class-H landmarks. One navigation, two perspectives keyed to
 // Shell 1: outside it the camera orbits BEING (§A.3.1); inside it the
 // viewer looks through BEING as an aperture (§A.3.2). The model opens as
-// the horn torus of the τ-deformation and unfolds on the first click.
+// the prototype's horn torus, which opens into the diamond on the first
+// click (torus.js). Faint dots on the shells show them turning with it.
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
 import { SHELLS, DRAWN_SHELLS, LANDMARKS, AXIS_EXTENT, CAMERA, APERTURE } from './constants.js';
-import { buildTorusMorph } from './torus.js';
+import { buildOpening } from './torus.js';
 
 const stage = document.getElementById('stage');
 
@@ -41,8 +42,11 @@ function init() {
   const caption = document.getElementById('caption');
   const hint = document.getElementById('hint');
   // A read-only state line for testing, shown only with #debug in the URL.
-  const debug = location.hash === '#debug' ? document.body.appendChild(document.createElement('pre')) : null;
+  // #debug&p=0.4 holds the opening at that progress, for screenshots.
+  const params = new URLSearchParams(location.hash.slice(1));
+  const debug = params.has('debug') ? document.body.appendChild(document.createElement('pre')) : null;
   if (debug) debug.className = 'debug';
+  const hold = debug && params.has('p') ? clamp(Number(params.get('p')) || 0, 0, 1) : null;
 
   // ── Renderers ────────────────────────────────────────────────────────
   const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -93,16 +97,13 @@ function init() {
     const front = new THREE.Mesh(geometry, shellMaterial(THREE.FrontSide));
     back.renderOrder = ORDER.back(n);
     front.renderOrder = ORDER.front(n);
-    // Meridians and parallels, shown from inside (§A.3.2: "the inner
-    // surface of Shell 1, the meridional structure" beyond it).
-    const graticule = new THREE.LineSegments(
-      graticuleGeometry(radius),
-      new THREE.LineBasicMaterial({ color: 0x3f4248, transparent: true, opacity: 0, depthWrite: false }),
-    );
-    graticule.renderOrder = ORDER.lines;
-    graticule.visible = false;
-    scene.add(back, front, graticule);
-    return { n, materials: [back.material, front.material], graticule };
+    // A faint, even scatter of dots fixed to the surface, so the sphere is
+    // seen to turn with the diamond (user request 2026-10-14). About 64 dots
+    // per unit area on every shell.
+    const dots = new THREE.Points(dotGeometry(radius, Math.round(64 * 4 * Math.PI * radius * radius)), dotMaterial());
+    dots.renderOrder = ORDER.lines;
+    scene.add(back, front, dots);
+    return { n, materials: [back.material, front.material], dots };
   });
 
   // ── Bipyramid skin: convex hull of the six landmarks (Spec §6.22) ────
@@ -125,13 +126,16 @@ function init() {
   key.position.set(-0.5, 0.8, 1);
   camera.add(key);
 
-  // ── τ-deformation: the opening torus (Spec §8.1) ─────────────────────
-  // Its twelve edges coincide with the hull's edges at τ = 0, so the hull
-  // edges are shown at rest and the morphing edges only while τ > 0.
+  // ── The opening: the torus opens into the diamond ────────────────────
+  // Its twelve edges coincide with the hull's edges once it has opened, so
+  // the hull edges are shown at rest and the moving edges only before.
   const equator = hullLandmarks.filter((l) => l.pos[2] === 0);
-  const morph = buildTorusMorph({
+  const apexHeight = Math.max(...hullLandmarks.map((l) => l.pos[2]));
+  const GOLD = new THREE.Color(0xc8951a);
+  const INK = new THREE.Color(0x383c44);
+  const morph = buildOpening({
     equatorRadius: Math.hypot(equator[0].pos[0], equator[0].pos[1]),
-    apexHeight: Math.max(...hullLandmarks.map((l) => l.pos[2])),
+    apexHeight,
     equatorAzimuths: equator.map((l) => Math.atan2(l.pos[1], l.pos[0])),
   });
   morph.edges.renderOrder = ORDER.lines;
@@ -139,17 +143,31 @@ function init() {
   scene.add(morph.edges, morph.grid);
 
   // ── Axes: X and Y end at their landmarks; Z runs to Birth and Death ──
+  // The Z axis is drawn on its own: in the opening it is the line the
+  // torus's hole fuses into, and it grows out to Birth and Death.
   const axesMaterial = new THREE.LineBasicMaterial({ color: 0x6c7077, transparent: true, opacity: 0.5, depthWrite: false });
   const axes = new THREE.LineSegments(
     new THREE.BufferGeometry().setFromPoints([
       new THREE.Vector3(-AXIS_EXTENT.x, 0, 0), new THREE.Vector3(AXIS_EXTENT.x, 0, 0),
       new THREE.Vector3(0, -AXIS_EXTENT.y, 0), new THREE.Vector3(0, AXIS_EXTENT.y, 0),
-      new THREE.Vector3(0, 0, -AXIS_EXTENT.z), new THREE.Vector3(0, 0, AXIS_EXTENT.z),
     ]),
     axesMaterial,
   );
+  const zMaterial = axesMaterial.clone();
+  const zAxis = new THREE.LineSegments(
+    new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, -AXIS_EXTENT.z), new THREE.Vector3(0, 0, AXIS_EXTENT.z)]),
+    zMaterial,
+  );
+  zAxis.frustumCulled = false;
   axes.renderOrder = ORDER.lines;
-  scene.add(axes);
+  zAxis.renderOrder = ORDER.lines;
+  scene.add(axes, zAxis);
+  const setZExtent = (L) => {
+    const p = zAxis.geometry.attributes.position;
+    p.setZ(0, -L);
+    p.setZ(1, L);
+    p.needsUpdate = true;
+  };
 
   // ── The nine Class-H landmarks (Spec §3.1–§3.2) ──────────────────────
   // Each marker is a dot inside its label, so it stays round at any angle
@@ -168,21 +186,27 @@ function init() {
     label.center.set(0, 0.5);               // the dot sits on the point; the name runs right
     label.position.set(...l.pos);
     scene.add(label);
-    return { label, element, isBeing, position: label.position, width: 0, flipped: false, opacity: -1 };
+    return { slug: l.slug, label, element, isBeing, position: label.position, width: 0, flipped: false, opacity: -1 };
   });
   // Label widths are measured lazily and re-measured after a resize or
   // once the web font has loaded.
   const remeasureLabels = () => landmarks.forEach((l) => { l.width = 0; });
   document.fonts?.ready.then(remeasureLabels);
 
-  // ── Opening: the torus unfolds into the diamond ──────────────────────
-  // Prototype timings: yaw 0.18 rad/s, a slower pitch swing of ±0.55 rad,
-  // and a 1.6 s unfold eased in and out.
+  // ── Opening: the torus opens into the diamond ───────────────────────
+  // The tumble keeps the prototype's timings: yaw 0.18 rad/s and a slower
+  // pitch swing of ±0.55 rad. Opening progress p runs 0 → 1 over 3.6 s in
+  // two overlapping stages: closing (a) and stretching (b).
+  const OPEN_SECONDS = reducedMotion ? 0.6 : 3.6;
+  const stagesOf = (p) => ({
+    a: smoothstep(p, 0, 0.4),
+    b: smoothstep(p, 0.33, 1),
+  });
   let phase = 'intro';                      // intro → unfolding → live
-  let tau = 1;
+  let progress = 0;
   let introTime = 0;
   let unfold = null;
-  morph.setTau(tau);
+  morph.set(0, 0);
 
   function introPose(t) {
     const azimuth = REST.azimuth + 0.18 * t;
@@ -203,8 +227,9 @@ function init() {
     let delta = (REST.azimuth - from.azimuth) % (2 * Math.PI);
     if (delta > Math.PI) delta -= 2 * Math.PI;
     if (delta < -Math.PI) delta += 2 * Math.PI;
-    unfold = { t: 0, duration: reducedMotion ? 0.35 : 1.6, from, delta };
+    unfold = { t: 0, duration: OPEN_SECONDS, from, delta };
   }
+  if (hold !== null) beginUnfold();
 
   stage.addEventListener('click', beginUnfold);
   stage.addEventListener('keydown', (event) => {
@@ -303,10 +328,10 @@ function init() {
       setSpherical(camera.position, REST.distance, pose.azimuth, pose.elevation);
       camera.lookAt(controls.target);
     } else if (phase === 'unfolding') {
-      unfold.t += dt;
+      unfold.t = hold !== null ? hold * unfold.duration : unfold.t + dt;
       const k = Math.min(1, unfold.t / unfold.duration);
       const e = k * k * (3 - 2 * k);
-      tau = 1 - e;
+      progress = k;
       setSpherical(
         camera.position,
         REST.distance,
@@ -314,9 +339,9 @@ function init() {
         lerp(unfold.from.elevation, REST.elevation, e),
       );
       camera.lookAt(controls.target);
-      if (k >= 1) {
+      if (k >= 1 && hold === null) {
         phase = 'live';
-        tau = 0;
+        progress = 1;
         controls.enabled = true;
         controls.update();
         stage.classList.add('is-live');
@@ -327,7 +352,14 @@ function init() {
     } else {
       controls.update();
     }
-    morph.setTau(tau);
+    const { a, b } = stagesOf(progress);
+    morph.set(a, b);
+
+    // The fused line grows from the torus's height out to Birth and Death,
+    // ahead of the apices it draws out (torus.js).
+    const lineEnd = lerp(morph.torusHeight, AXIS_EXTENT.z, b);
+    const apexEnd = lerp(morph.torusHeight, apexHeight, b);
+    setZExtent(lineEnd);
 
     // §A.3.3 — the regime flips when the camera is inside Shell 1 and flips
     // back once it is outside again. The camera pose is continuous across
@@ -346,7 +378,7 @@ function init() {
     // The torus is wider than the diamond; narrow screens widen the view
     // to fit it, then ease back as it unfolds.
     const introFov = clamp(fovForShortSide(degToRad(43)), ORBIT_FOV, MAX_FOV);
-    const baseFov = phase === 'intro' ? introFov : phase === 'unfolding' ? lerp(ORBIT_FOV, introFov, tau) : ORBIT_FOV;
+    const baseFov = phase === 'intro' ? introFov : phase === 'unfolding' ? lerp(introFov, ORBIT_FOV, b) : ORBIT_FOV;
     const fov = lerp(baseFov, coneFov, cone);
     if (Math.abs(fov - camera.fov) > 1e-3) {
       camera.fov = fov;
@@ -365,42 +397,61 @@ function init() {
     caption.classList.toggle('is-visible', inside && cone > 0.5);
     stage.classList.toggle('is-inside', inside);
 
-    // τ fades (prototype curves): the frame dissolves as the torus forms.
-    const frame = 1 - smoothstep(tau, 0.3, 0.85);
-    const labelsIn = 1 - smoothstep(tau, 0, 0.3);
-    const beingIn = 1 - smoothstep(tau, 0.05, 0.85);
+    // The opening's fades. The gold leaves the torus as it closes and
+    // gathers in BEING at the middle of the fused line; Birth and Death
+    // appear as the line starts to grow; the rest arrives as it settles.
+    const shellsIn = smoothstep(b, 0.75, 1);
+    const appear = {
+      being: smoothstep(a, 0.6, 1),
+      birth: smoothstep(b, 0, 0.15),
+      death: smoothstep(b, 0, 0.15),
+      obliteration: smoothstep(b, 0.6, 0.9),
+      awakening: smoothstep(b, 0.6, 0.9),
+    };
+    const equatorIn = smoothstep(b, 0.8, 1);
+    const gridOpacity = 0.65 * (1 - smoothstep(b, 0.5, 1));
+    morph.grid.visible = gridOpacity > 0.003;
+    morph.gridMaterial.opacity = gridOpacity;
+    morph.gridMaterial.color.lerpColors(GOLD, INK, smoothstep(b, 0, 0.7));
+    zMaterial.opacity = 0.5 * smoothstep(a, 0.5, 1);
+    axesMaterial.opacity = 0.5 * equatorIn;
+    hullMaterial.opacity = 0.11 * smoothstep(b, 0.7, 1);
+    hullEdges.visible = b >= 1;
+    morph.edges.visible = b < 1;
+    morph.edgeMaterial.opacity = 0.55 * smoothstep(b, 0.4, 0.9);
 
-    // Shells read stronger from afar and lighter close up.
+    // Shells read stronger from afar and lighter close up. Their dots are
+    // dimmer on the far side, except from inside, where all are far.
     const nearness = smoothstep(d, CAMERA.threshold, CAMERA.maxDistance);
     for (const shell of shells) {
-      const rimStrength = 0.17 * (0.6 + 0.4 * nearness) * frame;
+      const rimStrength = 0.17 * (0.6 + 0.4 * nearness) * shellsIn;
       for (const m of shell.materials) m.uniforms.uRim.value = rimStrength;
-      const g = cone * (0.30 - 0.06 * shell.n) * frame;
-      shell.graticule.material.opacity = g;
-      shell.graticule.visible = g > 0.003;
+      const u = shell.dots.material.uniforms;
+      u.uOpacity.value = 0.22 * shellsIn;
+      u.uInside.value = cone;
+      u.uSize.value = 2 * renderer.getPixelRatio();
+      shell.dots.visible = shellsIn > 0.003;
     }
-    hullMaterial.opacity = 0.11 * frame;
-    axesMaterial.opacity = 0.5 * frame;
-    hullEdges.visible = tau <= 1e-4;
-    morph.edges.visible = tau > 1e-4;
-    morph.edgeMaterial.opacity = 0.55 * frame;
 
     // Labels: far side dims; a label that would run past the right edge (or
     // the rim, inside) moves to the left of its point; BEING becomes the
     // aperture inside.
     toCamera.copy(camera.position).normalize();
     for (const entry of landmarks) {
-      const { label, element, isBeing, position } = entry;
+      const { slug, label, element, isBeing, position } = entry;
+      if (slug === 'death' || slug === 'obliteration') position.z = slug === 'death' ? lineEnd : apexEnd;
+      if (slug === 'birth' || slug === 'awakening') position.z = slug === 'birth' ? -lineEnd : -apexEnd;
+      const shown = appear[slug] ?? equatorIn;
       ndc.copy(position).project(camera);
       const px = ((ndc.x + 1) / 2) * width;
       const py = ((1 - ndc.y) / 2) * height;
       const outsideView = cone > 0.5 && Math.hypot(px - width / 2, py - height / 2) > rimRadius - 2;
       let opacity;
       if (isBeing) {
-        opacity = beingIn * (1 - cone);
+        opacity = shown * (1 - cone);
       } else {
         const far = position.dot(toCamera) < -0.35 * position.length();
-        opacity = outsideView ? 0 : labelsIn * (far && cone < 0.5 ? 0.42 : 1);
+        opacity = outsideView ? 0 : shown * (far && cone < 0.5 ? 0.42 : 1);
       }
       opacity = Math.round(opacity * 100) / 100;
       if (opacity !== entry.opacity) {
@@ -422,7 +473,7 @@ function init() {
 
     renderer.render(scene, camera);
     labelRenderer.render(scene, camera);
-    if (debug) debug.textContent = JSON.stringify({ phase, tau: +tau.toFixed(3), d: +d.toFixed(4), fov: +fov.toFixed(1), inside, cone: +cone.toFixed(2) });
+    if (debug) debug.textContent = JSON.stringify({ phase, p: +progress.toFixed(3), d: +d.toFixed(4), fov: +fov.toFixed(1), inside, cone: +cone.toFixed(2) });
   });
 }
 
@@ -467,27 +518,59 @@ function shellMaterial(side) {
   });
 }
 
-// Twelve meridians and five parallels (0°, ±30°, ±60°) on a sphere.
-function graticuleGeometry(radius) {
-  const points = [];
-  const SEG = 96;
-  const p = (lat, lon) => new THREE.Vector3(
-    radius * Math.cos(lat) * Math.cos(lon),
-    radius * Math.cos(lat) * Math.sin(lon),
-    radius * Math.sin(lat),
-  );
-  for (let m = 0; m < 12; m++) {
-    const lon = (m / 12) * 2 * Math.PI;
-    for (let i = 0; i < SEG; i++) {
-      points.push(p(-Math.PI / 2 + (i / SEG) * Math.PI, lon), p(-Math.PI / 2 + ((i + 1) / SEG) * Math.PI, lon));
-    }
+// An even scatter of n points on a sphere (a Fibonacci lattice).
+function dotGeometry(radius, n) {
+  const positions = new Float32Array(n * 3);
+  const golden = Math.PI * (3 - Math.sqrt(5));
+  for (let i = 0; i < n; i++) {
+    const z = 1 - (2 * (i + 0.5)) / n;
+    const rho = Math.sqrt(1 - z * z);
+    const lon = i * golden;
+    positions.set([radius * rho * Math.cos(lon), radius * rho * Math.sin(lon), radius * z], i * 3);
   }
-  for (const lat of [-60, -30, 0, 30, 60].map((a) => (a * Math.PI) / 180)) {
-    for (let i = 0; i < SEG; i++) {
-      points.push(p(lat, (i / SEG) * 2 * Math.PI), p(lat, ((i + 1) / SEG) * 2 * Math.PI));
-    }
-  }
-  return new THREE.BufferGeometry().setFromPoints(points);
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  return geometry;
+}
+
+// Small round dots of constant screen size. Dots on the far half of a
+// sphere are dimmer, which lets its turning read as rotation; from inside
+// (uInside = 1) every dot is on the far half, so the dimming is lifted.
+function dotMaterial() {
+  return new THREE.ShaderMaterial({
+    uniforms: {
+      uColor: { value: new THREE.Color(0x3f4248) },
+      uOpacity: { value: 0 },
+      uSize: { value: 2 },
+      uInside: { value: 0 },
+    },
+    vertexShader: /* glsl */ `
+      uniform float uSize;
+      varying float vFacing;
+      void main() {
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        vFacing = dot(normalize(normalMatrix * position), normalize(-mv.xyz));
+        gl_PointSize = uSize;
+        gl_Position = projectionMatrix * mv;
+      }
+    `,
+    fragmentShader: /* glsl */ `
+      uniform vec3 uColor;
+      uniform float uOpacity;
+      uniform float uInside;
+      varying float vFacing;
+      void main() {
+        float r = length(gl_PointCoord - 0.5);
+        if (r > 0.5) discard;
+        float side = mix(0.45, 1.0, smoothstep(-0.15, 0.15, vFacing));
+        float a = uOpacity * mix(side, 1.0, uInside) * smoothstep(0.5, 0.25, r);
+        gl_FragColor = vec4(uColor, a);
+        #include <colorspace_fragment>
+      }
+    `,
+    transparent: true,
+    depthWrite: false,
+  });
 }
 
 // Spherical position about BEING with Z as the vertical axis.
