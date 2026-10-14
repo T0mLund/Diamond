@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Graves' Diamond — an experimental, AI-assisted model</title>
+  <meta name="description" content="Graves' Diamond — an experimental, AI-assisted 3D interactive model of inner orientation. Translucent sphere, bipyramid at Scheme α (pure φ), morphing into a horn torus." />
+  <meta name="author" content="Vegar Svanemyr" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" />
+  <link rel="stylesheet" href="./style.css" />
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160/examples/jsm/"
+      }
+    }
+  </script>
+
+  <!-- Privacy-friendly analytics by Plausible -->
+  <script async src="https://plausible.io/js/pa-p6eXkmzqXXB5Ag9PWe2wB.js"></script>
+  <script>
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+    plausible.init()
+  </script>
+</head>
+<body>
+
+<div class="page">
+
+  <header class="site-head">
+    <div class="site-head__title-block">
+      <h1 class="site-title">Graves' Diamond</h1>
+      <p class="site-attribution">An experimental, AI-assisted model.</p>
+    </div>
+  </header>
+
+  <div id="stage" class="stage" aria-label="3D model of the Diamond">
+    <canvas id="scene" aria-hidden="true"></canvas>
+    <div id="label-layer" class="label-layer" aria-label="Tier labels"></div>
+
+    <div class="stage__hud" role="toolbar" aria-label="View controls">
+      <button id="info-btn" class="hud-btn" aria-label="Show introduction" title="About">i</button>
+      <button id="rotate-btn" class="hud-btn" aria-label="Start rotation" title="Rotate">▶</button>
+      <button id="fullscreen-btn" class="hud-btn" aria-label="Toggle fullscreen" title="Fullscreen">⛶</button>
+    </div>
+
+    <p id="stage-hint" class="stage__hint" aria-hidden="true">click</p>
+
+    <div id="tooltip" class="tooltip" role="tooltip" aria-hidden="true"></div>
+
+    <div id="overlay-reading" class="overlay-reading" aria-hidden="true">
+      <div class="overlay-content"></div>
+    </div>
+
+    <!-- Intro overlay — centered card with backdrop. Shown on first load,
+         dismissed on click of × / backdrop / Esc, re-openable via the
+         info button in the stage HUD. -->
+    <div id="intro-overlay" class="intro-overlay" role="dialog"
+         aria-modal="true" aria-labelledby="intro-title">
+      <div class="intro-overlay__backdrop" aria-hidden="true"></div>
+      <div class="intro-overlay__card" role="document">
+        <h2 id="intro-title" class="intro-overlay__title">Graves' Diamond</h2>
+        <p class="intro-overlay__attribution">An experimental, AI-assisted model.</p>
+        <div class="intro-overlay__body">
+          <p>
+            A model of the experienced universe. Everything emanates from and
+            returns to <span class="gold-being">BEING</span>.
+          </p>
+          <p>
+            Awakening and Obliteration exist together on the y axis;
+            Past and Future is the x axis;
+            Love and Hate is the z axis.
+          </p>
+          <p>
+            Birth and Death emerge from <span class="gold-being">BEING</span>
+            to structure the experienced universe. They then sit just past its
+            bounds, where only Awakening and Obliteration can reach.
+          </p>
+          <p>
+            Drag to orbit, scroll inward. At closer zoom levels there are
+            clickable references, approximately mapped to the interior
+            coordinates (AI-generated).
+          </p>
+        </div>
+        <button class="intro-overlay__begin" data-close="intro">Begin</button>
+      </div>
+    </div>
+
+    <div class="tau-control">
+      <span class="tau-glyph" aria-hidden="true" title="diamond → torus">⦵</span>
+      <input id="tau-slider"
+             class="tau-slider"
+             type="range"
+             min="0" max="1" step="0.001"
+             value="0"
+             aria-label="τ morph: bipyramid to horn torus" />
+      <span id="tau-value" class="tau-value" aria-hidden="true">0.00</span>
+    </div>
+  </div>
+
+  <section class="readings-section">
+    <h2 class="readings-heading">Readings</h2>
+    <p class="readings-sub">Sources, implications, and the first prose of a longer work. A magenta dot beside a source title marks sources that participate in the resonance web. Click a source name in any hover panel to scroll to its full entry.</p>
+    <div id="readings"></div>
+  </section>
+
+  <footer class="site-foot">
+    A <a href="https://thoughtfree.com" rel="noopener">Thoughtfree</a> Project, by Vegar Svanemyr
+  </footer>
+
+</div>
+
+<button id="return-to-model" class="return-to-model" type="button"
+        aria-label="Return to model" hidden>
+  ↑ Return to model
+</button>
+
+<noscript>
+  <p style="padding:2rem;">This page requires JavaScript to render the 3D model.</p>
+</noscript>
+
+<script type="module" src="./app.js"></script>
+</body>
+</html>

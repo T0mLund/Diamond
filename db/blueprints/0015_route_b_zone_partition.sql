@@ -12,6 +12,14 @@
 --   `docs/decision-notes/2026-06-01_0015_blueprint_schema_drift.md`
 -- Standing directive: "DO NOT use v3.1 files to build anything without
 --                     consulting me." (user, prior phase)
+-- Location: moved from db/migrations/ to db/blueprints/ on 2026-10-14.
+--           db-push executes every file in db/migrations/, and this
+--           file's guard (below) aborted every run from 2026-06-01. Files
+--           in db/blueprints/ are never executed by any workflow.
+-- Directive note: the "v3.1 files" in the directive above are the May
+--           2026 prototype content files (now in
+--           docs/archive/prototype-2026-05/), not the framework
+--           documents versioned v3.1 on 2026-10-14.
 -- Status: BLUEPRINT. This file is a planning artifact. It MUST NOT be
 --         executed against any database — staging or production —
 --         without:
