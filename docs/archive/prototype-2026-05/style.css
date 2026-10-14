@@ -1,0 +1,986 @@
+/* ============================================================
+   The Diamond — style.css (v3)
+   Single light theme. Off-white atmospheric background.
+   Greyscale + gold + magenta resonance accents.
+   ============================================================ */
+
+:root {
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  /* φ tokens — exposed to CSS so any layout dimension that wants
+     to echo the φ-shells can do so without duplicating decimals. */
+  --phi:        1.6180339887;
+  --phi-inv:    0.6180339887;
+  --shell-1:    0.6180339887;
+  --shell-2:    0.3819660113;
+  --shell-3:    0.2360679775;
+
+  --gold:        #b88813;
+  --gold-bright: #d9a823;
+  --gold-soft:   #8b6708;
+
+  --magenta:     #d896d8;
+  --magenta-soft: #b870b8;
+
+  --radius:      4px;
+  --gutter:      clamp(16px, 4vw, 40px);
+  --max-width:   1080px;
+  --transition:  220ms cubic-bezier(.25,.8,.25,1);
+
+  /* light theme — the only theme. */
+  --bg:          #f1f1f1;   /* light neutral grey — raises legibility of translucent shells against the page */
+  --bg-2:        #f6f3eb;
+  --ink:         #1c1e22;
+  --ink-2:       #3f4248;
+  --ink-3:       #6c7077;
+  --ink-faint:   #b9b6ae;
+  --rule:        #cbc7be;
+  --hover-bg:    rgba(252, 250, 245, 0.96);
+  --hover-bord:  rgba(40, 42, 46, 0.16);
+  --chip-bg:     rgba(184, 136, 19, 0.16);
+  --chip-ink:    #8b6708;
+  --link:        #1c1e22;
+  --link-hover:  #8b6708;
+  --flash:       rgba(216, 150, 216, 0.18);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.005em;
+}
+
+body { transition: background var(--transition), color var(--transition); }
+
+a {
+  color: var(--link);
+  text-decoration: none;
+  border-bottom: 1px solid var(--ink-faint);
+  transition: color var(--transition), border-color var(--transition);
+}
+a:hover { color: var(--link-hover); border-bottom-color: var(--link-hover); }
+
+.page {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: clamp(16px, 2.5vw, 28px) var(--gutter) 64px;
+}
+
+/* ----- Header ----- */
+.site-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 18px;
+}
+.site-title {
+  font-size: clamp(22px, 2.6vw, 32px);
+  font-weight: 300;
+  letter-spacing: 0.005em;
+  line-height: 1.05;
+  margin: 0 0 4px 0;
+}
+.site-attribution {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+.site-attribution em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+/* ----- Intro overlay (centered card with backdrop) -----
+   Shown over the stage on first load so users meet the framing before
+   touching the model. Backdrop blurs / dims the model behind. Re-openable
+   from the info button in the stage HUD. */
+.intro-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+.intro-overlay.is-visible {
+  display: flex;
+  pointer-events: auto;
+  opacity: 1;
+}
+.intro-overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.intro-overlay__card {
+  position: relative;
+  z-index: 1;
+  width: min(560px, calc(100% - 48px));
+  max-height: calc(100% - 48px);
+  overflow: auto;
+  padding: 36px 40px 32px;
+  background: #ffffff;
+  border: 1px solid var(--ink-faint);
+  border-radius: var(--radius);
+  box-shadow:
+    0 1px 2px rgba(20, 22, 26, 0.04),
+    0 24px 60px -20px rgba(20, 22, 26, 0.18);
+}
+.intro-overlay__close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--ink-3);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.intro-overlay__close:hover { color: var(--ink); background: rgba(0,0,0,0.04); }
+.intro-overlay__title {
+  margin: 0 0 4px;
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+}
+.intro-overlay__attribution {
+  margin: 0 0 18px;
+  font-size: 13px;
+  color: var(--ink-3);
+  font-style: italic;
+}
+.intro-overlay__body {
+  font-size: 15.5px;
+  font-weight: 300;
+  line-height: 1.6;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+.intro-overlay__body p { margin: 0 0 10px; }
+.intro-overlay__body em { color: var(--ink); font-style: italic; }
+.intro-overlay__body .gold-being {
+  color: var(--gold);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+.intro-overlay__begin {
+  margin-top: 18px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--ink);
+  color: #ffffff;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 999px;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.intro-overlay__begin:hover { background: var(--gold); color: #ffffff; }
+
+/* ----- Stage ----- */
+.stage {
+  position: relative;
+  width: 100%;
+  /* Stage fills the viewport below the header so the model is centred
+     in whatever screen the user has on first paint. Header is now compact
+     (≈110px including padding), so subtract a tighter estimate. */
+  height: calc(100vh - 130px);
+  min-height: 520px;
+  max-height: 900px;
+  margin: 16px 0 16px;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  overflow: hidden;
+  /* Near-pure-white stage. Just the faintest radial vignette to give the
+     model a centre of attention without colouring the field. */
+  background:
+    radial-gradient(circle at 50% 50%, #ffffff 0%, #fdfcfa 75%, #f8f6f1 100%);
+}
+@media (max-width: 720px) {
+  .stage { height: calc(100vh - 110px); min-height: 420px; }
+}
+.stage.is-fullscreen {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  border: none;
+  border-radius: 0;
+  z-index: 1000;
+  margin: 0;
+}
+body.stage-expanded { overflow: hidden; }
+
+#scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.label-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.label-layer .tier-label {
+  position: absolute;
+  top: 0; left: 0;
+  pointer-events: auto;
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: transparent;
+  padding: 2px 6px;
+  border-radius: 2px;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  text-shadow: 0 0 8px var(--bg), 0 0 8px var(--bg), 0 0 4px var(--bg);
+  transition: color 160ms, background 160ms;
+  outline: none;
+}
+.label-layer .tier-label:hover,
+.label-layer .tier-label:focus {
+  color: var(--gold-soft);
+  background: rgba(184,136,19,0.06);
+}
+/* Axis families. All three axes share one typographic treatment so
+   none reads as primary-among-equals; the time axis no longer carries
+   the italic-lowercase variant it used to wear. Vertical, affect, and
+   time are visually equivalent at the axis-pole tier. */
+.label-layer .axis-vertical { font-weight: 400; }
+.label-layer .axis-affect   { color: var(--ink); font-weight: 400; }
+.label-layer .axis-time     { color: var(--ink); font-weight: 400; }
+
+/* Zone vs axis-pole hierarchy.
+   Axis-poles (Birth/Death, Past/Future, Hate/Love, BEING) carry full
+   weight — they terminate an axis and name its limit.
+   Zones (the inner φ-tiers + Awakening/Obliteration) are inhabitants
+   of the frame: lighter weight, smaller, muted ink, narrower tracking,
+   so they read as named regions, not principal axes. */
+.label-layer .kind-zone {
+  font-weight: 300;
+  font-size: 9.5px;
+  color: var(--ink-3);
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+}
+.label-layer .kind-zone:hover,
+.label-layer .kind-zone:focus { color: var(--gold-soft); }
+.label-layer .being-label {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+}
+.label-layer .being-label:hover { color: var(--gold-soft); background: transparent; }
+
+/* HUD */
+.stage__hud {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 6px;
+  z-index: 3;
+}
+.hud-btn {
+  appearance: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.6);
+  color: var(--ink-2);
+  border: 1px solid var(--rule);
+  cursor: pointer;
+  font-size: 14px;
+  transition: var(--transition);
+}
+.hud-btn:hover { color: var(--gold-soft); border-color: var(--ink-faint); }
+.hud-btn.is-active {
+  color: var(--gold);
+  border-color: var(--gold);
+  background: rgba(184, 136, 19, 0.06);
+}
+
+/* Stage hint. Two states:
+   - Intro state (.is-intro on body): single word "click" centered
+     directly below the torus, prominent enough to be the obvious
+     next action.
+   - Post-intro state: short instruction tucked at bottom-left,
+     restrained, the tone of an unobtrusive help line. */
+.stage__hint {
+  position: absolute;
+  margin: 0;
+  pointer-events: none;
+  z-index: 2;
+  color: var(--ink-3);
+  font-weight: 300;
+  text-transform: lowercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+  bottom: 10px;
+  left: 14px;
+  transition: opacity 240ms ease;
+}
+
+/* When intro mode is active, override placement & weight: centered
+   below the torus, larger and a touch bolder so it reads as a call
+   to action rather than a help footnote. */
+body.is-intro .stage__hint {
+  left: 50%;
+  bottom: 78px;                  /* sits cleanly above the τ slider chip */
+  top: auto;
+  transform: translateX(-50%);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  color: var(--ink-2);
+  animation: hint-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes hint-pulse {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1.00; }
+}
+
+/* ----- Tooltip / hover box -----
+   Cards never escape the stage frame. They cap at 70% of the stage
+   height and scroll vertically inside when content exceeds that
+   bound. positionTooltipAt() in app.js clamps left/top so the card
+   sits fully within the stage rect on every show. */
+.tooltip {
+  position: absolute;
+  width: 320px;
+  max-width: calc(100% - 24px);
+  max-height: 70%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 14px 16px;
+  background: var(--hover-bg);
+  border: 1px solid var(--hover-bord);
+  border-radius: 6px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.10);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(2px);
+  transition: opacity 180ms ease, transform 180ms ease;
+  z-index: 4;
+}
+.tooltip.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.tip-close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  color: var(--ink-3);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.tip-close:hover { background: rgba(0,0,0,0.06); color: var(--ink-1); }
+.tip-close:focus-visible { outline: 1px solid var(--gold-soft); outline-offset: 1px; }
+
+/* Floating "return to model" button — appears once the user scrolls below
+   the stage. Bottom-right, gold pill, hides itself when near the top. */
+.return-to-model {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: #ffffff;
+  background: var(--ink);
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity 220ms ease, transform 220ms ease, background 160ms ease;
+}
+.return-to-model.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.return-to-model:hover { background: var(--gold); }
+.return-to-model:focus-visible { outline: 1px solid var(--gold-soft); outline-offset: 2px; }
+@media (max-width: 720px) {
+  .return-to-model { right: 12px; bottom: 12px; padding: 9px 14px; font-size: 12px; }
+}
+.tip-name {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold-soft);
+  margin-bottom: 6px;
+  padding-right: 22px;
+}
+.tip-blurb {
+  color: var(--ink-2);
+  margin-bottom: 12px;
+  font-weight: 300;
+}
+.tip-sources-label {
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 6px;
+}
+.tip-sources {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.tip-source {
+  appearance: none;
+  background: transparent;
+  color: var(--link);
+  border: none;
+  border-bottom: 1px solid var(--ink-faint);
+  text-align: left;
+  padding: 4px 0;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: color 160ms, border-color 160ms;
+}
+.tip-source:hover { color: var(--gold-soft); border-bottom-color: var(--gold); }
+
+/* ----- τ slider — pinned inside the stage frame, bottom-center -----
+   Glyph + thick track with a gold thumb + tiny readout, all in one
+   pill-shaped chip floating over the canvas. */
+.tau-control {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: max-content;
+  max-width: calc(100% - 32px);
+  padding: 10px 18px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  pointer-events: auto;
+}
+.tau-glyph {
+  font-size: 22px;
+  line-height: 1;
+  color: var(--ink-2);
+  width: 22px;
+  text-align: center;
+  flex: 0 0 auto;
+  user-select: none;
+}
+
+.tau-slider {
+  flex: 0 0 auto;
+  width: 240px;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--ink-faint) 0%,
+    var(--gold) 100%);
+  outline: none;
+  cursor: pointer;
+}
+.tau-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: 3px solid #ffffff;
+  box-shadow:
+    0 0 0 1px var(--ink-faint),
+    0 2px 6px rgba(216, 168, 35, 0.45);
+  cursor: grab;
+  transition: transform 160ms;
+}
+.tau-slider::-webkit-slider-thumb:active { transform: scale(1.12); cursor: grabbing; }
+.tau-slider::-moz-range-thumb {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--gold);
+  border: 3px solid #ffffff;
+  box-shadow:
+    0 0 0 1px var(--ink-faint),
+    0 2px 6px rgba(216, 168, 35, 0.45);
+  cursor: grab;
+}
+.tau-value {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+  min-width: 36px;
+  text-align: right;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 720px) {
+  .tau-control { gap: 10px; padding: 8px 14px; }
+  .tau-slider { width: 180px; }
+}
+
+/* ----- Readings ----- */
+.readings-section { margin-top: 0; }
+.readings-heading {
+  font-size: clamp(20px, 2.4vw, 26px);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  margin: 0 0 6px;
+}
+.readings-sub {
+  color: var(--ink-3);
+  font-size: 14px;
+  font-weight: 300;
+  margin: 0 0 22px;
+  max-width: 640px;
+}
+
+.reading-block {
+  border-bottom: 1px solid var(--rule);
+  padding: 14px 0;
+}
+.reading-block summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  color: var(--ink);
+  transition: color 160ms;
+}
+.reading-block summary::-webkit-details-marker { display: none; }
+.reading-block summary::before {
+  content: '+';
+  display: inline-block;
+  width: 16px;
+  text-align: center;
+  color: var(--ink-3);
+  font-weight: 300;
+  font-size: 16px;
+  transition: transform 200ms ease, color 160ms;
+}
+.reading-block[open] summary::before { content: '−'; color: var(--gold); }
+.reading-block summary:hover { color: var(--gold-soft); }
+
+.reading-block.reading-begin { border-top: 1px solid var(--rule); padding-top: 18px; }
+
+.reading-summary-title { flex: 1; }
+
+.chip {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.10em;
+  text-transform: lowercase;
+  font-style: italic;
+  background: var(--chip-bg);
+  color: var(--chip-ink);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.reading-body {
+  padding: 12px 0 8px 26px;
+  max-width: 720px;
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+.reading-body p { margin: 0 0 12px; }
+.reading-body .footnote {
+  display: block;
+  margin-top: 6px;
+  padding-left: 14px;
+  border-left: 2px solid var(--rule);
+  font-size: 13px;
+  color: var(--ink-3, var(--ink-2));
+  font-style: italic;
+  opacity: 0.85;
+}
+.reading-body .footnote em { font-style: normal; }
+.reading-body dl.glossary {
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) 3fr;
+  gap: 6px 18px;
+  align-items: baseline;
+}
+.reading-body dl.glossary dt {
+  margin: 0;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+  padding-top: 4px;
+  border-top: 1px solid var(--rule);
+}
+.reading-body dl.glossary dt:first-child,
+.reading-body dl.glossary dd:nth-child(2) {
+  border-top: none;
+  padding-top: 0;
+}
+.reading-body dl.glossary dd {
+  margin: 0;
+  padding-top: 4px;
+  border-top: 1px solid var(--rule);
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+.reading-body dl.glossary dt em { font-style: italic; }
+@media (max-width: 640px) {
+  .reading-body dl.glossary {
+    grid-template-columns: 1fr;
+    gap: 4px 0;
+  }
+  .reading-body dl.glossary dd {
+    border-top: none;
+    padding: 0 0 8px;
+  }
+}
+.reading-body .updated {
+  margin-top: 28px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--ink-3, var(--ink-2));
+  opacity: 0.7;
+  font-style: italic;
+}
+.reading-body em { color: var(--ink); font-style: italic; }
+.reading-body strong { color: var(--ink); font-weight: 500; }
+
+.reading-body ul.sources {
+  list-style: none;
+  padding: 8px 0 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.reading-body ul.sources li {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  padding: 8px 12px;
+  border-left: 2px solid var(--ink-faint);
+  background: transparent;
+  transition: background 240ms, border-color 240ms;
+}
+.reading-body ul.sources li.is-flash {
+  background: var(--flash);
+  border-left-color: var(--magenta);
+}
+.reading-body .src-name {
+  display: block;
+  color: var(--ink);
+  font-weight: 400;
+  margin-bottom: 2px;
+}
+
+/* ----- Overlay reading (fullscreen) ----- */
+.overlay-reading {
+  position: absolute;
+  inset: 0;
+  background: rgba(245, 243, 235, 0.86);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 36px;
+  z-index: 20;
+}
+.overlay-reading.is-visible { display: flex; }
+.overlay-content {
+  position: relative;
+  max-width: 540px;
+  width: 100%;
+  /* Card grows to fit content up to 70% of the stage frame (the
+     overlay's parent), then scrolls inside. The padding-36px on
+     .overlay-reading already gives the card air on every side. */
+  max-height: 70%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--hover-bg);
+  border: 1px solid var(--hover-bord);
+  border-radius: 8px;
+  padding: 28px 32px;
+  font-size: 14px;
+  color: var(--ink-2);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+}
+.overlay-close {
+  position: absolute;
+  top: 8px; right: 12px;
+  background: transparent;
+  color: var(--ink-3);
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+}
+.overlay-source .src-name { color: var(--gold-soft); display: block; margin-bottom: 8px; font-weight: 500; }
+
+/* "Read in full prose ↓" link inside the in-figure overlay card.
+   Sits at the bottom right, deliberately quiet — the overlay is
+   the primary read; the prose link is the deliberate next step. */
+.overlay-jump {
+  display: inline-block;
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule);
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
+  color: var(--ink-3);
+  text-decoration: none;
+  font-style: italic;
+  transition: color 200ms;
+}
+.overlay-jump:hover { color: var(--magenta); }
+
+/* ----- Footer ----- */
+.site-foot {
+  margin-top: 56px;
+  padding-top: 22px;
+  border-top: 1px solid var(--rule);
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--ink-3);
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+.site-foot a {
+  color: var(--ink-2);
+  border-bottom: 1px solid var(--ink-faint);
+}
+.site-foot a:hover { color: var(--gold-soft); border-bottom-color: var(--gold); }
+
+/* ----- Mobile tweaks ----- */
+@media (max-width: 720px) {
+  .site-head { flex-direction: row; align-items: flex-start; }
+  .site-title { font-size: 22px; }
+  .intro { font-size: 16px; }
+  .label-layer .tier-label { font-size: 10.5px; padding: 2px 5px; }
+  .reading-body { padding-left: 14px; font-size: 14px; }
+  .reading-block summary { font-size: 14px; }
+  .tooltip { width: 250px; font-size: 12px; }
+}
+
+/* keyboard focus */
+:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+/* ============================================================
+   v3: tooltip variants, source-refs, bibliography,
+   resonance marks, label pulse.
+   ============================================================ */
+
+/* ----- tooltip variants ----- */
+.tip-pool-meta {
+  font-size: 9.5px;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+  margin-left: 6px;
+  text-transform: none;
+}
+.tooltip.is-glyph .tip-name-glyph {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--gold-soft);
+}
+.tip-work {
+  font-size: 11.5px;
+  color: var(--ink-2);
+  margin-bottom: 8px;
+  font-weight: 300;
+}
+.tip-glyph-cta {
+  margin-top: 6px;
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  color: var(--gold);
+  border-bottom: 1px solid var(--ink-faint);
+  padding-bottom: 2px;
+}
+
+/* ----- inline source-refs in prose ----- */
+.reading-body a.source-ref {
+  color: var(--ink);
+  border-bottom: 1px dotted var(--ink-faint);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 160ms, border-color 160ms;
+}
+.reading-body a.source-ref em { color: inherit; }
+.reading-body a.source-ref:hover {
+  color: var(--gold-soft);
+  border-bottom-color: var(--gold);
+  border-bottom-style: solid;
+}
+
+/* ----- bibliography entries ----- */
+.src-entry {
+  padding: 14px 0 14px 0;
+  border-bottom: 1px solid var(--ink-faint);
+  transition: background 240ms, border-color 240ms;
+}
+.src-entry:last-child { border-bottom: none; }
+.src-entry.is-flash {
+  background: var(--flash);
+  border-bottom-color: var(--magenta);
+}
+.src-entry.is-flash .src-name {
+  color: var(--magenta);
+  transition: color 240ms;
+}
+.src-entry .src-name {
+  display: block;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 400;
+  margin-bottom: 4px;
+  letter-spacing: 0.005em;
+}
+.src-entry .src-name em { color: var(--ink); font-style: italic; }
+.src-entry .src-year {
+  color: var(--ink-3);
+  font-weight: 300;
+  font-size: 12.5px;
+  margin-left: 4px;
+}
+.src-entry .src-gloss {
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 300;
+  margin-bottom: 6px;
+  line-height: 1.55;
+}
+.src-entry .src-excerpt {
+  color: var(--ink-3);
+  font-size: 12.5px;
+  font-style: italic;
+  font-weight: 300;
+  margin-bottom: 6px;
+  padding-left: 10px;
+  border-left: 1px solid var(--ink-faint);
+  line-height: 1.55;
+}
+.src-entry .src-ref {
+  color: var(--ink-3);
+  font-size: 11.5px;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+}
+
+/* ----- resonance mark — small magenta dot next to source title ----- */
+.resonance-mark {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--magenta);
+  margin-right: 8px;
+  vertical-align: middle;
+  box-shadow: 0 0 6px rgba(216, 150, 216, 0.5);
+}
+
+/* ----- label pulse ----- */
+@keyframes label-pulse {
+  0%   { color: var(--ink); text-shadow: 0 0 8px var(--bg), 0 0 8px var(--bg), 0 0 4px var(--bg); }
+  35%  { color: var(--gold-bright); text-shadow: 0 0 12px var(--gold), 0 0 6px var(--gold), 0 0 3px var(--bg); }
+  100% { color: var(--ink); text-shadow: 0 0 8px var(--bg), 0 0 8px var(--bg), 0 0 4px var(--bg); }
+}
+.label-layer .tier-label.is-pulse {
+  animation: label-pulse 1.4s cubic-bezier(.25,.8,.25,1);
+}

@@ -118,3 +118,67 @@ a patch, not a draft cycle.
 - New: `docs/decision-notes/2026-06-01_0015_blueprint_schema_drift.md`.
 
 ---
+
+## v3.1 — committed 2026-10-14
+
+**Baseline transition:** v3.0 → v3.1, a within-baseline revision
+(minor bump, Convention §4.2). The v3.0 files are archived unchanged
+under `/docs/archive/v3/`. The project had been dormant from 2026-06-02
+to 2026-10-14; this entry also records the revival clean-up.
+
+### Revised commitments
+
+- **Birth and Death are Class H** (Spec §3.2, §6.24.3, §6.24.4; register
+  row H12). User decision 2026-10-14: "Birth and Death are class H
+  outside all zones." They remain NULL-zoned on Shell 5 at
+  (0, 0, ∓φ²) and are not bipyramid vertices. The canonical Class-H set
+  grows from seven to nine.
+- **Stage 1 scope includes Birth and Death** (Roadmap IV.1 scope and
+  acceptance criterion 2; Containment Note §A.3.1, §A.7; Summary exit
+  criterion 1). Shell 5 is not drawn as a surface; it is the outer zoom
+  limit.
+- **Stage 1 has no database read path** (Roadmap IV.1 criterion 5).
+  Geometry comes from the Spec constants; v3.0 specified a service-role
+  read path.
+
+### Retired claims
+
+- "Birth and Death are not in Stage 1 scope" (Spec §3.2, v3.0).
+
+### Naming
+
+- Framework and public surface are named **"The Diamond"** (user
+  decision 2026-10-14). Document titles change from "Vegar's Diamond — …"
+  to "The Diamond — …".
+
+### Infrastructure (Roadmap Part III, "Revival clean-up")
+
+- `0015_route_b_zone_partition.sql` moved from `db/migrations/` to
+  `db/blueprints/`. Its guard had aborted every `db-push` run since
+  2026-06-01. Status unchanged: blueprint, not applied.
+- New migration `0016_revival_cleanup.sql`: drops the 29 `directus_*`
+  tables; drops the inert `zones_public_read` / `sub_zones_public_read`
+  policies (never in a repo migration; contradicted Spec §9); stores
+  shell radii and the four polar landmark coordinates at full φ
+  precision (previously 9-decimal truncations; Spec §4.6).
+- `db-verify` rewritten against Spec v3.1 §3, §5 and §9 (it still
+  expected the May 2026 schema of 9 tables and 13 coordinates).
+  `actions/checkout` bumped from v4 to v7 (Node 20 runners removed
+  September 2026).
+- Removed: `agent-push` and `directus-snapshot` workflows, `directus/`,
+  `docs/DIRECTUS_CLOUD.md`, `scripts/`, and every unused Actions secret
+  (only `SUPABASE_DB_URL` remains). README, `docs/ARCHITECTURE.md` and
+  `docs/SECRETS.md` rewritten to describe the stack that exists.
+- Archived: the May 2026 "Graves' Diamond" prototype at
+  `docs/archive/prototype-2026-05/`, downloaded from the live site
+  because it had never been committed.
+- Stage 1 web app added in `web/`, with `netlify.toml` (separate PR).
+
+### Irregularity noted
+
+- The entry above titled "v3.0.1 — patch" does not fit Convention §3.3,
+  which has no patch component, and it cites §4.4, which concerns
+  skipping a major number. The change it records altered only a blueprint
+  file and no framework document, so no version bump was needed. No
+  `v3.0.1` filename was ever created. The entry is kept as written, as
+  history.

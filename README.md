@@ -1,74 +1,55 @@
-# Vegar's Diamond — Build Repository
+# The Diamond
 
-This repository implements the build pipeline for [Vegar's Diamond](https://diamond.thoughtfree.com), an interactive 3D metaphysical framework.
+Source repository for **The Diamond**, an interactive 3D model of a
+geometric framework for mapping human experience.
 
-> **Status:** Phase 0 complete. Phase 1 (this PR) introduces the Supabase schema, the agent-push workflow, and project scaffolding. Phases 2–7 follow.
+**Status (2026-10-14):** framework documents at **v3.1**; Stage 1 of the
+deployment ladder (the geometric object) is in `web/`.
 
-## Architecture (target)
-
-| Layer            | Tool                                     | Role                                      |
-| ---------------- | ---------------------------------------- | ----------------------------------------- |
-| Database         | Supabase (Postgres + PostGIS)            | Single source of truth                    |
-| No-code admin    | **Directus Cloud**                       | Human editing UI                          |
-| Website          | Next.js + React Three Fiber              | Live 3D at `diamond.thoughtfree.com`      |
-| 3D editor        | Triplex                                  | Visual scene editing                      |
-| Video            | Remotion + `@remotion/three`             | Programmatic videos                       |
-| Slide decks      | Reveal.js                                | Presentations                             |
-| Hosting          | Vercel                                   | Website + previews                        |
-| CI / credentials | GitHub App `perplexity-diamond-build`    | Short-lived AI-agent tokens               |
-
-> *Update from the original handoff:* Phase 2 uses **Directus Cloud** (managed, ~€15/mo) instead of self-hosting Directus on a DigitalOcean droplet. This eliminates Docker / Caddy / `.env` ops and matches the project's "terminal-averse" preference at the cost of ~€10/mo over the original $7–10 target.
-
-## Repository layout
+## Layout
 
 ```
-.github/workflows/
-  agent-push.yml   # Computer opens PRs via short-lived App tokens
-  db-push.yml      # Applies db/migrations/ to Supabase on push to main
-  db-verify.yml    # Asserts schema invariants after db-push
-db/
-  migrations/
-    0001_extensions.sql      # PostGIS, pgcrypto, moddatetime
-    0002_core_tables.sql     # axes, shells, coordinates
-    0003_content_tables.sql  # sources, source_positions, resonances, prose, glossary, revisions
-    0004_seed_geometry.sql   # 3 axes, 5 shells, 13 coordinates
-docs/
-  ARCHITECTURE.md
-  DIRECTUS_CLOUD.md
-  SECRETS.md
-scripts/
-  (reserved for import-v3.ts and similar tooling)
+docs/                 Framework documents and governance
+  Diamond_Summary_v3.1.md            read first
+  Diamond_Containment_Note_v3.1.md   then this
+  Diamond_Spec_v3.1.md               then the Spec
+  Diamond_Roadmap_v3.1.md            then the Roadmap (Part IV = deployment ladder)
+  Diamond_Versioning_Convention_v1.1.md
+  ARCHITECTURE.md · SECRETS.md
+  decision-notes/ · security-notes/
+  archive/            superseded documents and the May 2026 prototype (not served)
+web/                  Stage 1 web app: static Three.js, no build step
+db/migrations/        Supabase schema; every file is idempotent and re-applied by db-push
+db/blueprints/        drafted migrations that must not run (0015, Route B partition)
+.github/workflows/    db-push (apply migrations), db-verify (check invariants)
+netlify.toml          publishes web/ as-is
+CHANGELOG.md          accumulated changes per committed version
 ```
 
-## Required Actions secrets
+## How the pieces fit
 
-Set in **Settings → Secrets and variables → Actions**:
+- **Web app.** `web/` is plain HTML, CSS and JavaScript. Three.js is loaded
+  from a pinned CDN version through an import map, so there is nothing to
+  install or build. Geometry comes from the Spec constants in
+  `web/constants.js`, computed exactly from φ at runtime.
+- **Hosting.** Netlify serves `web/` (see `netlify.toml`). Once the Netlify
+  site is linked to this repository, every merge to `main` deploys.
+- **Database.** Supabase (Postgres + PostGIS, project
+  `zilnqideoswbsnbctqhi`, eu-west-1) holds the schema for later stages.
+  It is fully private: RLS on every table, no policies, no grants to
+  `anon` or `authenticated`. Stage 1 does not read it. On the Free plan it
+  pauses after a week without use; restoring is one click.
+- **Pipeline.** A push to `main` that touches `db/migrations/` runs
+  `db-push`, then `db-verify` checks the invariants of Spec v3.1 §9.
 
-| Secret                  | Used by                | Notes                                                    |
-| ----------------------- | ---------------------- | -------------------------------------------------------- |
-| `APP_ID`                | `agent-push`           | `3663078`                                                |
-| `APP_INSTALLATION_ID`   | `agent-push`           | `131053359`                                              |
-| `APP_PRIVATE_KEY`       | `agent-push`           | PEM, never echoed                                        |
-| `SUPABASE_PROJECT_REF`  | (future workflows)     | `zilnqideoswbsnbctqhi`                                   |
-| `SUPABASE_REGION`       | (future workflows)     | `eu-west-1`                                              |
-| `SUPABASE_DB_PASSWORD`  | (future workflows)     | Rotated 2026-05-10                                        |
-| `SUPABASE_DB_URL`       | `db-push`, `db-verify` | Full connection string with password                     |
+## Secrets
 
-See [`docs/SECRETS.md`](docs/SECRETS.md) for the rotation protocol.
+One Actions secret, `SUPABASE_DB_URL`. See [`docs/SECRETS.md`](docs/SECRETS.md).
 
-## Phase status
+## Archive
 
-- ✅ **Phase 0** — Accounts, App, secrets (DNS verification non-blocking).
-- 🟢 **Phase 1** — *This PR.* Schema + workflows + scaffolding.
-- ⏸ **Phase 2** — Directus Cloud project linked to Supabase. (Awaiting user.)
-- 🔲 **Phase 3** — Next.js + R3F site.
-- 🔲 **Phase 4** — Triplex visual editing.
-- 🔲 **Phase 5** — Remotion + `@remotion/three` video pipeline.
-- 🔲 **Phase 6** — Reveal.js slide pipeline.
-- 🔲 **Phase 7** — AI authorship loop end-to-end.
-
-## What's intentionally *not* in this PR
-
-- No source data. The 62 v3.1 sources will be imported by `scripts/import-v3.ts` in a later PR, after content guidance from the *Roadmap for Vegars Diamond Model* thread is incorporated.
-- No prose. `prose_sections` and `glossary_terms` start empty.
-- No Next.js or R3F code. Phase 3 is a separate PR.
+- `docs/archive/prototype-2026-05/`: the May 2026 "Graves' Diamond"
+  prototype, formerly live at diamond.thoughtfree.com. Kept for reference;
+  not served, not maintained.
+- `docs/archive/v3/`: the v3.0 documents (committed 2026-06-01).
+- `docs/archive/v2-drafts/`: the never-committed v2 drafts.

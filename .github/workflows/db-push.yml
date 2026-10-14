@@ -2,8 +2,14 @@ name: db-push
 
 # Applies SQL migrations under db/migrations/ to the Supabase project.
 # Triggered automatically on pushes to main that touch db/migrations/.
-# Idempotent: each migration is wrapped in a transaction; psql exits
-# non-zero on the first error and the workflow fails loudly.
+# Every file in db/migrations/ is re-applied in lexical order on each run,
+# so every migration must be idempotent. Each file runs in its own
+# transaction; psql exits non-zero on the first error and the workflow
+# fails loudly.
+#
+# Drafted-but-unapproved migrations live in db/blueprints/ and are never
+# executed here (0015 sat in db/migrations/ and its guard aborted every
+# run from 2026-06-01 until it was moved on 2026-10-14).
 #
 # Required secrets:
 #   SUPABASE_DB_URL  — full Postgres connection string with password.
@@ -29,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install psql client
         run: |
