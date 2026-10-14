@@ -1,4 +1,4 @@
-// The Diamond — Stage 1 constants.
+// The Diamond — constants.
 //
 // Every value is taken from Spec v3.1 and derived from φ at runtime
 // (exactness rule, Spec §4.6). Nothing here is a rounded literal.
@@ -8,6 +8,11 @@ export const PHI = (1 + Math.sqrt(5)) / 2;
 // §5 — the φ-cascade. Shell n has radius φ^(n − 3).
 export const SHELLS = [1, 2, 3, 4, 5].map((n) => ({ n, radius: PHI ** (n - 3) }));
 export const shellRadius = (n) => SHELLS[n - 1].radius;
+
+// Only the three zone spheres are drawn: Shells 1, 2 and 3 (user decision
+// 2026-10-14: "there should just be three nested spheres visible").
+// Shell 4 and Shell 5 remain radii only (the apices and the zoom horizon).
+export const DRAWN_SHELLS = [1, 2, 3];
 
 // §3.1 – §3.2 — the nine Class-H landmarks.
 //   hull: true  → a vertex of the bipyramid (convex hull, §6.22)
@@ -24,14 +29,23 @@ export const LANDMARKS = [
   { slug: 'death',        name: 'Death',        pos: [ 0, 0, shellRadius(5)],       shell: 5,    hull: false, zone: null },
 ];
 
-// Containment Note §A.3.1 — 3rd-person orbital mode.
-// Inner limit: the camera must not enter Zone 1 (r ≤ φ⁻²) in Stage 1
-// (Roadmap IV.1, criterion 4). A small margin keeps Shell 1's surface off
-// the near clipping plane. Outer limit: Shell 5 (r = φ²), the horizon.
+// Axes. X and Y end at their landmarks on Shell 3 (Heaven / Hell, Future /
+// Past); Z runs through the apices to Birth and Death on Shell 5 (user
+// decision 2026-10-14: the axes stop at Past / Future and Heaven / Hell).
+export const AXIS_EXTENT = { x: shellRadius(3), y: shellRadius(3), z: shellRadius(5) };
+
+// Containment Note §A.3 — one navigation, two perspectives, keyed to Shell 1.
+//   r > φ⁻²  3rd-person orbit around BEING (§A.3.1), out to Shell 5.
+//   r < φ⁻²  1st-person view through BEING (§A.3.2). BEING is approached
+//            but never reached or passed.
 export const CAMERA = {
-  minDistance: shellRadius(1) * 1.06,
   maxDistance: shellRadius(5),
+  threshold: shellRadius(1),
+  minDistance: shellRadius(1) / 12,
 };
 
-// Axes run to Shell 5 so that Birth and Death sit on the Z axis line.
-export const AXIS_EXTENT = shellRadius(5);
+// §A.3.2 — the aperture. The viewer looks through an opening of radius
+// APERTURE at BEING, so the cone's half-angle is atan(APERTURE / depth):
+// close → wide, far → narrow. The radius φ⁻³ (one step further down the
+// cascade than Shell 1) is a display choice, not a Spec value.
+export const APERTURE = PHI ** -3;
