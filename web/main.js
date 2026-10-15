@@ -10,22 +10,31 @@
 // Containment Note §A.3.2–§A.3.3 as revised in v3.2 and v3.3; the limits
 // are not seen from there). The model opens as the
 // prototype's horn torus, which opens into the diamond on the first click
-// (torus.js). Faint dots on the shells show them turning with it.
-// Outside, the labels appear by zoom level and dim behind the spheres; from
-// BEING, the name of the region in view replaces them (label-rules.js,
-// focus-labels.js; Containment Note §A.3.1–§A.3.2 as revised in v3.3).
+// (torus.js); dragging tilts and turns the torus. Zooming out stops at
+// level 0; a second zoom-out folds the diamond back into the torus, level
+// −1, and zooming in unfolds it again (v3.4). Dots on the shells show them
+// turning. Outside, the axis points are named by zoom level and dim behind
+// the spheres, and at level 0 Indra's net surrounds the model; from BEING,
+// the name of the region in view replaces them (label-rules.js,
+// focus-labels.js; Containment Note §A.3.1–§A.3.2 as revised in v3.4).
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
 import { SHELLS, DRAWN_SHELLS, LANDMARKS, AXIS_EXTENT, CAMERA, CONE, shellRadius } from './constants.js';
-import { ZONE_NAMES, labelReveal, opaqueWeight, shellTransmission, LEVEL_DISTANCE } from './label-rules.js';
+import { ZONE_NAMES, labelReveal, opaqueWeight, netWeight, shellTransmission, LEVEL_DISTANCE } from './label-rules.js';
 import { buildFocusLabels } from './focus-labels.js';
 import { buildOpening } from './torus.js';
 import { buildCone } from './cone.js';
 
 const stage = document.getElementById('stage');
+
+// Dots on the shells: a little darker and larger than in v3.3, and drawn
+// larger the nearer they are, so the turning reads clearly (user request
+// 2026-10-15).
+const DOT_OPACITY = 0.4;
+const DOT_SIZE = 2.4;                       // pixels at three units away
 
 if (!webglAvailable()) {
   stage.hidden = true;
@@ -70,9 +79,9 @@ function init() {
   const scene = new THREE.Scene();
 
   // ── Camera: Z is vertical (Obliteration and Death above) ─────────────
-  // From any point on Shell 5, Birth and Death are 90° apart (they are the
-  // ends of its diameter). A fixed 104° vertical field keeps both in view
-  // at the outer zoom limit whenever the camera is near the equator.
+  // A fixed 104° vertical field keeps Birth and Death in view, with room
+  // above and below, at zoom level 0 whenever the camera is near the
+  // equator.
   const ORBIT_FOV = 104;
   const MAX_FOV = 150;          // for the opening torus on narrow screens
   const REST = { azimuth: degToRad(-42), elevation: degToRad(8), distance: CAMERA.maxDistance };
@@ -89,7 +98,7 @@ function init() {
   controls.rotateSpeed = 0.6;
   controls.zoomSpeed = 2.4;
   controls.minDistance = CAMERA.minDistance; // just past Shell 1, where the eye enters BEING
-  controls.maxDistance = CAMERA.maxDistance; // never beyond Shell 5
+  controls.maxDistance = CAMERA.maxDistance; // zoom level 0, a stop (see the gestures below)
   controls.minPolarAngle = 0.2;             // never on Death or Birth
   controls.maxPolarAngle = Math.PI - 0.2;
   controls.enabled = false;                 // until the torus has unfolded
@@ -107,9 +116,10 @@ function init() {
     const front = new THREE.Mesh(geometry, shellMaterial(THREE.FrontSide));
     back.renderOrder = ORDER.back(n);
     front.renderOrder = ORDER.front(n);
-    // A faint, even scatter of dots fixed to the surface, so the sphere is
-    // seen to turn with the diamond (user request 2026-10-14). About 64 dots
-    // per unit area on every shell.
+    // An even scatter of dots fixed to the surface, so the sphere is seen
+    // to turn with the diamond (user request 2026-10-14; made clearer in
+    // v3.4, above all from inside). About 64 dots per unit area on every
+    // shell; nearer dots are drawn larger.
     const dots = new THREE.Points(dotGeometry(radius, Math.round(64 * 4 * Math.PI * radius * radius)), dotMaterial());
     dots.renderOrder = ORDER.lines;
     scene.add(back, front, dots);
@@ -135,14 +145,17 @@ function init() {
   const cone = buildCone({ hullGeometry, shellDots: shells.map((s) => s.dots.geometry) });
   const focus = buildFocusLabels(stage);
 
-  // ── Zoom level 0: the sphere and diamond seen as one opaque body ──────
-  // User decision 2026-10-15. It is drawn in its own pass and blended over
-  // the translucent model, so the change at level 1 is a plain crossfade.
+  // ── Zoom level 0: an opaque diamond in a slightly translucent sphere ──
+  // User decision 2026-10-15 (revised the same day). It is drawn in its own
+  // pass and blended over the translucent model, so the change at level 1
+  // is a plain crossfade. The sphere lets 18% through, so the diamond's
+  // middle shows faintly inside it.
   const solid = new THREE.Scene();
   const solidSphere = new THREE.Mesh(
     new THREE.SphereGeometry(shellRadius(3), 128, 96),
-    new THREE.MeshLambertMaterial({ color: 0xd3d5d9, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }),
+    new THREE.MeshLambertMaterial({ color: 0xd3d5d9, transparent: true, opacity: 0.82, depthWrite: false }),
   );
+  solidSphere.renderOrder = 2;
   const solidHull = new THREE.Mesh(
     hullGeometry,
     new THREE.MeshLambertMaterial({ color: 0xbfc2c8, flatShading: true, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }),
@@ -152,8 +165,11 @@ function init() {
     new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, -AXIS_EXTENT.z), new THREE.Vector3(0, 0, AXIS_EXTENT.z)]),
     new THREE.LineBasicMaterial({ color: 0x6c7077, transparent: true, opacity: 0.5 }),
   );
+  solidEdges.renderOrder = 1;
+  solidAxis.renderOrder = 1;
   const solidDots = new THREE.Points(shells[shells.length - 1].dots.geometry, dotMaterial());
   solidDots.scale.setScalar(1.004);
+  solidDots.renderOrder = 3;
   const solidKey = new THREE.DirectionalLight(0xffffff, 1.5);
   solid.add(solidSphere, solidHull, solidEdges, solidAxis, solidDots, new THREE.AmbientLight(0xffffff, 1.55), solidKey, solidKey.target);
   const solidTarget = new THREE.WebGLRenderTarget(1, 1, { samples: 4 });
@@ -179,6 +195,68 @@ function init() {
   const solidScreen = new THREE.Scene();
   solidScreen.add(solidQuad);
   const keyLocal = new THREE.Vector3(-0.5, 0.8, 1);
+
+  // ── Indra's net (zoom level 0; user decision 2026-10-15) ─────────────
+  // Faint solid copies of the bipyramid on a spacious cube grid, fixed to
+  // the model's frame, so they turn with it, and receding until they merge
+  // with the background. Copies close to the eye are faded too, so the
+  // frame's edges stay quiet. The nearest copies are NET.spacing from BEING:
+  // more than twice the farthest camera distance, so none can come between
+  // the eye and the diamond. The net has gone by the distance at which
+  // BEING begins to appear (label-rules.js). What the copies stand for is
+  // left open (user, 2026-10-15).
+  const NET = { spacing: 9, reach: 7 };
+  const netCells = [];
+  for (let i = -NET.reach; i <= NET.reach; i++) {
+    for (let j = -NET.reach; j <= NET.reach; j++) {
+      for (let k = -NET.reach; k <= NET.reach; k++) {
+        if ((i || j || k) && Math.hypot(i, j, k) <= NET.reach + 0.5) netCells.push([i, j, k]);
+      }
+    }
+  }
+  const netMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      uColor: { value: new THREE.Color(0xbfc2c8) },
+      uBackground: { value: new THREE.Color(0xf1f1f1) },
+      uLight: { value: new THREE.Vector3() },
+      uWeight: { value: 0 },
+      uReach: { value: NET.spacing * NET.reach },
+    },
+    vertexShader: /* glsl */ `
+      uniform float uReach;
+      varying vec3 vNormal;
+      varying float vFade;
+      void main() {
+        vec4 world = modelMatrix * instanceMatrix * vec4(position, 1.0);
+        vec4 mv = viewMatrix * world;
+        vNormal = normal;
+        float dist = length(mv.xyz);
+        vFade = smoothstep(8.0, 20.0, dist) * exp(-dist / 30.0) * (1.0 - smoothstep(0.7 * uReach, uReach, dist));
+        gl_Position = projectionMatrix * mv;
+      }
+    `,
+    fragmentShader: /* glsl */ `
+      uniform vec3 uColor;
+      uniform vec3 uBackground;
+      uniform vec3 uLight;
+      uniform float uWeight;
+      varying vec3 vNormal;
+      varying float vFade;
+      void main() {
+        float lit = 0.74 + 0.26 * max(dot(normalize(vNormal), uLight), 0.0);
+        gl_FragColor = vec4(mix(uBackground, uColor * lit, 0.4 * vFade * uWeight), 1.0);
+        #include <colorspace_fragment>
+      }
+    `,
+  });
+  const net = new THREE.InstancedMesh(hullGeometry, netMaterial, netCells.length);
+  const cell = new THREE.Matrix4();
+  netCells.forEach(([i, j, k], n) => net.setMatrixAt(n, cell.makeTranslation(i * NET.spacing, j * NET.spacing, k * NET.spacing)));
+  net.frustumCulled = false;
+  const netScene = new THREE.Scene();
+  netScene.add(net);
+  const netCamera = new THREE.PerspectiveCamera(ORBIT_FOV, 1, 1, NET.spacing * (NET.reach + 2) * 1.8);
+  netCamera.up.set(0, 0, 1);
 
   scene.add(new THREE.AmbientLight(0xffffff, 1.7));
   const key = new THREE.DirectionalLight(0xffffff, 1.6);
@@ -247,10 +325,11 @@ function init() {
     scene.add(label);
     return { slug: l.slug, label, element, isBeing, limit: !!l.limit, position: label.position, width: 0, flipped: false, opacity: -1 };
   });
-  // The zone names of the X and Z axes, where each axis meets the sphere
+  // The axis points of the X and Z axes, where each axis meets the sphere
   // that bounds its zone (Zone 1 on Shell 1, Zone 2 on Shell 2, Zone 3 on
-  // Shell 3; Love and Hate are the landmarks there). User decision
-  // 2026-10-15: visible from the third-person view. They are Class T
+  // Shell 3; Love and Hate are the landmarks there). User decisions
+  // 2026-10-15: visible from the third-person view, which shows axis
+  // points only, never the combined region names. They are Class T
   // labels, so they carry an open ring rather than a landmark's dot.
   ZONE_NAMES.forEach((names, i) => {
     const r = shellRadius(i + 1);
@@ -258,7 +337,7 @@ function init() {
     for (const [title, pos] of points) {
       if (i === 2 && pos[2] === 0) continue;   // Hate and Love are landmarks
       const element = document.createElement('div');
-      element.className = 'lm lm--zone';
+      element.className = 'lm lm--point';
       const dot = document.createElement('span');
       dot.className = 'lm__dot';
       const name = document.createElement('span');
@@ -269,7 +348,7 @@ function init() {
       label.center.set(0, 0.5);
       label.position.set(...pos);
       scene.add(label);
-      landmarks.push({ slug: title.toLowerCase(), label, element, isBeing: false, limit: false, zoneLabel: true, position: label.position, width: 0, flipped: false, opacity: -1 });
+      landmarks.push({ slug: title.toLowerCase(), label, element, isBeing: false, limit: false, pointLabel: true, position: label.position, width: 0, flipped: false, opacity: -1 });
     }
   });
   // Label widths are measured lazily and re-measured after a resize or
@@ -286,43 +365,142 @@ function init() {
     a: smoothstep(p, 0, 0.4),
     b: smoothstep(p, 0.33, 1),
   });
-  let phase = 'intro';                      // intro → unfolding → live
+  // intro (the torus, level −1) → unfolding → live. From live, a second
+  // zoom-out folds the diamond back (folding) to the torus (intro); zooming
+  // in unfolds it again. The fold follows the zoom back and forth, in place
+  // of the prototype's τ slider (user decision 2026-10-15).
+  let phase = 'intro';
   let progress = 0;
   let introTime = 0;
   let unfold = null;
   morph.set(0, 0);
+  const OPEN_HINT = 'Drag to turn. Click, tap or zoom in to open.';
+  const TILT = 1.35;                        // the farthest the torus tilts, in radians
+  const turn = { azimuth: 0, elevation: 0 }; // the user's own turning of the torus
+  const pose = { azimuth: REST.azimuth, elevation: REST.elevation }; // the camera while folding
 
   function introPose(t) {
-    const azimuth = REST.azimuth + 0.18 * t;
-    const elevation = REST.elevation + 0.55 * Math.sin(0.07 * t);
+    const azimuth = REST.azimuth + 0.18 * t + turn.azimuth;
+    const elevation = clamp(REST.elevation + 0.55 * Math.sin(0.07 * t) + turn.elevation, -TILT, TILT);
     return { azimuth, elevation };
   }
+  const cameraPose = () => {
+    const r = camera.position.length();
+    return { azimuth: Math.atan2(camera.position.y, camera.position.x), elevation: Math.asin(camera.position.z / r) };
+  };
 
+  // Plays the rest of the opening: from the torus, or from wherever a fold
+  // was left, to the diamond at zoom level 0.
   function beginUnfold() {
-    if (phase !== 'intro') return;
+    if (phase !== 'intro' && phase !== 'folding') return;
+    const fromTorus = phase === 'intro';
     phase = 'unfolding';
     hint.classList.remove('is-visible');
-    const r = camera.position.length();
-    const from = {
-      azimuth: Math.atan2(camera.position.y, camera.position.x),
-      elevation: Math.asin(camera.position.z / r),
-    };
-    // Shortest way round to the rest azimuth.
-    let delta = (REST.azimuth - from.azimuth) % (2 * Math.PI);
+    const from = cameraPose();
+    // From the torus the camera returns to its rest position, the shortest
+    // way round; from a fold it stays where it is.
+    let delta = fromTorus ? (REST.azimuth - from.azimuth) % (2 * Math.PI) : 0;
     if (delta > Math.PI) delta -= 2 * Math.PI;
     if (delta < -Math.PI) delta += 2 * Math.PI;
-    unfold = { t: 0, duration: OPEN_SECONDS, from, delta };
+    const to = fromTorus ? REST.elevation : from.elevation;
+    unfold = { t: progress * OPEN_SECONDS, duration: OPEN_SECONDS, from, delta, to, k0: progress };
   }
   if (hold !== null) beginUnfold();
 
-  stage.addEventListener('click', beginUnfold);
+  function showHint(text, ms, top = false) {
+    hint.textContent = text;
+    hint.classList.toggle('is-top', top);
+    hint.classList.add('is-visible');
+    clearTimeout(showHint.timer);
+    if (ms) showHint.timer = setTimeout(() => hint.classList.remove('is-visible'), ms);
+  }
+
+  // At level 0 a zoom-out gesture begins to fold the diamond.
+  function beginFold() {
+    phase = 'folding';
+    controls.enabled = false;
+    Object.assign(pose, cameraPose());
+    hint.classList.remove('is-visible');
+  }
+  // The fold follows the zoom: dp < 0 folds toward the torus, dp > 0 opens.
+  function scrubFold(dp) {
+    if (phase === 'intro') {
+      if (dp <= 0) return;
+      phase = 'folding';
+      Object.assign(pose, cameraPose());
+      hint.classList.remove('is-visible');
+    }
+    if (phase !== 'folding') return;
+    progress = clamp(progress + dp, 0, 1);
+    if (progress >= 1) {
+      // Back at level 0, a stop: the rest of this gesture does nothing.
+      phase = 'live';
+      controls.update();
+      controls.enabled = !gesture.active;
+    } else if (progress <= 0) {
+      // Level −1: the torus turns and swings again from where it is.
+      phase = 'intro';
+      const p = pose;
+      turn.azimuth = p.azimuth - REST.azimuth - 0.18 * introTime;
+      turn.elevation = p.elevation - REST.elevation - 0.55 * Math.sin(0.07 * introTime);
+      showHint(OPEN_HINT, 6000);
+    }
+  }
+
+  // A zoom gesture is one continuous scroll (it ends once 350 ms and at
+  // least two frames pass without a wheel event, so a slow device does not
+  // split it), one pinch, or one key press. Zooming out stops at level 0; only
+  // a gesture that begins there, and begins by zooming out, folds the
+  // diamond toward level −1 (user decision 2026-10-15).
+  const gesture = { active: false, fromRest: false, kind: '', last: 0, quiet: 0 };
+  const atRest = () => phase === 'live' && view === 'orbit' && camera.position.length() >= CAMERA.maxDistance * 0.995;
+  function gestureStart() {
+    gesture.active = true;
+    gesture.fromRest = atRest();
+    gesture.kind = '';
+  }
+  function gestureEnd() {
+    gesture.active = false;
+    gesture.kind = '';
+    if (phase === 'live' && view === 'orbit') controls.enabled = true;
+  }
+  // out > 0 zooms out; one unit is the whole fold.
+  function zoomGesture(out) {
+    if (phase === 'live') {
+      if (view !== 'orbit') return;
+      if (out < 0) { gesture.fromRest = false; return; }
+      if (!gesture.fromRest || !atRest()) return;
+      beginFold();
+    }
+    if (phase === 'folding' || phase === 'intro') scrubFold(-out);
+  }
+
+  // Dragging turns the torus, and the model while it folds. A drag is not
+  // a click, so it does not open the torus.
+  const DRAG_SPEED = 0.008;
+  let dragged = false;
+  let dragFrom = null;
+  function turnFolded(dx, dy) {
+    if (phase === 'intro') {
+      turn.azimuth -= dx * DRAG_SPEED;
+      turn.elevation = clamp(turn.elevation + dy * DRAG_SPEED, -TILT - 0.6, TILT + 0.6);
+    } else if (phase === 'folding') {
+      pose.azimuth -= dx * DRAG_SPEED;
+      pose.elevation = clamp(pose.elevation + dy * DRAG_SPEED, -MAX_ELEVATION, MAX_ELEVATION);
+    }
+  }
+
+  stage.addEventListener('click', () => {
+    if (dragged) { dragged = false; return; }
+    beginUnfold();
+  });
   stage.addEventListener('keydown', (event) => {
-    if (phase === 'intro' && (event.key === 'Enter' || event.key === ' ')) {
+    if ((phase === 'intro' || phase === 'folding') && (event.key === 'Enter' || event.key === ' ')) {
       event.preventDefault();
       beginUnfold();
     }
   });
-  setTimeout(() => { if (phase === 'intro') hint.classList.add('is-visible'); }, 900);
+  setTimeout(() => { if (phase === 'intro') showHint(OPEN_HINT); }, 900);
 
   // ── The view from BEING: entering, looking, leaving ──────────────────
   // orbit → entering → inside → leaving → orbit. Zooming in past Shell 1
@@ -371,12 +549,14 @@ function init() {
     flight = { t: 0, from: camera.position.clone() };
     coneAngle = entryAngle();
     excess = 0;
+    pointers.clear();
     hint.classList.remove('is-visible');
   }
 
   function leaveBeing() {
     view = 'leaving';
     flight = { t: 0, pitchFrom: look.pitch, pitchTo: clamp(look.pitch, -MAX_ELEVATION, MAX_ELEVATION) };
+    pointers.clear();
     hint.classList.remove('is-visible');
   }
 
@@ -400,50 +580,102 @@ function init() {
   }
 
   // Pointer: one finger or the mouse pans and tilts; two fingers pinch.
+  // Outside, the orbit controls turn and zoom the model; these handlers
+  // only turn the torus and the folding model, and follow pinches so that
+  // a pinch out at level 0 can fold the diamond.
   const pointers = new Map();
   let pinchFrom = 0;
   const pinchDistance = () => {
     const [p, q] = [...pointers.values()];
     return Math.hypot(p.x - q.x, p.y - q.y);
   };
+  const outside = () => view === 'orbit' && phase !== 'unfolding';
   stage.addEventListener('pointerdown', (e) => {
-    if (view !== 'inside') return;
-    stage.setPointerCapture?.(e.pointerId);
+    if (view !== 'inside' && !outside()) return;
+    if (e.pointerType === 'mouse') pointers.clear();
+    if (view === 'inside' || phase !== 'live') stage.setPointerCapture?.(e.pointerId);
     pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    if (pointers.size === 2) pinchFrom = pinchDistance();
+    if (pointers.size === 1) { dragFrom = { x: e.clientX, y: e.clientY }; dragged = false; }
+    if (pointers.size === 2) {
+      pinchFrom = pinchDistance();
+      dragged = true;
+      if (outside()) { gestureStart(); gesture.kind = 'pinch'; }
+    }
   });
   stage.addEventListener('pointermove', (e) => {
-    if (view !== 'inside' || !pointers.has(e.pointerId)) return;
+    if (!pointers.has(e.pointerId)) return;
     const prev = pointers.get(e.pointerId);
     const next = { x: e.clientX, y: e.clientY };
     pointers.set(e.pointerId, next);
-    if (pointers.size === 1) {
-      turnBy(next.x - prev.x, next.y - prev.y);
-    } else if (pointers.size === 2) {
-      const d = pinchDistance();
-      if (pinchFrom > 0 && d > 0) zoomCone(pinchFrom / d);
-      pinchFrom = d;
+    if (view === 'inside') {
+      if (pointers.size === 1) {
+        turnBy(next.x - prev.x, next.y - prev.y);
+      } else if (pointers.size === 2) {
+        const d = pinchDistance();
+        if (pinchFrom > 0 && d > 0) zoomCone(pinchFrom / d);
+        pinchFrom = d;
+      }
+    } else if (outside()) {
+      if (pointers.size === 1 && phase !== 'live') {
+        if (dragFrom && Math.hypot(next.x - dragFrom.x, next.y - dragFrom.y) > 6) dragged = true;
+        turnFolded(next.x - prev.x, next.y - prev.y);
+      } else if (pointers.size === 2) {
+        const d = pinchDistance();
+        if (pinchFrom > 0 && d > 0) zoomGesture(Math.log(pinchFrom / d) * 1.6);
+        pinchFrom = d;
+      }
     }
   });
   const endPointer = (e) => {
     pointers.delete(e.pointerId);
     pinchFrom = pointers.size === 2 ? pinchDistance() : 0;
+    if (pointers.size === 0 && gesture.kind === 'pinch') gestureEnd();
   };
   stage.addEventListener('pointerup', endPointer);
   stage.addEventListener('pointercancel', endPointer);
 
   stage.addEventListener('wheel', (e) => {
-    if (view !== 'inside') return;
-    e.preventDefault();
     const lines = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? height : 1;
-    zoomCone(Math.exp(clamp(e.deltaY * lines, -200, 200) * 0.0012));
+    const delta = clamp(e.deltaY * lines, -200, 200);
+    if (view === 'inside') {
+      e.preventDefault();
+      zoomCone(Math.exp(delta * 0.0012));
+      return;
+    }
+    if (!outside()) return;
+    if (phase !== 'live') e.preventDefault();
+    if (gesture.kind !== 'wheel') { gestureStart(); gesture.kind = 'wheel'; }
+    gesture.last = performance.now();
+    gesture.quiet = 0;
+    zoomGesture(delta / 600);
   }, { passive: false });
 
   // ── Keyboard: arrows orbit or look, + / − zoom ───────────────────────
   stage.tabIndex = 0;
+  const zoomKey = (key) => (key === '+' || key === '=' ? -1 : key === '-' || key === '_' ? 1 : 0);
   stage.addEventListener('keydown', (event) => {
-    if (phase !== 'live') return;
     const step = degToRad(5);
+    const zoom = zoomKey(event.key);              // +1 zooms out
+    if (zoom && !event.repeat && outside()) { gestureStart(); gesture.kind = 'key'; }
+    if (phase === 'intro' || phase === 'folding') {
+      const turnStep = step / DRAG_SPEED;
+      switch (event.key) {
+        case 'ArrowLeft': turnFolded(turnStep, 0); break;
+        case 'ArrowRight': turnFolded(-turnStep, 0); break;
+        case 'ArrowUp': turnFolded(0, turnStep); break;
+        case 'ArrowDown': turnFolded(0, -turnStep); break;
+        default:
+          if (!zoom) return;
+          zoomGesture(zoom * 0.2);
+      }
+      event.preventDefault();
+      return;
+    }
+    if (phase !== 'live') return;
+    if (view === 'orbit' && zoom) {
+      zoomGesture(zoom * 0.2);
+      if (phase !== 'live' || !controls.enabled) { event.preventDefault(); return; }
+    }
     if (view === 'inside') {
       switch (event.key) {
         case 'ArrowLeft': look.yaw += step; break;
@@ -477,12 +709,16 @@ function init() {
     setSpherical(camera.position, radius, azimuth, elevation);
     controls.update();
   });
+  stage.addEventListener('keyup', (event) => {
+    if (zoomKey(event.key) && gesture.kind === 'key') gestureEnd();
+  });
 
   // Safari reports trackpad pinches as gesture events, not wheel events.
   // Touch pinches are left to the orbit controls (outside) or the pointer
   // handlers (inside).
   let touches = 0;
   let gestureFrom = 0;
+  let gestureScale = 1;
   stage.addEventListener('pointerdown', (e) => { if (e.pointerType === 'touch') touches++; });
   const release = (e) => { if (e.pointerType === 'touch') touches = Math.max(0, touches - 1); };
   stage.addEventListener('pointerup', release);
@@ -490,17 +726,24 @@ function init() {
   stage.addEventListener('gesturestart', (e) => {
     e.preventDefault();
     gestureFrom = view === 'inside' ? coneAngle : camera.position.length();
+    gestureScale = 1;
+    if (touches === 0 && outside()) { gestureStart(); gesture.kind = 'safari'; }
   });
   stage.addEventListener('gesturechange', (e) => {
     e.preventDefault();
-    if (touches > 0 || phase !== 'live' || !e.scale) return;
-    if (view === 'inside') {
-      zoomCone((gestureFrom / e.scale) / coneAngle);
-    } else if (view === 'orbit') {
+    if (touches > 0 || !e.scale) return;
+    if (outside()) {
+      const out = Math.log(gestureScale / e.scale) * 1.6;
+      gestureScale = e.scale;
+      zoomGesture(out);
+      if (phase !== 'live' || !controls.enabled) return;
       camera.position.setLength(clamp(gestureFrom / e.scale, controls.minDistance, controls.maxDistance));
       controls.update();
+    } else if (phase === 'live' && view === 'inside') {
+      zoomCone((gestureFrom / e.scale) / coneAngle);
     }
   });
+  stage.addEventListener('gestureend', () => { if (gesture.kind === 'safari') gestureEnd(); });
 
   // First interaction after the unfold hides the orbit hint.
   const dismissHint = () => { if (phase === 'live') hint.classList.remove('is-visible'); };
@@ -537,7 +780,9 @@ function init() {
   let lastAngleText = '';
   const bySlug = Object.fromEntries(landmarks.map((l) => [l.slug, l]));
 
+  const foldHint = { armed: false, shown: false };
   renderer.setAnimationLoop(() => {
+    if (gesture.kind === 'wheel' && ++gesture.quiet >= 2 && performance.now() - gesture.last > 350) gestureEnd();
     const now = performance.now();
     const dt = Math.min(0.1, (now - last) / 1000);
     last = now;
@@ -551,13 +796,14 @@ function init() {
     } else if (phase === 'unfolding') {
       unfold.t = hold !== null ? hold * unfold.duration : unfold.t + dt;
       const k = Math.min(1, unfold.t / unfold.duration);
-      const e = ease(k);
+      const e0 = ease(unfold.k0);
+      const e = unfold.k0 < 1 ? (ease(k) - e0) / (1 - e0) : 1;
       progress = k;
       setSpherical(
         camera.position,
         REST.distance,
         unfold.from.azimuth + unfold.delta * e,
-        lerp(unfold.from.elevation, REST.elevation, e),
+        lerp(unfold.from.elevation, unfold.to, e),
       );
       camera.lookAt(controls.target);
       if (k >= 1 && hold === null) {
@@ -566,13 +812,21 @@ function init() {
         controls.enabled = true;
         controls.update();
         stage.classList.add('is-live');
-        hint.textContent = 'Drag to turn. Scroll or pinch to zoom in through BEING.';
-        hint.classList.add('is-visible');
-        setTimeout(() => { if (view === 'orbit') hint.classList.remove('is-visible'); }, 7000);
+        showHint('Drag to turn. Scroll or pinch to zoom in through BEING.', 7000);
       }
+    } else if (phase === 'folding') {
+      setSpherical(camera.position, REST.distance, pose.azimuth, pose.elevation);
+      camera.lookAt(controls.target);
     } else if (view === 'orbit') {
       controls.update();
-      if (camera.position.length() < CAMERA.threshold) enterBeing();
+      const r = camera.position.length();
+      if (r < CAMERA.threshold) enterBeing();
+      // The first time a zoom out comes to rest at level 0, say how to go on.
+      if (r < CAMERA.maxDistance * 0.97) foldHint.armed = true;
+      if (foldHint.armed && !foldHint.shown && atRest()) {
+        foldHint.shown = true;
+        showHint('Zoom out again to fold the diamond back into the torus.', 5000);
+      }
     }
 
     // The flights in and out, and looking from BEING.
@@ -625,7 +879,7 @@ function init() {
     // The outside view's field: the torus is wider than the diamond, so
     // narrow screens widen the view to fit it, then ease back as it opens.
     const introFov = clamp(fovForShortSide(degToRad(43)), ORBIT_FOV, MAX_FOV);
-    const fov = phase === 'intro' ? introFov : phase === 'unfolding' ? lerp(introFov, ORBIT_FOV, b) : ORBIT_FOV;
+    const fov = phase === 'live' ? ORBIT_FOV : lerp(introFov, ORBIT_FOV, b);
     if (Math.abs(fov - camera.fov) > 1e-3) {
       camera.fov = fov;
       camera.updateProjectionMatrix();
@@ -669,8 +923,8 @@ function init() {
       const rimStrength = 0.17 * (0.6 + 0.4 * nearness) * shellsIn;
       for (const m of shell.materials) m.uniforms.uRim.value = rimStrength;
       const u = shell.dots.material.uniforms;
-      u.uOpacity.value = 0.22 * shellsIn;
-      u.uSize.value = 2 * renderer.getPixelRatio();
+      u.uOpacity.value = DOT_OPACITY * shellsIn;
+      u.uSize.value = DOT_SIZE * renderer.getPixelRatio();
       shell.dots.visible = shellsIn > 0.003;
     }
 
@@ -729,11 +983,23 @@ function init() {
     focus.update({ cone, angle: coneAngle, forward: setForward(look.yaw, look.pitch).clone(), width, height, alpha: Math.max(0, 2 * mix - 1), dt, reducedMotion });
 
     renderer.clear();
+    const netShown = view === 'orbit' ? netWeight(d) * shellsIn * (1 - mix) : 0;
+    if (netShown > 0.003) {
+      netCamera.position.copy(camera.position);
+      netCamera.quaternion.copy(camera.quaternion);
+      netCamera.fov = camera.fov;
+      netCamera.aspect = camera.aspect;
+      netCamera.updateProjectionMatrix();
+      netMaterial.uniforms.uLight.value.copy(keyLocal).applyQuaternion(camera.quaternion).normalize();
+      netMaterial.uniforms.uWeight.value = netShown;
+      renderer.render(netScene, netCamera);
+      renderer.clearDepth();
+    }
     if (mix < 1) renderer.render(scene, camera);
     if (mix < 1 && solidWeight > 0.003) {
       solidKey.position.copy(keyLocal).applyQuaternion(camera.quaternion);
-      solidDots.material.uniforms.uOpacity.value = 0.22;
-      solidDots.material.uniforms.uSize.value = 2 * renderer.getPixelRatio();
+      solidDots.material.uniforms.uOpacity.value = DOT_OPACITY;
+      solidDots.material.uniforms.uSize.value = DOT_SIZE * renderer.getPixelRatio();
       renderer.setRenderTarget(solidTarget);
       renderer.setClearColor(0x000000, 0);
       renderer.clear();
@@ -747,8 +1013,9 @@ function init() {
     if (debug) {
       debug.textContent = JSON.stringify({
         phase, view, p: +progress.toFixed(3), d: +d.toFixed(4), fov: +fov.toFixed(1),
-        cone: +coneAngle.toFixed(1), mix: +mix.toFixed(2), solid: +solidWeight.toFixed(2),
-        level: LEVEL_DISTANCE.filter((D) => d <= D + 1e-6).length - 1,
+        cone: +coneAngle.toFixed(1), mix: +mix.toFixed(2), solid: +solidWeight.toFixed(2), net: +netShown.toFixed(2),
+        level: phase === 'live' ? LEVEL_DISTANCE.filter((D) => d <= D + 1e-6).length - 1 : -1,
+        az: +radToDeg(Math.atan2(camera.position.y, camera.position.x)).toFixed(1), el: +radToDeg(Math.asin(camera.position.z / d)).toFixed(1),
         zone: focus.element.dataset.zone, region: focus.element.dataset.region, name: focus.element.dataset.name,
         labels: Object.fromEntries(landmarks.filter((l) => l.opacity > 0).map((l) => [l.slug, l.opacity])),
         yaw: +radToDeg(look.yaw).toFixed(1), pitch: +radToDeg(look.pitch).toFixed(1),
@@ -830,20 +1097,24 @@ function dotGeometry(radius, n) {
 
 // Small round dots of constant screen size. Dots on the far half of a
 // sphere are dimmer, which lets its turning read as rotation.
+// Seen from outside a sphere, its far side is dimmed; from inside it,
+// every dot is near.
 function dotMaterial() {
   return new THREE.ShaderMaterial({
     uniforms: {
       uColor: { value: new THREE.Color(0x3f4248) },
       uOpacity: { value: 0 },
-      uSize: { value: 2 },
+      uSize: { value: DOT_SIZE },
     },
     vertexShader: /* glsl */ `
       uniform float uSize;
       varying float vFacing;
       void main() {
         vec4 mv = modelViewMatrix * vec4(position, 1.0);
-        vFacing = dot(normalize(normalMatrix * position), normalize(-mv.xyz));
-        gl_PointSize = uSize;
+        vec3 centre = (modelViewMatrix * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
+        bool inside = length(centre) < length(mv.xyz - centre);
+        vFacing = inside ? 1.0 : dot(normalize(normalMatrix * position), normalize(-mv.xyz));
+        gl_PointSize = clamp(uSize * 3.0 / max(-mv.z, 0.05), uSize * 0.7, uSize * 2.4);
         gl_Position = projectionMatrix * mv;
       }
     `,

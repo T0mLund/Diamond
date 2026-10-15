@@ -39,13 +39,18 @@ export const LANDMARKS = [
 export const AXIS_EXTENT = { x: shellRadius(3), y: shellRadius(3), z: shellRadius(5) };
 
 // Containment Note §A.3 — one navigation, two perspectives, keyed to Shell 1.
-//   r > φ⁻²  3rd-person orbit around BEING (§A.3.1), out to Shell 5.
+//   r > φ⁻²  3rd-person orbit around BEING (§A.3.1), out to zoom level 0.
 //   r < φ⁻²  the view from BEING (user decision 2026-10-14, replacing the
 //            §A.3.2 viewer behind an aperture): zooming in past Shell 1
 //            carries the eye into BEING, at the origin, facing the way it
 //            was travelling. It returns along the same line to exitDistance.
+// Zoom level 0 is the outermost camera position and a stop: zooming out
+// ends there, and only a new zoom-out gesture goes on to the torus, level
+// −1 (user decisions 2026-10-15). It lies a quarter beyond Shell 5, so
+// the model has room above and below; this is a design choice, not a
+// property of the framework.
 export const CAMERA = {
-  maxDistance: shellRadius(5),
+  maxDistance: shellRadius(5) * 1.25,
   threshold: shellRadius(1),
   minDistance: shellRadius(1) * 0.8,
   exitDistance: shellRadius(1) * 1.25,

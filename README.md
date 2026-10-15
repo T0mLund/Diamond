@@ -3,7 +3,7 @@
 Source repository for **The Diamond**, an interactive 3D model of a
 geometric framework for mapping human experience.
 
-**Status (2026-10-15):** framework documents at **v3.3**; Stages 1 and 2
+**Status (2026-10-15):** framework documents at **v3.4**; Stages 1 and 2
 of the deployment ladder (the geometric object and the view from BEING)
 are in `web/`, live at diamond.thoughtfree.com.
 
@@ -11,10 +11,10 @@ are in `web/`, live at diamond.thoughtfree.com.
 
 ```
 docs/                 Framework documents and governance
-  Diamond_Summary_v3.3.md            read first
-  Diamond_Containment_Note_v3.3.md   then this
-  Diamond_Spec_v3.3.md               then the Spec
-  Diamond_Roadmap_v3.3.md            then the Roadmap (Part IV = deployment ladder)
+  Diamond_Summary_v3.4.md            read first
+  Diamond_Containment_Note_v3.4.md   then this
+  Diamond_Spec_v3.4.md               then the Spec
+  Diamond_Roadmap_v3.4.md            then the Roadmap (Part IV = deployment ladder)
   Diamond_Versioning_Convention_v1.1.md
   ARCHITECTURE.md · SECRETS.md
   decision-notes/ · security-notes/
@@ -50,9 +50,11 @@ CHANGELOG.md          accumulated changes per committed version
   `zilnqideoswbsnbctqhi`, eu-west-1) holds the schema for later stages.
   It is fully private: RLS on every table, no policies, no grants to
   `anon` or `authenticated`. The web app does not read it. On the Free plan it
-  pauses after a week without use; restoring is one click.
+  pauses after a week without use; restoring is one click. The latest
+  migration, `0018_stillness_and_meditation.sql`, renames two vertical
+  qualities (Spec v3.4 §3.3).
 - **Pipeline.** A push to `main` that touches `db/migrations/` runs
-  `db-push`, then `db-verify` checks the invariants of Spec v3.3 §9.
+  `db-push`, then `db-verify` checks the invariants of Spec v3.4 §9.
 
 ## Secrets
 
@@ -63,6 +65,7 @@ One Actions secret, `SUPABASE_DB_URL`. See [`docs/SECRETS.md`](docs/SECRETS.md).
 - `docs/archive/prototype-2026-05/`: the May 2026 "Graves' Diamond"
   prototype, formerly live at diamond.thoughtfree.com. Kept for reference;
   not served, not maintained.
-- `docs/archive/v3/`: the v3.0 documents (committed 2026-06-01) and the
-  v3.1 and v3.2 documents (committed 2026-10-14).
+- `docs/archive/v3/`: the v3.0 documents (committed 2026-06-01), the
+  v3.1 and v3.2 documents (committed 2026-10-14) and the v3.3 documents
+  (committed 2026-10-15).
 - `docs/archive/v2-drafts/`: the never-committed v2 drafts.
