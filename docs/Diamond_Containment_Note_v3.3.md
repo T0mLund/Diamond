@@ -377,6 +377,62 @@ Z1).
     equatorial plane; from near-polar viewpoints one of them is at or
     behind the camera. Asked whether to keep the Shell 5 limit or allow
     zooming out further, the user decided (2026-10-14): *"keep limit"*.
+- **Zoom levels and labels (v3.3).** User decision, 2026-10-15
+  (verbatim):
+
+  > *The labels Fear, Aversion, Attraction, Desire, Meditation,
+  > Contemplation, Reflection, Oppression, Excitement, Acceleration, and
+  > Obliteration  should be visible from the third person view. The labels
+  > should appear in order of priority according to zoom levels: 0 is
+  > Birth and Death above and below an opaque sphere and diamond, plus
+  > _additional elements_ which will be specified later, 1 is BEING,
+  > Birth, and death with a translucent sphere and diamond, minus those
+  > additonal elements, 2 is BEING, Birth, and Death plus Awakening and
+  > Obliteration, 3 is the previous plus Love, Hate, Acceleration and
+  > Meditation, 4 is the previous plus remaining labels*
+  >
+  > *All labels should dim as they rotate behind the spheres. Moving
+  > behind two spheres would be dimmer than only being behind one.
+  > Currently the label is not dimmed quite enough.*
+
+  From this decision, in order from the outer limit inward; each level
+  keeps what the levels before it show:
+
+  - **Level 0**, at the outer limit: Birth and Death above and below the
+    sphere and the diamond, which are seen as one **opaque** body. The
+    *additional elements* of this level are to be specified by the user.
+  - **Level 1:** the sphere and diamond become translucent and BEING
+    appears, with Birth and Death.
+  - **Level 2:** adds Awakening and Obliteration.
+  - **Level 3:** adds Love, Hate, Acceleration and Meditation.
+  - **Level 4:** adds the remaining labels: Past and Future, and the zone
+    names Aversion, Attraction, Fear, Desire, Reflection, Oppression,
+    Contemplation and Excitement.
+  - **Dimming.** Every label dims as it turns behind a sphere, and more
+    behind two spheres than behind one.
+
+  **Implementation choices** (the assisting agent's, 2026-10-15; not
+  user decisions, and open to revision):
+
+  - The zone names sit where each axis meets the sphere that bounds its
+    zone: Aversion / Attraction and Reflection / Oppression on Shell 1,
+    Fear / Desire and Contemplation / Excitement on Shell 2, Meditation /
+    Acceleration on Shell 3 (where Love and Hate are the landmarks). They
+    are Class T labels (Spec §6.24), so they carry an open ring rather
+    than a landmark's dot.
+  - The levels are keyed to the camera's distance from BEING: level 0 at
+    the outer limit \(\varphi^{2}\), level 1 complete at 2.1, level 2 at
+    1.7, level 3 at 1.33 and level 4 at 1.0 (Shell 3). Each level fades
+    in over the 12% of distance just outside it; the opaque body turns
+    translucent in the same way, between 2.35 and 2.1.
+  - A label is **behind a sphere** when it lies in the far half of the
+    model (beyond the plane through BEING that faces the camera), on or
+    outside that sphere, and within its outline. The dimming begins about
+    6° past that plane and is complete by about 20°. Each sphere passes
+    32% of the label's contrast: 32% behind one sphere, 10% behind two,
+    3% behind three. Spheres that enclose the camera do not count; BEING
+    is never dimmed. This replaces the single 42% dim of the far side in
+    v3.2.
 - The user sees the diamond as a structure: shells, landmarks, axes, the
   bipyramid. This is the structural / diagrammatic reading consistent
   with Spec §4.4.
@@ -423,10 +479,11 @@ From these decisions:
 - **The visual field is a light cone with its apex at BEING.** It always
   fills the whole screen: the screen's longer side spans the cone's full
   angle.
-- The user sees the shells from inside (their faint dots), the
-  bipyramid's skin and edges, and each landmark in its direction from
-  BEING, out to Awakening and Obliteration on Shell 4. Birth and Death
-  are not shown (revised v3.3; see below).
+- The user sees the shells from inside (their faint dots) and the
+  bipyramid's skin and edges. Since v3.3 the landmarks and zones are
+  named by the focus labels below, not as labelled points, out to
+  Awakening and Obliteration on Shell 4. Birth and Death are not shown
+  (revised v3.3; see below).
 - This is the witness / phenomenological / first-person reading. The
   framework's apophatic centre is doing real work: BEING is the empty
   centre from which awareness looks out into the model.
@@ -470,6 +527,78 @@ straight down, each under its own name. Birth and Death, the limits
 Death and Awakening / Birth were shown apart off the axis and merged when
 viewed directly; with them, the open reading of "respectively", which no
 longer arises.
+
+**Labels in the view from BEING (v3.3).** User decision, 2026-10-15
+(verbatim):
+
+> *The way I want to solve the FPV is a version of the earlier Option 2,
+> but with the following modifications:  The zone that is being
+> “inhabited” by the view cone should replace the nearest labels. So for
+> instance, looking towards Hate, Future, and Obliteration from inside
+> zone 1, you would be seeing “Future Aversion-Oppression” with the faded
+> labels “Fear” slightly down to the left,“Future” slightly down to the
+> right, and “Excitement” above. I think the zone names could be locked
+> to the mid point between the axis, perhaps even curving along the
+> sphere shell if thats possible.*
+
+The two options it refers to were the user's own, earlier the same day
+(verbatim): *"one state or focus either obscures or supersedes the next.
+so the labels and zones should probably be implemented by opacity and
+come into or recede from focus. As you zoom out, zone 1 fades and zone 2
+comes into view."* Option 2: *"the labels are fixed along the
+sphere/axis intersection points and scale in size as you zoom. The label
+behind the one you're looking at becomes fully visible as you pass
+through the first"*.
+
+Asked how the focus should move from Zone 1 out to Zones 2 and 3, the
+user chose (2026-10-15): *"Narrowing moves outward"*. The widest cone is
+Zone 1; narrowing focuses outward to Zone 2, then Zone 3; widening
+brings the focus back to Zone 1 and then steps out of BEING.
+
+From these decisions:
+
+- The labelled points are not shown from BEING. In their place, the
+  name of the region the cone faces, in the zone in focus, replaces the
+  nearest labels: for example *Future Aversion-Oppression*, facing the
+  octant toward Hate, Future and Obliteration from Zone 1.
+- The name is fixed at the region's midpoint between the axes, and
+  curves along the sphere.
+- The next zone's names on the axes that bound the region stay faint at
+  their own points: from Zone 1 Fear / Desire, Past / Future and
+  Contemplation / Excitement; from Zone 2 Hate / Love, Past / Future and
+  Meditation / Acceleration; from Zone 3 Awakening / Obliteration. Past
+  and Future are the same in every zone, because the time axis is
+  zoneless (Spec §3.5).
+- Narrowing the cone moves the focus outward, so the faint names become
+  the present ones, as in Option 2.
+
+**Implementation choices** (the assisting agent's, 2026-10-15; not
+user decisions, and open to revision):
+
+- **Which region is named.** The nearest of 26 directions to the centre
+  of view: six axes, twelve plane diagonals and eight octant centres.
+  This is a display convention only. The database's sub-zones (Spec
+  §6.2) are exact sign regions, in which a plane or an axis has no
+  width; on screen, facing near the horizon reads *Future Aversion* and
+  facing straight along −X reads *Aversion*.
+- **The form of the name** is *Past* or *Future*, then the X-axis
+  quality, a hyphen and the Z-axis quality, as in the user's example; a
+  part whose axis is zero is left out. It is built from the zone names,
+  not from the database's `composite_quality` text.
+- **Focus bands.** Zone 1 from the widest cone down to 118°, Zone 2
+  down to 66°, Zone 3 below that, with 3° of hysteresis and a 0.25 s
+  crossfade. On a phone held upright, where the widest cone is about
+  147°, the Zone 1 band is correspondingly shorter.
+- **Polar caps.** In Zone 3, facing straight up or down with the cone
+  narrower than about 40°, the name becomes Obliteration or Awakening
+  (the polar caps of Spec §6.1).
+- **Straight along an axis** the next name lies in the same direction as
+  the present one, so it is drawn just below it, larger and fainter
+  (12%), rather than on the same point. The other faint names are at
+  25%.
+- The faint names lie about 55° from an octant's centre, so they are on
+  screen only while the cone is wide; in Zones 2 and 3 they come into
+  view as the cone turns toward an axis.
 
 **Implementation choices** (the assisting agent's, 2026-10-14; not user
 decisions, and open to revision):
@@ -613,9 +742,10 @@ the user is engaging.
   statement about experience; the *kinds of looking* vocabulary in the
   §A.3.2 supplement is tagged as *borrowed*. The two epistemic statuses
   are kept distinct.
-- **Spec §6.7 (time axis as nested horizons, H13)** is honoured because
-  the horizons at Shell 5 bound the witness position without appearing
-  in it (revised v3.3). From BEING the cone reaches Awakening and
+- **Spec §6.7 (time axis as nested horizons, H13; retired for now in
+  v3.3).** While it stood, it was honoured because the horizons at Shell
+  5 bound the witness position without appearing in it. The limits keep
+  that role (revised v3.3). From BEING the cone reaches Awakening and
   Obliteration; Birth and Death, which cannot be comprehended from the
   first-person perspective (user decision 2026-10-15, §A.3.2), are seen
   only from outside. v3.0 to v3.2 said the cosmological poles were

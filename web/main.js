@@ -11,12 +11,17 @@
 // are not seen from there). The model opens as the
 // prototype's horn torus, which opens into the diamond on the first click
 // (torus.js). Faint dots on the shells show them turning with it.
+// Outside, the labels appear by zoom level and dim behind the spheres; from
+// BEING, the name of the region in view replaces them (label-rules.js,
+// focus-labels.js; Containment Note §A.3.1–§A.3.2 as revised in v3.3).
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
-import { SHELLS, DRAWN_SHELLS, LANDMARKS, AXIS_EXTENT, CAMERA, CONE } from './constants.js';
+import { SHELLS, DRAWN_SHELLS, LANDMARKS, AXIS_EXTENT, CAMERA, CONE, shellRadius } from './constants.js';
+import { ZONE_NAMES, labelReveal, opaqueWeight, shellTransmission, LEVEL_DISTANCE } from './label-rules.js';
+import { buildFocusLabels } from './focus-labels.js';
 import { buildOpening } from './torus.js';
 import { buildCone } from './cone.js';
 
@@ -93,6 +98,7 @@ function init() {
   // Draw order for nested translucent surfaces: far halves outer → inner,
   // then the solid interior, then near halves inner → outer.
   const ORDER = { back: (n) => 4 - n, hull: 4, lines: 5, front: (n) => 5 + n };
+  const DRAWN_RADII = DRAWN_SHELLS.map(shellRadius);
 
   // ── Shells 1–3 (Spec §5) ─────────────────────────────────────────────
   const shells = SHELLS.filter((s) => DRAWN_SHELLS.includes(s.n)).map(({ n, radius }) => {
@@ -127,6 +133,52 @@ function init() {
 
   // ── The view from BEING (cone.js) ────────────────────────────────────
   const cone = buildCone({ hullGeometry, shellDots: shells.map((s) => s.dots.geometry) });
+  const focus = buildFocusLabels(stage);
+
+  // ── Zoom level 0: the sphere and diamond seen as one opaque body ──────
+  // User decision 2026-10-15. It is drawn in its own pass and blended over
+  // the translucent model, so the change at level 1 is a plain crossfade.
+  const solid = new THREE.Scene();
+  const solidSphere = new THREE.Mesh(
+    new THREE.SphereGeometry(shellRadius(3), 128, 96),
+    new THREE.MeshLambertMaterial({ color: 0xd3d5d9, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }),
+  );
+  const solidHull = new THREE.Mesh(
+    hullGeometry,
+    new THREE.MeshLambertMaterial({ color: 0xbfc2c8, flatShading: true, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }),
+  );
+  const solidEdges = new THREE.LineSegments(new THREE.EdgesGeometry(hullGeometry, 1), new THREE.LineBasicMaterial({ color: 0x3f4248, transparent: true, opacity: 0.55 }));
+  const solidAxis = new THREE.LineSegments(
+    new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, -AXIS_EXTENT.z), new THREE.Vector3(0, 0, AXIS_EXTENT.z)]),
+    new THREE.LineBasicMaterial({ color: 0x6c7077, transparent: true, opacity: 0.5 }),
+  );
+  const solidDots = new THREE.Points(shells[shells.length - 1].dots.geometry, dotMaterial());
+  solidDots.scale.setScalar(1.004);
+  const solidKey = new THREE.DirectionalLight(0xffffff, 1.5);
+  solid.add(solidSphere, solidHull, solidEdges, solidAxis, solidDots, new THREE.AmbientLight(0xffffff, 1.55), solidKey, solidKey.target);
+  const solidTarget = new THREE.WebGLRenderTarget(1, 1, { samples: 4 });
+  // The target is cleared to transparent, so the background is never
+  // drawn twice; the body is composited with premultiplied alpha.
+  const solidQuad = new THREE.Mesh(
+    new THREE.PlaneGeometry(2, 2),
+    new THREE.ShaderMaterial({
+      uniforms: { map: { value: solidTarget.texture }, uOpacity: { value: 0 } },
+      vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }',
+      fragmentShader: `uniform sampler2D map; uniform float uOpacity; varying vec2 vUv;
+        void main() {
+          vec4 t = texture2D(map, vUv);
+          gl_FragColor = vec4(t.a > 0.0 ? t.rgb / t.a : vec3(0.0), 1.0);
+          #include <colorspace_fragment>
+          gl_FragColor = vec4(gl_FragColor.rgb * t.a, t.a) * uOpacity;
+        }`,
+      transparent: true, depthTest: false, depthWrite: false,
+      blending: THREE.CustomBlending, blendSrc: THREE.OneFactor, blendDst: THREE.OneMinusSrcAlphaFactor,
+    }),
+  );
+  solidQuad.frustumCulled = false;
+  const solidScreen = new THREE.Scene();
+  solidScreen.add(solidQuad);
+  const keyLocal = new THREE.Vector3(-0.5, 0.8, 1);
 
   scene.add(new THREE.AmbientLight(0xffffff, 1.7));
   const key = new THREE.DirectionalLight(0xffffff, 1.6);
@@ -194,6 +246,31 @@ function init() {
     label.position.set(...l.pos);
     scene.add(label);
     return { slug: l.slug, label, element, isBeing, limit: !!l.limit, position: label.position, width: 0, flipped: false, opacity: -1 };
+  });
+  // The zone names of the X and Z axes, where each axis meets the sphere
+  // that bounds its zone (Zone 1 on Shell 1, Zone 2 on Shell 2, Zone 3 on
+  // Shell 3; Love and Hate are the landmarks there). User decision
+  // 2026-10-15: visible from the third-person view. They are Class T
+  // labels, so they carry an open ring rather than a landmark's dot.
+  ZONE_NAMES.forEach((names, i) => {
+    const r = shellRadius(i + 1);
+    const points = [[names.x[0], [-r, 0, 0]], [names.x[1], [r, 0, 0]], [names.z[0], [0, 0, -r]], [names.z[1], [0, 0, r]]];
+    for (const [title, pos] of points) {
+      if (i === 2 && pos[2] === 0) continue;   // Hate and Love are landmarks
+      const element = document.createElement('div');
+      element.className = 'lm lm--zone';
+      const dot = document.createElement('span');
+      dot.className = 'lm__dot';
+      const name = document.createElement('span');
+      name.className = 'lm__name';
+      name.textContent = title;
+      element.append(dot, name);
+      const label = new CSS2DObject(element);
+      label.center.set(0, 0.5);
+      label.position.set(...pos);
+      scene.add(label);
+      landmarks.push({ slug: title.toLowerCase(), label, element, isBeing: false, limit: false, zoneLabel: true, position: label.position, width: 0, flipped: false, opacity: -1 });
+    }
   });
   // Label widths are measured lazily and re-measured after a resize or
   // once the web font has loaded.
@@ -440,6 +517,7 @@ function init() {
     camera.updateProjectionMatrix();
     renderer.setSize(width, height);
     labelRenderer.setSize(width, height);
+    solidTarget.setSize(Math.round(width * renderer.getPixelRatio()), Math.round(height * renderer.getPixelRatio()));
     remeasureLabels();
   }
   window.addEventListener('resize', resize);
@@ -586,6 +664,7 @@ function init() {
     // Shells read stronger from afar and lighter close up.
     const d = camera.position.length();
     const nearness = smoothstep(d, CAMERA.threshold, CAMERA.maxDistance);
+    const solidWeight = (view === 'orbit' ? opaqueWeight(d) : 0) * shellsIn;
     for (const shell of shells) {
       const rimStrength = 0.17 * (0.6 + 0.4 * nearness) * shellsIn;
       for (const m of shell.materials) m.uniforms.uRim.value = rimStrength;
@@ -606,6 +685,8 @@ function init() {
       // a name that would run past the right edge moves to the left.
       // A name whose point is off screen is hidden; where two names would
       // collide, the one farther from the camera gives way.
+      // Names appear by zoom level (user decision 2026-10-15) and dim by
+      // the number of spheres they have turned behind.
       toCamera.copy(camera.position).normalize();
       const boxes = [];
       for (const entry of landmarks) {
@@ -614,11 +695,17 @@ function init() {
         const px = ((ndc.x + 1) / 2) * width;
         const py = ((1 - ndc.y) / 2) * height;
         const onScreen = ndc.z < 1 && px > -2 && px < width + 2 && py > -2 && py < height + 2;
-        const shown = onScreen ? appear[slug] ?? equatorIn : 0;
-        const far = position.dot(toCamera) < -0.35 * position.length();
+        const shown = onScreen ? (appear[slug] ?? equatorIn) * labelReveal(slug, d) : 0;
+        let depth = 1;
+        if (!isBeing) {
+          const glass = shellTransmission(camera.position, position, DRAWN_RADII);
+          const body = 1 - shellTransmission(camera.position, position, [shellRadius(3)]).layers;
+          depth = lerp(glass.opacity, Math.max(0, body), solidWeight);
+          entry.layers = glass.layers;
+        }
         const flip = px + entry.width > width - 4;
         const near = position.dot(toCamera);
-        boxes.push({ entry, px, py, flip, near, opacity: isBeing ? shown * (1 - 2 * mix) : shown * (far ? 0.42 : 1) * (1 - 2 * mix) });
+        boxes.push({ entry, px, py, flip, near, opacity: shown * depth * (1 - 2 * mix) });
       }
       for (const p of boxes) {
         for (const q of boxes) {
@@ -635,25 +722,35 @@ function init() {
       // are limits and cannot be seen from the first person (user decision
       // 2026-10-15), so only Awakening and Obliteration show on the
       // vertical axis. Each other landmark sits at its direction in the cone.
-      const alpha = (2 * mix - 1);
-      for (const entry of landmarks) {
-        if (entry.isBeing || entry.limit) { setLabel(entry, 0, false); continue; }
-        const p = cone.project(entry.position);
-        const onScreen = p.angle < degToRad(coneAngle / 2) * 1.2 && p.x > -2 && p.x < width + 2 && p.y > -2 && p.y < height + 2;
-        const opacity = onScreen ? alpha : 0;
-        setLabel(entry, opacity, p.x + entry.width > width - 4);
-        entry.element.style.display = '';
-        entry.element.style.transform = `translate(${entry.flipped ? -100 : 0}%, -50%) translate(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px)`;
-      }
+      // The point labels give way to the focus labels (focus-labels.js):
+      // the name of the region in view, and faint the next zone's names.
+      for (const entry of landmarks) setLabel(entry, 0, entry.flipped);
     }
+    focus.update({ cone, angle: coneAngle, forward: setForward(look.yaw, look.pitch).clone(), width, height, alpha: Math.max(0, 2 * mix - 1), dt, reducedMotion });
 
     renderer.clear();
     if (mix < 1) renderer.render(scene, camera);
+    if (mix < 1 && solidWeight > 0.003) {
+      solidKey.position.copy(keyLocal).applyQuaternion(camera.quaternion);
+      solidDots.material.uniforms.uOpacity.value = 0.22;
+      solidDots.material.uniforms.uSize.value = 2 * renderer.getPixelRatio();
+      renderer.setRenderTarget(solidTarget);
+      renderer.setClearColor(0x000000, 0);
+      renderer.clear();
+      renderer.render(solid, camera);
+      renderer.setRenderTarget(null);
+      renderer.setClearColor(0xf1f1f1, 1);
+      solidQuad.material.uniforms.uOpacity.value = solidWeight * (1 - mix);
+      renderer.render(solidScreen, cone.screen);
+    }
     if (mix > 0) renderer.render(cone.scene, cone.screen);
     if (debug) {
       debug.textContent = JSON.stringify({
         phase, view, p: +progress.toFixed(3), d: +d.toFixed(4), fov: +fov.toFixed(1),
-        cone: +coneAngle.toFixed(1), mix: +mix.toFixed(2),
+        cone: +coneAngle.toFixed(1), mix: +mix.toFixed(2), solid: +solidWeight.toFixed(2),
+        level: LEVEL_DISTANCE.filter((D) => d <= D + 1e-6).length - 1,
+        zone: focus.element.dataset.zone, region: focus.element.dataset.region, name: focus.element.dataset.name,
+        labels: Object.fromEntries(landmarks.filter((l) => l.opacity > 0).map((l) => [l.slug, l.opacity])),
         yaw: +radToDeg(look.yaw).toFixed(1), pitch: +radToDeg(look.pitch).toFixed(1),
       });
     }

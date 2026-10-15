@@ -34,7 +34,9 @@ CHANGELOG.md          accumulated changes per committed version
   `web/fonts/`, so the site loads nothing from other servers and there is
   nothing to install or build. Geometry comes from the Spec constants in
   `web/constants.js`, computed exactly from φ at runtime. The files are
-  `torus.js` (the opening), `cone.js` (the view from BEING) and
+  `torus.js` (the opening), `cone.js` (the view from BEING),
+  `label-rules.js` (which labels show at each zoom level, and how they
+  dim), `focus-labels.js` (the names in the view from BEING) and
   `main.js` (scene, controls and labels).
 - **Security headers.** `netlify.toml` sets a strict Content Security
   Policy (same-origin only), `noindex`, and related headers. If the import

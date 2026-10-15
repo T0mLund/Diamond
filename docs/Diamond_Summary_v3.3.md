@@ -30,12 +30,14 @@ registers only the changes relative to the immediately previous
 committed baseline, here v3.2 (2026-10-14). Earlier changes are in
 `CHANGELOG.md` and in the archived v3.0, v3.1 and v3.2 Summaries. v3.3
 is a minor bump under Convention §4.2: it renames two landmarks, gives
-Birth and Death a category of their own, and settles which shells are
-drawn and whether the time axis has zones, but opens no new iteration.
+Birth and Death a category of their own, settles which shells are drawn
+and whether the time axis has zones, and sets which labels show at each
+zoom level and in the view from BEING, but opens no new iteration.
 
 These entries are the v3.3 entry in the repo `CHANGELOG.md`. The user's
 decisions of 2026-10-15 are quoted verbatim where they govern: Spec §3.1,
-§3.2, §3.4, §3.5, §5 and §6.24.2, and Containment Note §A.3.2.
+§3.2, §3.4, §3.5, §5, §6.7 and §6.24.2, and Containment Note §A.3.1 and
+§A.3.2.
 
 ### Revised commitments
 
@@ -61,6 +63,22 @@ decisions of 2026-10-15 are quoted verbatim where they govern: Spec §3.1,
   and the database.
 - **Migration 0017** (Spec §9). Renames the two database rows and
   updates four descriptions; no schema change.
+- **Labels by zoom level** (Containment Note §A.3.1; Roadmap IV.1).
+  Level 0 at the outer limit shows Birth and Death above and below an
+  opaque sphere and diamond; level 1 makes them translucent and adds
+  BEING; level 2 adds Awakening and Obliteration; level 3 adds Love,
+  Hate, Acceleration and Meditation; level 4 adds the rest, including
+  the zone names of the X and Z axes.
+- **Labels dim behind the spheres** (Containment Note §A.3.1), more
+  behind two spheres than behind one.
+- **Focus labels in the view from BEING** (Containment Note §A.3.2;
+  Roadmap IV.2). A version of the user's Option 2: the name of the
+  region the cone faces, in the zone in focus, replaces the nearest
+  labels, fixed at the region's midpoint and curving along the sphere,
+  with the next zone's names faint around it. Narrowing the cone moves
+  the focus outward from Zone 1 to Zones 2 and 3.
+- **The name "the limits" stands**, and Love and Hate name both the
+  landmarks and the Zone 3 qualities (user answers, 2026-10-15).
 
 ### Retired claims
 
@@ -71,18 +89,29 @@ decisions of 2026-10-15 are quoted verbatim where they govern: Spec §3.1,
   30 px separation of the build.
 - The cosmological poles at Shell 5 are "visible from cone mode"
   (Containment Note §A.6, v3.0 to v3.2).
+- **Retired for now:** the per-zone registers of the time axis (Spec
+  §6.7.2), the nested-horizon reading with its cosmological overlay
+  (§6.7.1) and H13 (user decision 2026-10-15: *"retire those for
+  now"*). The text is kept so that it can be restored.
+- Labelled points in the view from BEING (v3.2), replaced by the focus
+  labels; the single 42% dim of far-side labels (v3.2); "no other
+  labels" in Roadmap IV.1.
 
 ### Open
 
-- Whether the per-zone registers of the time axis (Spec §6.7.2: Memory /
-  Anticipation, History / Projection, and so on) stay as a reading of
-  the axis or are retired, now that the axis is zoneless.
+- The *additional elements* of zoom level 0, and changes to the opening,
+  which the user will specify later.
+- The implementation choices listed in Containment Note §A.3.1 and
+  §A.3.2 (zoom-level distances, strength of the dimming, placement and
+  form of the names, focus bands) await the user's review.
 
 ### Numerical values
 
-- None changed. Shell radii, landmark coordinates and the bipyramid
-  inequality are as in v3.0; the cone's range (24° to 220°) is as in
-  v3.2.
+- None of the framework's values changed. Shell radii, landmark
+  coordinates and the bipyramid inequality are as in v3.0; the cone's
+  range (24° to 220°) is as in v3.2. The new display values (zoom-level
+  distances, 32% per sphere, the 118° and 66° focus bands) are
+  implementation choices, not framework values.
 
 ---
 
@@ -159,7 +188,8 @@ above for the enumeration. The most consequential of these:
 - **Measured-geometry table** for the four zones (Spec §6.23; H9 theorem
   for Z1 and Z2; under Route B, Z3 row splits into inner/outer and the
   Z4 row becomes the two polar caps).
-- **Time axis as nested horizons** (Spec §6.7; H13 adopted).
+- **Time axis as nested horizons** (Spec §6.7; H13 adopted; retired for
+  now in v3.3).
 - **Exactness rule** and **triage rule** (Spec §4.6 and §4.7; H10 and H11
   adopted as governance).
 - **Mixed-reading thesis** for sub-zone labels (Spec §6.24; H12 adopted).
@@ -369,7 +399,7 @@ For continuity with the v1.0 hypothesis register and the v2-draft cycle:
 | **H10** — Exactness rule for geometric quantities | **ADOPTED as rule (§4.6)** | Spec §4.6 |
 | **H11** — Triage rule (derived / stipulated / borrowed) | **ADOPTED as governance rule (§4.7)** | Spec §4.7 |
 | **H12** — Mixed reading of sub-zone labels (Class T / H / S) | **ADOPTED as mixed-reading thesis (§6.24)** | Spec §6.24 |
-| **H13** — Time axis as nested horizons | **ADOPTED as structural commitment (§6.7)** | Spec §6.7 |
+| **H13** — Time axis as nested horizons | **RETIRED for now (2026-10-15)**; adopted as a structural commitment in v3.0 | Spec §6.7 |
 
 H8 and H9 are no longer hypotheses — they are theorems. H10, H11, H12, H13
 are rules and structural commitments adopted at the v2-draft → v3.0

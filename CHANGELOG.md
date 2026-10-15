@@ -321,6 +321,41 @@ under `/docs/archive/v3/`, next to the v3.0 and v3.1 files.
 - *"-We will let go of heaven and hell, and change to the following:
   Hate–Fear–Aversion-BEING-Attraction–Desire–Love"*
 
+Later the same day, answering three questions (the name "the limits";
+Love and Hate naming both the landmarks and the Zone 3 qualities; the
+time registers of Spec §6.7.2): *"1. this seems fine. in what context is
+this word used? 2. this seems fine, in practice it shouldnt be an issue.
+3. retire those for now."* In the same message:
+
+- *"-The labels Fear, Aversion, Attraction, Desire, Meditation,
+  Contemplation, Reflection, Oppression, Excitement, Acceleration, and
+  Obliteration  should be visible from the third person view. The labels
+  should appear in order of priority according to zoom levels: 0 is
+  Birth and Death above and below an opaque sphere and diamond, plus
+  _additional elements_ which will be specified later, 1 is BEING,
+  Birth, and death with a translucent sphere and diamond, minus those
+  additonal elements, 2 is BEING, Birth, and Death plus Awakening and
+  Obliteration, 3 is the previous plus Love, Hate, Acceleration and
+  Meditation, 4 is the previous plus remaining labels"*
+- *"All labels should dim as they rotate behind the spheres. Moving
+  behind two spheres would be dimmer than only being behind one.
+  Currently the label is not dimmed quite enough."*
+- *"-The way I want to solve the FPV is a version of the earlier Option
+  2, but with the following modifications:  The zone that is being
+  “inhabited” by the view cone should replace the nearest labels. So for
+  instance, looking towards Hate, Future, and Obliteration from inside
+  zone 1, you would be seeing “Future Aversion-Oppression” with the
+  faded labels “Fear” slightly down to the left,“Future” slightly down
+  to the right, and “Excitement” above. I think the zone names could be
+  locked to the mid point between the axis, perhaps even curving along
+  the sphere shell if thats possible."*
+- *"- I have additional modifications to the torus animation and the
+  additional elements that are visible at third person zoom level 0 but
+  I’ll return to those later"*
+
+Asked how the focus in the view from BEING should move from Zone 1 to
+Zones 2 and 3: *"Narrowing moves outward"*.
+
 ### Revised commitments
 
 - **Love and Hate replace Heaven and Hell** (Spec §3.1, §3.4, §4.3, §5,
@@ -337,6 +372,17 @@ under `/docs/archive/v3/`, next to the v3.0 and v3.1 files.
   Past and Future are its only names, in every zone.
 - **Shells 4 and 5 are anchors only** (Spec §5; Roadmap IV.1). Only
   Shells 1–3 are ever drawn; this matches the build and `shells.role`.
+- **Labels by zoom level** (Containment Note §A.3.1; Roadmap IV.1,
+  acceptance criterion 6): five levels, from Birth and Death around an
+  opaque sphere and diamond at the outer limit to all labels, including
+  the zone names of the X and Z axes.
+- **Labels dim behind the spheres**, more behind two than one
+  (Containment Note §A.3.1).
+- **Focus labels in the view from BEING** (Containment Note §A.3.2;
+  Roadmap IV.2, acceptance criterion 6), a version of Option 2; narrowing
+  the cone moves the focus outward.
+- "The limits" stands as the name of Class L; Love and Hate name both
+  the landmarks and the Zone 3 qualities.
 
 ### Retired claims
 
@@ -346,11 +392,17 @@ under `/docs/archive/v3/`, next to the v3.0 and v3.1 files.
   reading of "respectively" and the 30 px pair separation of the build.
 - "The cosmological poles at Shell 5 are visible from cone mode"
   (Containment Note §A.6, v3.0 to v3.2).
+- Retired for now: the per-zone time registers (Spec §6.7.2), the
+  nested-horizon reading with its cosmological overlay (§6.7.1) and H13.
+- Labelled points in the view from BEING (v3.2); the single 42% dim of
+  far-side labels (v3.2); "no other labels" in Roadmap IV.1.
 
 ### Open
 
-- Whether the per-zone time registers of Spec §6.7.2 stay as a reading
-  of the axis or are retired.
+- The *additional elements* of zoom level 0 and the changes to the
+  opening, which the user will specify later.
+- The implementation choices of Containment Note §A.3.1 and §A.3.2,
+  pending the user's review.
 
 ### Implementation
 
@@ -364,6 +416,12 @@ under `/docs/archive/v3/`, next to the v3.0 and v3.1 files.
   `heaven` or `hell` row that the seed re-creates once `love` and `hate`
   exist. No schema change. `db-verify` now checks the `love` and `hate`
   slugs.
+- `web/label-rules.js` (new): the zoom levels, the dimming behind the
+  spheres, the zone names and the focus bands. `web/focus-labels.js`
+  (new): the names in the view from BEING, drawn as SVG text along the
+  sphere. `web/main.js`: the ten zone-name labels, the opaque body of
+  level 0 (drawn in its own pass and crossfaded), and the label rules
+  wired in. No change to the import map, so the CSP hash stands.
 
 ### Housekeeping
 

@@ -610,9 +610,20 @@ project owner and the assisting agent without explicit user approval.
   Awakening \((0,0,-\varphi)\), BEING \((0,0,0)\), and, on Shell 5
   outside all zones, the limits Birth \((0,0,-\varphi^{2})\) and
   Death \((0,0,+\varphi^{2})\) (added v3.1; Class L since v3.3; Love
-  and Hate replace Heaven and Hell in v3.3). No other items, no other
-  labels. Shell 5 itself is not drawn as a surface; it is the outer zoom
-  limit (Containment Note §A.3.1).
+  and Hate replace Heaven and Hell in v3.3). No other items. The only
+  other labels are the zone names of the X and Z axes, added in v3.3
+  (next item). Shell 5 itself is not drawn as a surface; it is the outer
+  zoom limit (Containment Note §A.3.1).
+- **Labels by zoom level** (v3.3; user decision 2026-10-15, verbatim in
+  Containment Note §A.3.1). Level 0, at the outer limit, shows Birth and
+  Death above and below an opaque sphere and diamond; level 1 makes them
+  translucent and adds BEING; level 2 adds Awakening and Obliteration;
+  level 3 adds Love, Hate, Acceleration and Meditation; level 4 adds the
+  remaining labels, Past, Future and the zone names Aversion,
+  Attraction, Fear, Desire, Reflection, Oppression, Contemplation and
+  Excitement. Labels dim as they turn behind the spheres, more behind
+  two than one. The *additional elements* of level 0 are still to be
+  specified by the user.
 - **Orbital camera.** 3rd-person mode per Containment Note §A.3.1.
   BEING is non-passable. The outer zoom limit stays at Shell 5; Birth
   and Death are both in view there from near-equatorial viewpoints (user
@@ -652,6 +663,9 @@ project owner and the assisting agent without explicit user approval.
    database read, so there is no anon DB access (revised v3.1; v3.0
    specified a service-role read path). No public link unless the user
    explicitly opens one.
+6. *(Added v3.3.)* The labels appear by zoom level as in Containment
+   Note §A.3.1, the body is opaque at level 0, and labels behind two
+   spheres are dimmer than labels behind one.
 
 **Dependencies:** None of the open R-threads block Stage 1. The
 Containment Note Appendix A.3.1 is the spec.
@@ -691,6 +705,14 @@ Note §A.3.2 and §A.3.3.
 - The *gao yuan / shen yuan / ping yuan* Class H tags from §A.3.2
   supplement are **reserved** as future UX surfaces but not exposed as
   toggles at Stage 2. They live in the documentation.
+- **Focus labels** (v3.3; user decisions 2026-10-15, verbatim in
+  Containment Note §A.3.2). The name of the region the cone faces, in
+  the zone in focus, replaces the nearest labels, fixed at the region's
+  midpoint and curving along the sphere; the next zone's names on the
+  bounding axes stay faint at their own points. Narrowing the cone moves
+  the focus outward from Zone 1 to Zones 2 and 3 (*"Narrowing moves
+  outward"*). This is a rule for labels only; it does not bring forward
+  Stage 3's active-zone fade of the geometry.
 - *Retired in v3.2:* viewer-behind-aperture controls and
   depth-behind-aperture as the control for cone width.
 
@@ -713,11 +735,16 @@ Note §A.3.2 and §A.3.3.
    The wording is the assisting agent's. The
    framework's commitment to declaring its stipulations applies to the
    UX as well as the documents.
+6. *(Added v3.3.)* Facing the octant toward Hate, Future and
+   Obliteration from Zone 1 shows *Future Aversion-Oppression*, with
+   Fear, Future and Excitement faint around it; narrowing the cone moves
+   the focus to Zone 2 (*Future Fear-Excitement*) and Zone 3 (*Future
+   Hate-Acceleration*).
 
 **Status (2026-10-14):** built and tested on desktop, laptop and phone
 sizes and in Safari's engine; merged as PR #14. Revised 2026-10-15
 (v3.3, PR #15): Birth and Death hidden from BEING; the merged pairs
-removed.
+removed; the focus labels added.
 
 **Dependencies:** Stage 1 stabilised. Of the I.7 sub-questions, the
 panoramic limit and BEING-as-singularity-vs-passable are resolved by the
@@ -791,7 +818,10 @@ The deployment ladder beyond Stage 4 is **not committed in v3.0**.
 Possible Stage 5+ surfaces, enumerated as tracked decisions:
 
 - **Stage 5 candidates.** Labels (the full Z-axis quality order from
-  Spec §3.3, sub-zone labels under the mixed-reading thesis of §6.24);
+  Spec §3.3, sub-zone labels under the mixed-reading thesis of §6.24;
+  v3.3 brought forward the zone names of the X and Z axes and the
+  region names in the view from BEING, by the user's decisions of
+  2026-10-15);
   surfacing of `items` data; surfacing of prose (`prose_sections`);
   surfacing of relations (`item_relations`).
 - **Stage 6 candidates.** Auth-gated editing surfaces — the WYSIWYG

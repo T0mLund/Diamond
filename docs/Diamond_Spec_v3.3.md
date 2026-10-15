@@ -174,8 +174,8 @@ have to remain "zoneless""*.
 The Y-axis carries no zone gradation. Past and Future are its only
 names: they name the landmarks at \((0, \mp 1, 0)\) on Shell 3 and the
 time quality in every zone, as the live database already records. The
-per-zone registers of §6.7.2 are therefore not zone names and are not
-shown as labels (see the note there).
+per-zone registers of §6.7.2 are not zone names; they were retired for
+now in v3.3 (see the note there).
 
 ## §4 — Governance and editorial rules
 
@@ -409,6 +409,16 @@ mixed-reading thesis of §6.24.
 
 ### 6.7 The time axis as nested horizons
 
+> **Retired for now (v3.3).** Asked whether the per-zone registers of
+> §6.7.2 should stay as a reading of the now zoneless axis or be
+> retired, the user answered on 2026-10-15 (verbatim): *"retire those
+> for now"*. The register table (§6.7.2), the nested-horizon reading it
+> expresses (§6.7.1) and H13 (§10) are therefore retired for now, and
+> the cosmological overlay at Shell 5 with them; §6.7.4 and §6.7.5,
+> which discuss that overlay, are kept for the record. The rule on verbs
+> in §6.7.3 stays in force. Birth and Death remain the limits at Shell 5
+> (§3.2). The text is kept unchanged below so that it can be restored.
+
 #### 6.7.1 What the section asserts
 
 The time axis (the Y-axis in the canonical orientation; Past at \((0,-1,0)\),
@@ -435,8 +445,8 @@ overlays at the same shell.
 
 **Note (v3.3).** The time axis is zoneless (§3.5). The registers in this
 table are not zone names and are never shown as labels; Past and Future
-remain the axis's only names in every zone. Whether the table stays as a
-reading of the axis or is retired is open (Summary §0).
+remain the axis's only names in every zone. The table is retired for now
+(user decision 2026-10-15; see the note under §6.7).
 
 #### 6.7.3 What scales along the time axis
 
@@ -922,9 +932,10 @@ adopts H8–H13.
 | **H10** | Every geometric quantity in v3.0+ documents is either analytic, bounded, or dated-measured with declared precision | **ADOPTED as rule (§4.6)** | §4.6 |
 | **H11** | Every substantive claim in the framework is tagged by epistemic class — derived, stipulated, or borrowed — and silent stipulation is prohibited | **ADOPTED as governance rule (§4.7)** | §4.7 |
 | **H12** | Sub-zone and landmark labels admit a mixed reading: Class T (tags/coordinates) is the default, Class H (hybrid) covers the seven landmarks of §3.1 plus a small set of inherited terms (v3.3; Birth and Death, Class H in v3.1–v3.2, are now the Class L limits), and Class S (phenomenological states) is empty by default and promotion requires a dedicated §4.7-tagged warrant | **ADOPTED as mixed-reading thesis (§6.24)** | §6.24 |
-| **H13** | The time axis is bounded by nested horizons: phenomenological Past / Future at inner zones, biographical-cultural at Z2, civilisational / cosmic at Z3, and cosmological (Big Bang past pole / heat-death–Big-Rip–CCC future pole) as an *overlay* at Shell 5 — the cosmological reading is identification-by-overlay, not identification-by-equation. *v3.3: the time axis is zoneless (§3.5), so the per-zone registers are not zone names; whether they stay is open (§6.7.2).* | **ADOPTED as structural commitment (§6.7)** | §6.7 |
+| **H13** | The time axis is bounded by nested horizons: phenomenological Past / Future at inner zones, biographical-cultural at Z2, civilisational / cosmic at Z3, and cosmological (Big Bang past pole / heat-death–Big-Rip–CCC future pole) as an *overlay* at Shell 5 — the cosmological reading is identification-by-overlay, not identification-by-equation. *v3.3: the time axis is zoneless (§3.5), so the per-zone registers are not zone names.* | **RETIRED for now (2026-10-15)**; adopted as a structural commitment in v3.0 | §6.7 |
 
 H8 and H9 are theorems. H10, H11, H12, H13 are rules and commitments
+(H13 retired for now in v3.3)
 adopted in the v2-draft → v3.0 transition. They remain in the register so
 the register tells a complete story of what each iteration produced.
 
