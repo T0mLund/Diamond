@@ -430,9 +430,10 @@ Z1).
     outside that sphere, and within its outline. The dimming begins about
     6° past that plane and is complete by about 20°. Each sphere passes
     32% of the label's contrast: 32% behind one sphere, 10% behind two,
-    3% behind three. Spheres that enclose the camera do not count; BEING
-    is never dimmed. This replaces the single 42% dim of the far side in
-    v3.2.
+    3% behind three. The rule is about the model's two halves rather than
+    the line of sight, so it reads the same at every distance, also when
+    the camera is inside Shell 3. BEING is never dimmed. This replaces
+    the single 42% dim of the far side in v3.2.
 - The user sees the diamond as a structure: shells, landmarks, axes, the
   bipyramid. This is the structural / diagrammatic reading consistent
   with Spec §4.4.

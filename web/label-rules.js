@@ -32,8 +32,9 @@ export const opaqueWeight = (distance) => smooth(distance, LEVEL_DISTANCE[1], LE
 // Dimming behind the spheres. A label is behind a sphere when it lies in
 // the far half of the model (beyond the plane through BEING that faces the
 // camera), on or outside that sphere, and inside its outline. The dimming
-// begins about 6 degrees past that plane and is complete by about 20; the
-// camera's own enclosing spheres do not count. Each sphere a label is behind
+// begins about 6 degrees past that plane and is complete by about 20. This
+// is a rule about the model's halves, not a ray test, so it reads the same
+// at every distance, the camera inside Shell 3 included. Each sphere a label is behind
 // transmits 32% of its contrast, so two spheres dim more than one.
 export function shellTransmission(camera, point, radii) {
   const c = Math.hypot(camera.x, camera.y, camera.z) || 1;
@@ -43,7 +44,7 @@ export function shellTransmission(camera, point, radii) {
   let layers = 0;
   for (const r of radii) {
     if (rho < r * 0.999) continue;
-    layers += smooth(-s / rho, 0.1, 0.35) * (1 - smooth(across, r * 0.94, r * 1.02)) * smooth(c, r, r * 1.06);
+    layers += smooth(-s / rho, 0.1, 0.35) * (1 - smooth(across, r * 0.94, r * 1.02));
   }
   return { opacity: 0.32 ** layers, layers };
 }
