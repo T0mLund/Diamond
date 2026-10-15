@@ -1,8 +1,8 @@
 name: db-verify
 
 # Sanity-checks the live Supabase schema after a db-push, against
-# Spec v3.1 §5 (φ-cascade), §3.1–§3.2 (landmarks) and §9 (schema state,
-# fully-private posture).
+# Spec v3.3 §5 (φ-cascade), §3.1–§3.2 (landmarks and limits) and §9
+# (schema state, fully-private posture).
 #
 # Runs on workflow_dispatch (so the owner or the assisting agent can
 # re-verify any time) and after every successful db-push run.
@@ -65,7 +65,7 @@ jobs:
           # Geometry (Spec §3, §4.6, §5)
           check "one_origin"        "select count(*) from public.coordinates where is_origin;" "1"
           check "shell_radii_exact" "select count(*) from public.shells where abs(radius::float8 - power($PHI, ord - 3)) > 1e-12;" "0"
-          check "landmarks_exact"   "select count(*) from public.coordinates c join (values ('being',0,0,0), ('heaven',1,0,0), ('hell',-1,0,0), ('future',0,1,0), ('past',0,-1,0), ('obliteration',0,0,$PHI), ('awakening',0,0,-$PHI), ('death',0,0,$PHI*$PHI), ('birth',0,0,-$PHI*$PHI)) as e(slug,x,y,z) using (slug) where abs(c.x-e.x) < 1e-12 and abs(c.y-e.y) < 1e-12 and abs(c.z-e.z) < 1e-12;" "9"
+          check "landmarks_exact"   "select count(*) from public.coordinates c join (values ('being',0,0,0), ('love',1,0,0), ('hate',-1,0,0), ('future',0,1,0), ('past',0,-1,0), ('obliteration',0,0,$PHI), ('awakening',0,0,-$PHI), ('death',0,0,$PHI*$PHI), ('birth',0,0,-$PHI*$PHI)) as e(slug,x,y,z) using (slug) where abs(c.x-e.x) < 1e-12 and abs(c.y-e.y) < 1e-12 and abs(c.z-e.z) < 1e-12;" "9"
           check "birth_death_unzoned" "select count(*) from public.coordinates where slug in ('birth','death') and public.compute_zone(x, y, z) is null;" "2"
 
           if [ "$fails" -gt 0 ]; then

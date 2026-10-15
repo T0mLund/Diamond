@@ -3,7 +3,7 @@
 Source repository for **The Diamond**, an interactive 3D model of a
 geometric framework for mapping human experience.
 
-**Status (2026-10-14):** framework documents at **v3.2**; Stages 1 and 2
+**Status (2026-10-15):** framework documents at **v3.3**; Stages 1 and 2
 of the deployment ladder (the geometric object and the view from BEING)
 are in `web/`, live at diamond.thoughtfree.com.
 
@@ -11,10 +11,10 @@ are in `web/`, live at diamond.thoughtfree.com.
 
 ```
 docs/                 Framework documents and governance
-  Diamond_Summary_v3.2.md            read first
-  Diamond_Containment_Note_v3.2.md   then this
-  Diamond_Spec_v3.2.md               then the Spec
-  Diamond_Roadmap_v3.2.md            then the Roadmap (Part IV = deployment ladder)
+  Diamond_Summary_v3.3.md            read first
+  Diamond_Containment_Note_v3.3.md   then this
+  Diamond_Spec_v3.3.md               then the Spec
+  Diamond_Roadmap_v3.3.md            then the Roadmap (Part IV = deployment ladder)
   Diamond_Versioning_Convention_v1.1.md
   ARCHITECTURE.md · SECRETS.md
   decision-notes/ · security-notes/
@@ -34,7 +34,9 @@ CHANGELOG.md          accumulated changes per committed version
   `web/fonts/`, so the site loads nothing from other servers and there is
   nothing to install or build. Geometry comes from the Spec constants in
   `web/constants.js`, computed exactly from φ at runtime. The files are
-  `torus.js` (the opening), `cone.js` (the view from BEING) and
+  `torus.js` (the opening), `cone.js` (the view from BEING),
+  `label-rules.js` (which labels show at each zoom level, and how they
+  dim), `focus-labels.js` (the names in the view from BEING) and
   `main.js` (scene, controls and labels).
 - **Security headers.** `netlify.toml` sets a strict Content Security
   Policy (same-origin only), `noindex`, and related headers. If the import
@@ -50,7 +52,7 @@ CHANGELOG.md          accumulated changes per committed version
   `anon` or `authenticated`. The web app does not read it. On the Free plan it
   pauses after a week without use; restoring is one click.
 - **Pipeline.** A push to `main` that touches `db/migrations/` runs
-  `db-push`, then `db-verify` checks the invariants of Spec v3.2 §9.
+  `db-push`, then `db-verify` checks the invariants of Spec v3.3 §9.
 
 ## Secrets
 
@@ -62,5 +64,5 @@ One Actions secret, `SUPABASE_DB_URL`. See [`docs/SECRETS.md`](docs/SECRETS.md).
   prototype, formerly live at diamond.thoughtfree.com. Kept for reference;
   not served, not maintained.
 - `docs/archive/v3/`: the v3.0 documents (committed 2026-06-01) and the
-  v3.1 documents (committed 2026-10-14).
+  v3.1 and v3.2 documents (committed 2026-10-14).
 - `docs/archive/v2-drafts/`: the never-committed v2 drafts.
