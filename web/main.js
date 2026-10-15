@@ -1,13 +1,14 @@
 // The Diamond — the geometric object and its two perspectives.
 //
-// Roadmap v3.2 Part IV (Stages 1 and 2) and Containment Note Appendix A:
+// Roadmap v3.3 Part IV (Stages 1 and 2) and Containment Note Appendix A:
 // Shells 1–3 as translucent spheres, the X / Y / Z reference axes, the
-// bipyramid skin built as the convex hull of its six landmarks, and the
-// nine Class-H landmarks. One navigation, two perspectives keyed to
-// Shell 1: outside it the camera orbits BEING (§A.3.1); zooming in past
-// Shell 1 carries the eye into BEING, from where it looks out as a light
-// cone that fills the screen (cone.js; Containment Note §A.3.2–§A.3.3 as
-// revised in v3.2). The model opens as the
+// bipyramid skin built as the convex hull of its six landmarks, the seven
+// Class-H landmarks and the two limits, Birth and Death. One navigation,
+// two perspectives keyed to Shell 1: outside it the camera orbits BEING
+// (§A.3.1); zooming in past Shell 1 carries the eye into BEING, from
+// where it looks out as a light cone that fills the screen (cone.js;
+// Containment Note §A.3.2–§A.3.3 as revised in v3.2 and v3.3; the limits
+// are not seen from there). The model opens as the
 // prototype's horn torus, which opens into the diamond on the first click
 // (torus.js). Faint dots on the shells show them turning with it.
 
@@ -15,7 +16,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
-import { SHELLS, DRAWN_SHELLS, LANDMARKS, AXIS_EXTENT, CAMERA, CONE, MERGED_PAIRS } from './constants.js';
+import { SHELLS, DRAWN_SHELLS, LANDMARKS, AXIS_EXTENT, CAMERA, CONE } from './constants.js';
 import { buildOpening } from './torus.js';
 import { buildCone } from './cone.js';
 
@@ -175,7 +176,7 @@ function init() {
     p.needsUpdate = true;
   };
 
-  // ── The nine Class-H landmarks (Spec §3.1–§3.2) ──────────────────────
+  // ── The seven Class-H landmarks and the two limits (Spec §3.1–§3.2) ───
   // Each marker is a dot inside its label, so it stays round at any angle
   // of view. BEING is the luminous gold point.
   const landmarks = LANDMARKS.map((l) => {
@@ -192,7 +193,7 @@ function init() {
     label.center.set(0, 0.5);               // the dot sits on the point; the name runs right
     label.position.set(...l.pos);
     scene.add(label);
-    return { slug: l.slug, label, element, isBeing, position: label.position, width: 0, flipped: false, opacity: -1 };
+    return { slug: l.slug, label, element, isBeing, limit: !!l.limit, position: label.position, width: 0, flipped: false, opacity: -1 };
   });
   // Label widths are measured lazily and re-measured after a resize or
   // once the web font has loaded.
@@ -457,9 +458,6 @@ function init() {
   const ndc = new THREE.Vector3();
   let lastAngleText = '';
   const bySlug = Object.fromEntries(landmarks.map((l) => [l.slug, l]));
-  const pairOf = {};
-  for (const pair of MERGED_PAIRS) { pairOf[pair.inner] = pair; pairOf[pair.outer] = pair; }
-  const MERGE_SEPARATION = 30;              // px between a pair, off-axis
 
   renderer.setAnimationLoop(() => {
     const now = performance.now();
@@ -633,32 +631,16 @@ function init() {
       for (const box of boxes) setLabel(box.entry, box.opacity, box.flip);
       labelRenderer.render(scene, camera);
     } else {
-      // From BEING: the eye is BEING, so its label is gone. Each other
-      // landmark sits at its direction in the cone. A pair on one line from
-      // BEING is drawn apart until it is viewed directly, where the two
-      // merge and the outer name remains.
+      // From BEING: the eye is BEING, so its label is gone. Birth and Death
+      // are limits and cannot be seen from the first person (user decision
+      // 2026-10-15), so only Awakening and Obliteration show on the
+      // vertical axis. Each other landmark sits at its direction in the cone.
       const alpha = (2 * mix - 1);
-      const projected = {};
       for (const entry of landmarks) {
-        if (entry.isBeing) { setLabel(entry, 0, false); continue; }
+        if (entry.isBeing || entry.limit) { setLabel(entry, 0, false); continue; }
         const p = cone.project(entry.position);
-        projected[entry.slug] = { x: p.x, y: p.y, angle: p.angle };
-      }
-      for (const pair of MERGED_PAIRS) {
-        const p = projected[pair.outer];
-        const off = Math.hypot(p.x - width / 2, p.y - height / 2);
-        const apart = smoothstep(p.angle, degToRad(1.5), degToRad(10));
-        if (off > 1e-3) {
-          p.x += ((p.x - width / 2) / off) * MERGE_SEPARATION * apart;
-          p.y += ((p.y - height / 2) / off) * MERGE_SEPARATION * apart;
-        }
-        projected[pair.inner].merge = smoothstep(p.angle, degToRad(1), degToRad(4));
-      }
-      for (const entry of landmarks) {
-        if (entry.isBeing) continue;
-        const p = projected[entry.slug];
         const onScreen = p.angle < degToRad(coneAngle / 2) * 1.2 && p.x > -2 && p.x < width + 2 && p.y > -2 && p.y < height + 2;
-        const opacity = onScreen ? alpha * (p.merge ?? 1) : 0;
+        const opacity = onScreen ? alpha : 0;
         setLabel(entry, opacity, p.x + entry.width > width - 4);
         entry.element.style.display = '';
         entry.element.style.transform = `translate(${entry.flipped ? -100 : 0}%, -50%) translate(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px)`;
