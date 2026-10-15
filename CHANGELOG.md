@@ -296,3 +296,81 @@ under `/docs/archive/v3/`, next to the v3.0 files.
 ### Numerical values
 
 - New: the cone's range, 24° to 220°. No framework values changed.
+
+---
+
+## v3.3 — committed 2026-10-15 (PR #15)
+
+**Baseline transition:** v3.2 → v3.3, a within-baseline revision
+(minor bump, Convention §4.2). The v3.2 files are archived unchanged
+under `/docs/archive/v3/`, next to the v3.0 and v3.1 files.
+
+### User decisions recorded (2026-10-15, verbatim)
+
+- *"First, lets update and settle the following, regardless of of the
+  FPV is implemented: - Birth and Death are to be a category onto
+  themselves."*
+- *"-Shell 1, 2, 3 are the only ones that would remain visible under any
+  circumstance. Shell 4 was developed to give an anchor point for the
+  polar points of Awakening and Obliteration, and shell 5 was developed
+  similarly to anchor the Birth and Death points. Birth and Death should
+  not be visible in the FPV. I reverse my earlier design choice to have
+  it merge with Awakening and Obliteration. You cannot comprehend those
+  from the first person perspective, only Awakening and Obliteration."*
+- *"- The past and future axis will have to remain "zoneless""*
+- *"-We will let go of heaven and hell, and change to the following:
+  Hate–Fear–Aversion-BEING-Attraction–Desire–Love"*
+
+### Revised commitments
+
+- **Love and Hate replace Heaven and Hell** (Spec §3.1, §3.4, §4.3, §5,
+  §6.22; Containment Note §2, §A.3.2 supplement; Roadmap I.5, IV.1).
+  The landmarks at \((\pm 1, 0, 0)\) are Love (+X) and Hate (−X); the
+  X-axis order is recorded verbatim in the new Spec §3.4.
+- **Birth and Death are the limits, Class L** (Spec §3.2, §6.24.2–
+  §6.24.4, §9, H12). A category of their own; v3.1 and v3.2 had them as
+  Class H. Seven Class-H landmarks and two limits.
+- **Birth and Death are not seen from BEING** (Containment Note §A.3.2,
+  §A.6, §A.7; Roadmap IV.2). Looking straight up from BEING shows
+  Obliteration, straight down Awakening.
+- **The time axis is zoneless** (new Spec §3.5; note in §6.7.2; H13).
+  Past and Future are its only names, in every zone.
+- **Shells 4 and 5 are anchors only** (Spec §5; Roadmap IV.1). Only
+  Shells 1–3 are ever drawn; this matches the build and `shells.role`.
+
+### Retired claims
+
+- Heaven and Hell as landmark names (v3.0 to v3.2).
+- Birth and Death as Class H (v3.1, v3.2).
+- The merged pairs (Containment Note §A.3.2, v3.2), with the open
+  reading of "respectively" and the 30 px pair separation of the build.
+- "The cosmological poles at Shell 5 are visible from cone mode"
+  (Containment Note §A.6, v3.0 to v3.2).
+
+### Open
+
+- Whether the per-zone time registers of Spec §6.7.2 stay as a reading
+  of the axis or are retired.
+
+### Implementation
+
+- `web/`: Love and Hate in place of Heaven and Hell; Birth and Death
+  carry a `limit` flag and are hidden in the view from BEING; the
+  merged-pair code is removed; `og.png` regenerated.
+- New migration `0017_love_hate_and_limits.sql`: renames the `heaven`
+  and `hell` rows of `coordinates` to `love` and `hate` (ids kept) and
+  updates the Love, Hate, Birth, Death, Zone 3 and Shell 3 descriptions.
+  Because db-push re-runs the baseline seed, 0017 also removes any
+  `heaven` or `hell` row that the seed re-creates once `love` and `hate`
+  exist. No schema change. `db-verify` now checks the `love` and `hate`
+  slugs.
+
+### Housekeeping
+
+- README, `docs/ARCHITECTURE.md` and the two archive READMEs updated
+  (v3.2 files archived). The Spec's §9 migration list now includes 0016
+  and 0017.
+
+### Numerical values
+
+- None changed.

@@ -1,12 +1,12 @@
 # Architecture
 
-Current as of 2026-10-14 (framework v3.2). For what is in the repository,
+Current as of 2026-10-15 (framework v3.3). For what is in the repository,
 see the README.
 
 ## Principle
 
 Use the smallest stack that serves the next stage of the deployment
-ladder (Roadmap v3.2 Part IV). Every additional account is something that
+ladder (Roadmap v3.3 Part IV). Every additional account is something that
 can lapse while the project rests: between June and October 2026, four
 did.
 
@@ -25,7 +25,7 @@ did.
 
 The web app reads no database. The landmark coordinates, shell radii and
 bipyramid hull are computed in `web/constants.js` from
-φ = (1 + √5) / 2, exactly as Spec v3.2 §3 and §5 define them. The
+φ = (1 + √5) / 2, exactly as Spec v3.3 §3 and §5 define them. The
 database holds the same values (at full precision since migration 0016),
 and `db-verify` checks that the two agree with the Spec.
 
