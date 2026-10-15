@@ -433,7 +433,7 @@ Zones 2 and 3: *"Narrowing moves outward"*.
 
 - None changed.
 
-## v3.4 — 2026-10-15 (awaiting approval; not merged)
+## v3.4 — committed 2026-10-15 (PR #16)
 
 **Baseline transition:** v3.3 → v3.4, a within-baseline revision
 (minor bump, Convention §4.2). The v3.3 files are archived unchanged
