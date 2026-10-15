@@ -432,3 +432,135 @@ Zones 2 and 3: *"Narrowing moves outward"*.
 ### Numerical values
 
 - None changed.
+
+## v3.4 — 2026-10-15 (awaiting approval; not merged)
+
+**Baseline transition:** v3.3 → v3.4, a within-baseline revision
+(minor bump, Convention §4.2). The v3.3 files are archived unchanged
+under `/docs/archive/v3/`, next to the v3.0 to v3.2 files.
+
+### User decisions recorded (2026-10-15, verbatim)
+
+In the message approving v3.3 for release:
+
+- *"Each zoom level should occur sooner, so that there is more space
+  around the diamond when the labels appear. Please just initiate
+  further back so that there is more space above and below in
+  general."*
+- *"I made mistakes in specifying which labels at which zoom level,
+  update with this: 0 is Birth and Death above and below an opaque
+  diamond and a _slightly translucent_ sphere , plus the forthcoming
+  additional elements. 1 is BEING, Birth, and death with a translucent
+  sphere and diamond, minus those additonal elements, 2 is BEING, Birth,
+  and Death plus Awakening and Obliteration, 3 is the previous plus
+  Love, Hate, Future and Past, 4 is the previous plus the rest."*
+- *"The intersection points should probably be in all caps, to
+  distinguish them from the combined zone names. Please provide a list
+  of all the zones with their current names, and I will edit their names
+  slightly and feed back to you."*
+- *"Meditation needs to be replaced across the board with Stillness (to
+  mirror Acceleration), and Contemplation should be replaced across the
+  board with Meditation."*
+- *"For the opening animation I like how the torus rotates and
+  oscillates. I would like to be able to drag it to tilt and rotate it,
+  and to  return to it by zooming all the way back (to what we might
+  call a -1 state)."*
+- *"At the 0 zoom level, where the diamond is opaque and the spheres
+  slightly translucent, the new element I want to include is an
+  "Indra's net". This should be a grid of faint replicas of the diamond,
+  just simple shapes in a spacious cube grid, receding into infinity,
+  and locked in relationship to the center of our diamond. None of these
+  would pass in between the viewer and the diamond.  This grid would
+  fade out exactly at the point where BEING begins to fade in at the
+  center of the diamond."*
+
+Answering four questions:
+
+- How zooming out should reach the torus: *"Disregard the current
+  limitations in this regard from the containemnt note, and update
+  it/remove those paragraphs. The zooming out should require two actions
+  to reach the torus. The first goes from whatever zoomed in state the
+  user is in out to zoom level 0 where it stops, to reach the torus zoom
+  level -1  the user has to initiate another zoom out gesture. This
+  comes in place of the slider that allowed a moving back and forth
+  through the animation in a previous iteration. I also want to add that
+  you need to refine the texture or definition of the spheres to make
+  their rotation more obvious, particularly while being inside the
+  sphere. At the moment the dots i suggested earlier are only faintly
+  visible at zoom level 1"*
+- What each copy in Indra's net should look like: *"Faint solid
+  bipyramids"*
+- Which names should be in capitals: *"Capital names are for every axis
+  point in FPV, as BEING is not visible there. In third person view, no
+  zone names should be visible. only axis points. We may need to refine
+  exactly what is meant by points and zones. Please clarify if
+  unclear"*
+- How the documents should read Indra's net and the space beyond
+  Shell 5: *"Leave the theory open"*
+
+Asked, after the agent proposed the terms axis point and region, which
+names the third-person view should show: *"All axis-point names"*.
+
+### Revised commitments
+
+- **Zooming out stops at zoom level 0, set farther back** (Containment
+  Note §A.3.1; Roadmap IV.1, acceptance criterion 7).
+- **Zoom level −1** (Containment Note §A.3.1; Spec §8.1): a second
+  zoom-out at level 0 folds the diamond back into the torus, in place of
+  the prototype's τ slider; the torus can be dragged.
+- **The labels at each zoom level** (Containment Note §A.3.1; Roadmap
+  IV.1), as the user corrected them; level 0 has an opaque diamond in a
+  slightly translucent sphere.
+- **Indra's net at level 0** (Containment Note §A.3.1; Spec §4.5, open
+  note; Roadmap IV.1).
+- **Axis points and regions** (Containment Note §A.3.1 and §A.3.2;
+  Roadmap IV.2): the third-person view names all axis points and never a
+  region; from BEING, axis points are in capitals.
+- **Stillness and Meditation** (Spec §3.3): Stillness replaces Meditation
+  (Zone 3); Meditation replaces Contemplation (Zone 2).
+- **Clearer dots** on the shells (Containment Note §A.3.1 and §A.3.2;
+  Roadmap IV.1).
+
+### Retired claims
+
+- The outer zoom limit at Shell 5 (v3.0 to v3.3) and the decision of
+  2026-10-14 to keep it.
+- The labels per zoom level as first given in v3.3.
+- "Zone names" for the single names outside; they are axis-point names.
+- Contemplation (Zone 2) and Meditation (Zone 3) as names of the −Z
+  qualities.
+
+### Open
+
+- The region names, which the user will revise.
+- What, if anything, Indra's net and the space beyond Shell 5 stand for.
+- The implementation choices of Containment Note §A.3.1 and §A.3.2,
+  pending the user's review.
+
+### Implementation
+
+- `web/constants.js`: level 0 at \(1.25\,\varphi^{2}\).
+  `web/label-rules.js`: the new levels, a quarter farther out; the
+  renamed qualities; the distance at which Indra's net fades.
+  `web/main.js`: Indra's net (one instanced mesh, drawn first in its own
+  pass); the slightly translucent sphere of level 0; the stop at level 0
+  and the fold back to the torus by wheel, pinch, Safari gesture and
+  keys; dragging the torus; the stronger dots. `web/cone.js`: stronger
+  dots from BEING. `web/focus-labels.js`: axis points in capitals.
+  `web/index.html`: the hint and the description for screen readers.
+  No change to the import map, so the CSP hash stands.
+- New migration `0018_stillness_and_meditation.sql`: renames Zone 3's
+  −Z quality to Stillness and Zone 2's to Meditation in `zones` and the
+  18 `sub_zones` that carry them, and updates the Zone 2, Zone 3 and
+  Awakening descriptions. No schema change. `db-verify` now checks the
+  vertical names, that no Contemplation remains, and the nine Stillness
+  regions.
+
+### Housekeeping
+
+- README, `docs/ARCHITECTURE.md` and the archive README updated (v3.3
+  files archived). The Spec's §9 migration list now includes 0018.
+
+### Numerical values
+
+- None changed.

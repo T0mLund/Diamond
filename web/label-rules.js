@@ -1,33 +1,52 @@
 // Display rules, not changes to the framework's coordinate partition.
-// User decisions 2026-10-15. Numeric fade/zoom thresholds are preview tuning.
+// User decisions 2026-10-15. Numeric fade/zoom thresholds are display
+// choices, open to revision.
 import { CAMERA } from './constants.js';
 
 const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
 const smooth = (x, a, b) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
 
+// Zoom levels (user decision 2026-10-15, revised the same day):
+//   0  Birth and Death, an opaque diamond in a slightly translucent
+//      sphere, and Indra's net
+//   1  BEING, Birth and Death; the sphere and diamond translucent
+//   2  adds Awakening and Obliteration
+//   3  adds Love, Hate, Future and Past
+//   4  adds the rest: the other axis points
 export const LABEL_LEVEL = {
   birth: 0, death: 0, being: 1, awakening: 2, obliteration: 2,
-  love: 3, hate: 3, acceleration: 3, meditation: 3,
-  past: 4, future: 4, fear: 4, aversion: 4, attraction: 4, desire: 4,
-  contemplation: 4, reflection: 4, oppression: 4, excitement: 4,
+  love: 3, hate: 3, past: 3, future: 3,
+  aversion: 4, attraction: 4, reflection: 4, oppression: 4,
+  fear: 4, desire: 4, meditation: 4, excitement: 4,
+  stillness: 4, acceleration: 4,
 };
+// The names of the axis points: where the affect (x) and vertical (z)
+// axes meet each zone's sphere. The time axis is zoneless: Past and Future.
+// Renamed 2026-10-15: Stillness (was Meditation) mirrors Acceleration;
+// Meditation (was Contemplation).
 export const ZONE_NAMES = [
   { x: ['Aversion', 'Attraction'], z: ['Reflection', 'Oppression'] },
-  { x: ['Fear', 'Desire'], z: ['Contemplation', 'Excitement'] },
-  { x: ['Hate', 'Love'], z: ['Meditation', 'Acceleration'] },
+  { x: ['Fear', 'Desire'], z: ['Meditation', 'Excitement'] },
+  { x: ['Hate', 'Love'], z: ['Stillness', 'Acceleration'] },
 ];
 
-// Five zoom levels inside the existing Shell 1 to Shell 5 camera range.
 // Level n is complete at LEVEL_DISTANCE[n] and fades in over the 12%
-// farther out. Level 0 is the plateau at the outer limit.
-export const LEVEL_DISTANCE = [CAMERA.maxDistance, 2.1, 1.7, 1.33, 1.0];
+// farther out. Level 0 is the plateau at the outermost camera position.
+// The levels sit a quarter farther out than in v3.3, so the names
+// appear with more room around the model (user, 2026-10-15).
+const SPREAD = 1.25;
+export const LEVEL_DISTANCE = [CAMERA.maxDistance, 2.1 * SPREAD, 1.7 * SPREAD, 1.33 * SPREAD, 1.0 * SPREAD];
 export function labelReveal(slug, distance) {
-  const level = LABEL_LEVEL[slug];
-  if (!level) return 1;
+  const level = LABEL_LEVEL[slug] ?? 1;
+  if (level === 0) return 1;
   const D = LEVEL_DISTANCE[level];
   return 1 - smooth(distance, D, D * 1.12);
 }
 export const opaqueWeight = (distance) => smooth(distance, LEVEL_DISTANCE[1], LEVEL_DISTANCE[1] * 1.12);
+// Indra's net is gone at the distance where BEING begins to fade in
+// (user, 2026-10-15), and fully there a little farther out.
+export const BEING_BEGINS = LEVEL_DISTANCE[1] * 1.12;
+export const netWeight = (distance) => smooth(distance, BEING_BEGINS, BEING_BEGINS * 1.05);
 
 // Dimming behind the spheres. A label is behind a sphere when it lies in
 // the far half of the model (beyond the plane through BEING that faces the

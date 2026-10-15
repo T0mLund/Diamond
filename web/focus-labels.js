@@ -1,7 +1,14 @@
 // The active region's name replaces the near axial labels. Next-zone
 // axial labels stay faint, spatially anchored to their own directions.
+// From BEING, every axis point's name is in capitals, as BEING is not
+// visible there; the combined region names keep their capitalisation
+// (user decision 2026-10-15).
 import * as THREE from 'three';
 import { ZONE_NAMES, closestDirection, compoundName, zoneForAngle, polarWeight } from './label-rules.js';
+
+// A region facing one axis straight on is named by that axis point alone.
+const isPoint = (signs) => signs.filter(Boolean).length === 1;
+const shown = (name, point) => (point ? name.toUpperCase() : name);
 
 export function buildFocusLabels(container) {
   const NS = 'http://www.w3.org/2000/svg';
@@ -70,8 +77,10 @@ export function buildFocusLabels(container) {
         const opacity = angularAlpha * weights[z] * (1 - polar);
         if (opacity < 0.005) continue;
         const item = textNode(`c-${side}-${z}`, true);
-        const name = compoundName(z, region.signs);
+        const point = isPoint(region.signs);
+        const name = shown(compoundName(z, region.signs), point);
         item.content.textContent = name;
+        item.text.classList.toggle('is-caps', point);
         const size = baseSize;
         item.text.setAttribute('font-size', size.toFixed(1));
         const p = { ...cone.project(position.set(...region.vector)) };
@@ -81,7 +90,7 @@ export function buildFocusLabels(container) {
         // At a pole the latitude degenerates, so use a straight baseline.
         const world = region.vector;
         const latitudeRadius = Math.hypot(world[0], world[1]);
-        const halfPixels = Math.max(55, name.length * size * 0.34);
+        const halfPixels = Math.max(55, name.length * size * (point ? 0.42 : 0.34));
         const phi = Math.atan2(world[1], world[0]);
         const span = Math.min(0.72, halfPixels / Math.max(width,height) * angle * Math.PI / 180 / Math.max(0.35,latitudeRadius));
         let path = '';
@@ -114,7 +123,8 @@ export function buildFocusLabels(container) {
       // Straight ahead along an axis, the current name sits atop the next
       // one, which is larger and fainter (Option 2, 2026-10-14).
       const size = same ? baseSize*1.8 : Math.max(13,baseSize*0.9);
-      item.content.textContent=name;
+      item.content.textContent=shown(name, true);
+      item.text.classList.add('is-caps');
       item.text.setAttribute('x', p.x.toFixed(1));
       item.text.setAttribute('y', (p.y + (same ? baseSize*0.62 + size*0.5 : 0)).toFixed(1));
       item.text.setAttribute('font-size', size.toFixed(1));
@@ -122,7 +132,8 @@ export function buildFocusLabels(container) {
     }
     if (polar > 0.005) {
       const p={...cone.project(position.set(...selected.vector))};
-      cap.content.textContent=selected.signs[2]>0?'Obliteration':'Awakening';
+      cap.content.textContent=selected.signs[2]>0?'OBLITERATION':'AWAKENING';
+      cap.text.classList.add('is-caps');
       cap.text.setAttribute('x',p.x.toFixed(1));
       cap.text.setAttribute('y',p.y.toFixed(1));
       cap.text.setAttribute('font-size',baseSize.toFixed(1));
@@ -130,7 +141,7 @@ export function buildFocusLabels(container) {
     }
     svg.dataset.zone=String(active+1);
     svg.dataset.region=selected.id;
-    svg.dataset.name=polar>0.5 ? (selected.signs[2]>0?'Obliteration':'Awakening') : compoundName(active,selected.signs);
+    svg.dataset.name=polar>0.5 ? (selected.signs[2]>0?'OBLITERATION':'AWAKENING') : shown(compoundName(active,selected.signs), isPoint(selected.signs));
   }
   return { update, element: svg };
 }

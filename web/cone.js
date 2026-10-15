@@ -92,7 +92,9 @@ export function buildCone({ hullGeometry, shellDots }) {
   }));
   edges.renderOrder = 2;
 
-  // The shells' dots, the same points as in the outside view.
+  // The shells' dots, the same points as in the outside view; from here
+  // they are what shows the view turning, so they are drawn clearly and
+  // grow as the cone narrows (user request 2026-10-15).
   const dotUniforms = { ...uniforms, uSize: { value: 2 }, uColor: { value: new THREE.Color(0x3f4248) } };
   const dots = shellDots.map((geometry) => {
     const points = new THREE.Points(geometry, new THREE.ShaderMaterial({
@@ -103,7 +105,7 @@ export function buildCone({ hullGeometry, shellDots }) {
           if (vAngle > uLimit) discard;
           float r = length(gl_PointCoord - 0.5);
           if (r > 0.5) discard;
-          gl_FragColor = vec4(uColor, 0.22 * uMix * smoothstep(0.5, 0.25, r));
+          gl_FragColor = vec4(uColor, 0.5 * uMix * smoothstep(0.5, 0.25, r));
           #include <colorspace_fragment>
         }`,
       transparent: true, depthTest: false, depthWrite: false,
@@ -135,7 +137,7 @@ export function buildCone({ hullGeometry, shellDots }) {
     uniforms.uScale.value.set(state.span / width, state.span / height);
     uniforms.uLimit.value = Math.min(state.half * 1.25 + 0.1, Math.PI - 0.08);
     uniforms.uMix.value = mix;
-    dotUniforms.uSize.value = 2 * pixelRatio;
+    dotUniforms.uSize.value = 3.4 * pixelRatio * THREE.MathUtils.clamp(Math.sqrt(220 / angleDegrees), 1, 2.4);
   }
 
   // Screen position of a direction from BEING, and its angle from the
