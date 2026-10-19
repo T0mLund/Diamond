@@ -585,3 +585,13 @@ Site-only change under `web/`; no spec, schema or geometry change. See
 - Opening: gold lines fade to grey; spheres emerge from the centre.
 - Birth and Death carry black point markers.
 - `focus-labels.js` removed (unused); `main.js` rewritten. `#debug` not carried over.
+
+### Follow-up, 2026-10-19: interface elements removed, Indra's net restored
+
+- Removed the elements added without consultation: masthead text, the
+  Outside / From BEING switch, the information button and panel, the travel
+  readout, the journey bar and hint, the plus/minus buttons and the
+  look-toward menu. Keyboard keys (+, −, arrows, Home, R) still work.
+- Restored the v3.4 Indra's net: it appears after the torus opens and has
+  gone before BEING becomes visible.
+- Any hint, caption or control is to be agreed with the user before it is added.
