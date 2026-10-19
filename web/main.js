@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import { shellRadius, LANDMARKS, AXIS_EXTENT, CAMERA } from './constants.js';
-import { DIRECTIONS, closestDirection, compoundName, ZONE_NAMES, SPHERE_NAMES, shellLayerOpacity, labelReveal } from './label-rules.js';
+import { DIRECTIONS, closestDirection, compoundName, ZONE_NAMES, SPHERE_NAMES, shellLayerOpacity, labelReveal, netWeight } from './label-rules.js';
 import { buildOpening } from './torus.js';
 import { buildCone } from './cone.js';
 import { buildBeingLabels } from './being-labels.js';
@@ -24,18 +24,7 @@ const state = { nav: START, target: START, orbitYaw: degToRad(-42), orbitPitch: 
 const direction = new THREE.Vector3(), orbit = new THREE.Vector3(), forward = new THREE.Vector3(), v = new THREE.Vector3();
 const routeDefault = DIRECTIONS.find((d) => d.id === '-1,-1,-1');
 state.route = routeDefault;
-const routeSelect = $('#route');
-// Put familiar test routes first; all 26 display directions remain available.
-const routeOrder = [...DIRECTIONS].sort((a,b) => {
-  const priority = ['-1,-1,-1','1,0,0','0,0,-1','-1,0,0','0,0,1'];
-  const x=priority.indexOf(a.id), y=priority.indexOf(b.id);
-  return (x<0?99:x)-(y<0?99:y) || a.id.localeCompare(b.id);
-});
-for (const d of routeOrder) {
-  const option=document.createElement('option'); option.value=d.id;
-  option.textContent=compoundName(0,d.signs); routeSelect.append(option);
-}
-routeSelect.value=state.route.id;
+
 
 let renderer;
 try { renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'low-power'}); }
@@ -108,10 +97,27 @@ morph.edges.renderOrder=13;morph.grid.renderOrder=13;scene.add(morph.edges,morph
 morph.set(0,0);
 
 // Faint orbital context; no replica is between the camera and the central model.
-const netCells=[];for(let x=-2;x<=2;x++)for(let y=-2;y<=2;y++)for(let z=-2;z<=2;z++)if(x||y||z)netCells.push([x,y,z]);
-const netMaterial=new THREE.MeshBasicMaterial({color:0xb0b3b8,transparent:true,opacity:.035,depthWrite:false});
+// Indra's net (zoom level 0; user decision 2026-10-15). Faint solid copies of the
+// bipyramid on a spacious cube grid, fixed to the model's frame, receding until they
+// merge with the background. Copies near the eye are faded so the frame's edges stay
+// quiet. The nearest copies are NET.spacing from BEING, more than twice the farthest
+// camera distance, so none can come between the eye and the diamond. The net has gone
+// by the distance at which BEING begins to appear (label-rules.js). This is the v3.4
+// implementation, restored.
+const NET={spacing:9,reach:7};
+const netCells=[];
+for(let i=-NET.reach;i<=NET.reach;i++)for(let j=-NET.reach;j<=NET.reach;j++)for(let k=-NET.reach;k<=NET.reach;k++)if((i||j||k)&&Math.hypot(i,j,k)<=NET.reach+.5)netCells.push([i,j,k]);
+const netMaterial=new THREE.ShaderMaterial({
+  uniforms:{uColor:{value:new THREE.Color(0xbfc2c8)},uBackground:{value:new THREE.Color(0xf1f1f1)},uLight:{value:new THREE.Vector3()},uWeight:{value:0},uReach:{value:NET.spacing*NET.reach}},
+  vertexShader:`uniform float uReach;varying vec3 vNormal;varying float vFade;void main(){vec4 world=modelMatrix*instanceMatrix*vec4(position,1.0);vec4 mv=viewMatrix*world;vNormal=normal;float dist=length(mv.xyz);vFade=smoothstep(8.0,20.0,dist)*exp(-dist/30.0)*(1.0-smoothstep(0.7*uReach,uReach,dist));gl_Position=projectionMatrix*mv;}`,
+  fragmentShader:`uniform vec3 uColor;uniform vec3 uBackground;uniform vec3 uLight;uniform float uWeight;varying vec3 vNormal;varying float vFade;void main(){float lit=0.74+0.26*max(dot(normalize(vNormal),uLight),0.0);gl_FragColor=vec4(mix(uBackground,uColor*lit,0.4*vFade*uWeight),1.0);\n#include <colorspace_fragment>\n}`
+});
 const net=new THREE.InstancedMesh(hullGeometry,netMaterial,netCells.length),matrix=new THREE.Matrix4();
-netCells.forEach(([x,y,z],i)=>net.setMatrixAt(i,matrix.makeTranslation(x*9,y*9,z*9)));net.renderOrder=0;scene.add(net);
+netCells.forEach(([x,y,z],n)=>net.setMatrixAt(n,matrix.makeTranslation(x*NET.spacing,y*NET.spacing,z*NET.spacing)));
+net.frustumCulled=false;
+const netScene=new THREE.Scene();netScene.add(net);
+const netCamera=new THREE.PerspectiveCamera(104,1,1,NET.spacing*(NET.reach+2)*1.8);netCamera.up.set(0,0,1);
+const netLight=new THREE.Vector3(-.5,.8,1);
 
 // Outside labels have no black point markers. Crossings are represented by ripples.
 const exterior=[];
@@ -140,23 +146,7 @@ function faceAlong(yaw,pitch){
 // No controls are disabled at zero, no active touches are cleared at mode transitions.
 function setTarget(n){state.target=clamp(n,...BOUNDS);}
 function move(amount){state.gestures++;setTarget(state.target+amount);}
-function setRoute(d){state.route=d;routeSelect.value=d.id;state.yawOffset=0;state.pitchOffset=0;}
-function beginTravel(){
-  setRoute(DIRECTIONS.find(d=>d.id===routeSelect.value)||routeDefault);
-  orbit.copy(direction.set(...state.route.vector)).negate();
-  state.orbitYaw=Math.atan2(orbit.y,orbit.x);state.orbitPitch=Math.asin(orbit.z);
-  setTarget(CENTRE);
-}
-$('#within').addEventListener('click',beginTravel);
-$('#outside').addEventListener('click',()=>setTarget(0));
-$('#origin').addEventListener('click',()=>{setTarget(CENTRE);state.yawOffset=0;state.pitchOffset=0;});
-routeSelect.addEventListener('change',()=>{setRoute(DIRECTIONS.find(d=>d.id===routeSelect.value));state.nav=CENTRE;setTarget(CENTRE);});
-$('#forward').addEventListener('click',()=>move(.14));
-$('#backward').addEventListener('click',()=>move(-.14));
-const about=$('.about-panel');
-function showAbout(show){about.hidden=!show;$('#about').setAttribute('aria-expanded',String(show));}
-$('#about').addEventListener('click',()=>showAbout(about.hidden));$('#close-about').addEventListener('click',()=>showAbout(false));
-
+function setRoute(d){state.route=d;state.yawOffset=0;state.pitchOffset=0;}
 function turn(dx,dy){
   if(state.nav>1.08){const perPixel=degToRad(state.coneAngle)/Math.max(width,height);state.yawOffset+=dx*perPixel;state.pitchOffset=clamp(state.pitchOffset+dy*perPixel,-Math.PI/2-Math.asin(state.route.vector[2]),Math.PI/2-Math.asin(state.route.vector[2]));}
   else {state.orbitYaw-=dx*.006;state.orbitPitch=clamp(state.orbitPitch+dy*.005,-1.35,1.35);}
@@ -183,7 +173,6 @@ stage.addEventListener('gesturestart',e=>{e.preventDefault();gestureScale=e.scal
 stage.addEventListener('gesturechange',e=>{e.preventDefault();if(pointers.size>=2||!e.scale)return;move(Math.log(e.scale/gestureScale)*.85);gestureScale=e.scale;});
 window.addEventListener('keydown',e=>{
   if(e.target.matches('select,input,textarea'))return;
-  if(e.key==='Escape'){showAbout(false);return;}
   if(e.key==='r'||e.key==='R'){setTarget(0);return;}
   if(['+','=','-','_','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home'].includes(e.key))e.preventDefault();
   if(e.key==='+'||e.key==='=')move(.09);
@@ -283,22 +272,10 @@ function updateOutside(alpha,a,b){
   }
   labels.render(scene,camera);
 }
-function updateUI(focus,ahead,active){
+function updateUI(){
   const inside=state.nav>1.08;
   state.mode=state.nav<-.99?'torus':state.nav<0?'unfolding':inside?'within':'outside';
-  $('.route-panel').hidden=!inside;
-  $('#outside').setAttribute('aria-pressed',String(!inside));$('#within').setAttribute('aria-pressed',String(inside));
   stage.dataset.mode=state.mode;
-  $('#journey-fill').style.width=`${(state.nav+1)/4*100}%`;
-  $('#forward').disabled=state.target>=END-.0001;$('#backward').disabled=state.target<=-1+.0001;
-  let name,detail;
-  if(state.nav<0){name=state.nav<-.99?'Torus':'Unfolding';detail='One continuous movement. Reverse at any point.';}
-  else if(inside){
-    name=`From BEING · ${Math.round(state.coneAngle)}° cone`;
-    detail=`${compoundName(ahead,active.signs)} · ${SPHERE_NAMES[focus<R[0]?0:focus<R[1]?1:2]}`;
-  }else{name='Outside view';detail='Responsiveness, Involvement, Fixation. Ripples mark the crossings.';}
-  const key=name+'|'+detail;if(key!==lastStatus){lastStatus=key;$('#view-name').textContent=name;$('#view-detail').textContent=detail;}
-  $('#hint').textContent=inside?'Drag to rotate the cone · Pinch or scroll to focus':state.nav<-.99?'Drag to turn · Tap or zoom in to unfold':'Drag to turn · Scroll or pinch to move';
 }
 function tick(dt){
   elapsed+=dt;
@@ -331,12 +308,19 @@ function tick(dt){
     }
   });
   ripples.forEach(({r,mesh})=>{mesh.scale.setScalar(Math.max(.0001,growth));mesh.visible=shellsIn>.001;mesh.material.uniforms.uWeight.value=shellsIn;mesh.material.uniforms.uInside.value=camera.position.length()<r?1:0;});
-  net.visible=state.nav>=0&&state.nav<.2;netMaterial.opacity=.022*(1-smoothstep(state.nav,.01,.2));
   updateOutside(1-inside,a,b);
   cone.setView(camera,state.coneAngle,width,height,inside,renderer.getPixelRatio());
   const info=atlas.update({cone,angle:state.coneAngle,forward,width,height,alpha:inside,dt});
-  updateUI(info.focus,info.ahead,info.active);
+  updateUI();
   renderer.clear();
+  const netShown=netWeight(camera.position.length())*shellsIn*(1-inside);
+  if(netShown>.003){
+    netCamera.position.copy(camera.position);netCamera.quaternion.copy(camera.quaternion);
+    netCamera.fov=camera.fov;netCamera.aspect=camera.aspect;netCamera.updateProjectionMatrix();
+    netMaterial.uniforms.uLight.value.copy(netLight).applyQuaternion(camera.quaternion).normalize();
+    netMaterial.uniforms.uWeight.value=netShown;
+    renderer.render(netScene,netCamera);renderer.clearDepth();
+  }
   if(inside<1)renderer.render(scene,camera);
   if(inside>0)renderer.render(cone.scene,cone.screen);
 
