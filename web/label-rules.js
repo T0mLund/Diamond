@@ -10,25 +10,32 @@ const smooth = (x, a, b) => { const t = clamp((x - a) / (b - a)); return t * t *
 //   0  Birth and Death, an opaque diamond in a slightly translucent
 //      sphere, and Indra's net
 //   1  BEING, Birth and Death; the sphere and diamond translucent
-//   2  adds Awakening and Obliteration
-//   3  adds Love, Hate, Future and Past
+//   2  adds Permanence and Erasure
+//   3  adds Craving, Hostility, Inflation and Abasement
 //   4  adds the rest: the other axis points
 export const LABEL_LEVEL = {
-  birth: 0, death: 0, being: 1, awakening: 2, obliteration: 2,
-  love: 3, hate: 3, past: 3, future: 3,
-  aversion: 4, attraction: 4, reflection: 4, oppression: 4,
-  fear: 4, desire: 4, meditation: 4, excitement: 4,
-  stillness: 4, acceleration: 4,
+  birth: 0, death: 0, being: 1, permanence: 2, erasure: 2,
+  craving: 3, hostility: 3, inflation: 3, abasement: 3,
+  discernment: 4, appreciation: 4, humility: 4, dignity: 4, vitality: 4, release: 4,
+  resistance: 4, wanting: 4, deference: 4, pride: 4, striving: 4, withdrawal: 4,
+  insistence: 4, escape: 4,
 };
 // The names of the axis points: where the affect (x) and vertical (z)
-// axes meet each zone's sphere. The time axis is zoneless: Past and Future.
+// axes meet each zone's sphere. All three axes are zoned.
 // Renamed 2026-10-15: Stillness (was Meditation) mirrors Acceleration;
 // Meditation (was Contemplation).
 export const ZONE_NAMES = [
-  { x: ['Aversion', 'Attraction'], z: ['Reflection', 'Oppression'] },
-  { x: ['Fear', 'Desire'], z: ['Meditation', 'Excitement'] },
-  { x: ['Hate', 'Love'], z: ['Stillness', 'Acceleration'] },
+  { x: ['Discernment', 'Appreciation'], y: ['Humility', 'Dignity'], z: ['Vitality', 'Release'] },
+  { x: ['Resistance', 'Wanting'], y: ['Deference', 'Pride'], z: ['Striving', 'Withdrawal'] },
+  { x: ['Hostility', 'Craving'], y: ['Abasement', 'Inflation'], z: ['Insistence', 'Escape'] },
 ];
+// Contemplative-mandala vocabulary (proposal of 19 October 2026). The three
+// spheres describe how tightly a position is held, not how much of anything
+// there is. Birth, Death and BEING are unchanged.
+export const SPHERE_NAMES = ['Responsiveness', 'Involvement', 'Fixation'];
+export const AXIS_NAMES = {
+  x: ['Rejecting', 'Grasping'], y: ['Self-diminishment', 'Self-elevation'], z: ['Insistence on continuance', 'Insistence on disappearance'],
+};
 
 // Level n is complete at LEVEL_DISTANCE[n] and fades in over the 12%
 // farther out. Level 0 is the plateau at the outermost camera position.
@@ -53,8 +60,14 @@ export const netWeight = (distance) => smooth(distance, BEING_BEGINS, BEING_BEGI
 // camera), on or outside that sphere, and inside its outline. The dimming
 // begins about 6 degrees past that plane and is complete by about 20. This
 // is a rule about the model's halves, not a ray test, so it reads the same
-// at every distance, the camera inside Shell 3 included. Each sphere a label is behind
-// transmits 32% of its contrast, so two spheres dim more than one.
+// at every distance, the camera inside Shell 3 included. Sphere count
+// contributes to a shared contrast curve: 90% after one sphere, 61.5%
+// after two and 33% after three. This is not repeated multiplication:
+// the old 32%-per-layer rule left only 3.3% after three spheres.
+export function shellLayerOpacity(layers) {
+  const n = clamp(layers, 0, 3);
+  return n <= 1 ? 1 - 0.1 * n : 0.9 - (n - 1) * 0.285;
+}
 export function shellTransmission(camera, point, radii) {
   const c = Math.hypot(camera.x, camera.y, camera.z) || 1;
   const s = (point.x * camera.x + point.y * camera.y + point.z * camera.z) / c;
@@ -65,7 +78,7 @@ export function shellTransmission(camera, point, radii) {
     if (rho < r * 0.999) continue;
     layers += smooth(-s / rho, 0.1, 0.35) * (1 - smooth(across, r * 0.94, r * 1.02));
   }
-  return { opacity: 0.32 ** layers, layers };
+  return { opacity: shellLayerOpacity(layers), layers };
 }
 
 // Angular label anchors: six axes, twelve plane bisectors and eight
@@ -86,10 +99,11 @@ export function closestDirection(forward, previous) {
 export function compoundName(zoneIndex, signs) {
   const [x, y, z] = signs;
   const names = ZONE_NAMES[zoneIndex];
-  const time = y === 0 ? '' : y < 0 ? 'Past' : 'Future';
-  const affect = x === 0 ? '' : names.x[x > 0 ? 1 : 0];
-  const vertical = z === 0 ? '' : names.z[z > 0 ? 1 : 0];
-  return [time, [affect, vertical].filter(Boolean).join('-')].filter(Boolean).join(' ');
+  const parts = [];
+  if (x) parts.push(names.x[x > 0 ? 1 : 0]);
+  if (y) parts.push(names.y[y > 0 ? 1 : 0]);
+  if (z) parts.push(names.z[z > 0 ? 1 : 0]);
+  return parts.join(' \u00b7 ');
 }
 // Narrowing moves the focus outward (user, 2026-10-15). The focus is in
 // Zone 1 from the widest cone down to 118 degrees, in Zone 2 down to 66,

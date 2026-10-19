@@ -38,7 +38,7 @@ const CLIP = /* glsl */ `
   varying float vAngle;
 `;
 
-export function buildCone({ hullGeometry, shellDots }) {
+export function buildCone({ hullGeometry, shellDots = [], shellRipples = [] }) {
   const uniforms = {
     uView: { value: new THREE.Matrix3() },
     uHalf: { value: 1 },
@@ -114,7 +114,14 @@ export function buildCone({ hullGeometry, shellDots }) {
     return points;
   });
 
-  for (const object of [backdrop, faces, edges, ...dots]) {
+  // The same surface-bound ripples as outside, projected from BEING.
+  const rings = shellRipples.map(geometry => new THREE.LineSegments(geometry, new THREE.ShaderMaterial({
+    uniforms, transparent:true, depthTest:false, depthWrite:false,
+    vertexShader: PROJECT + 'attribute float strength; varying float vStrength; void main(){vStrength=strength;gl_Position=coneProject(position);}',
+    fragmentShader: CLIP + 'varying float vStrength; void main(){if(vAngle>uLimit)discard;gl_FragColor=vec4(.25,.26,.28,.48*vStrength*uMix);}'
+  })));
+  rings.forEach(ring=>ring.renderOrder=3);
+  for (const object of [backdrop, faces, edges, ...dots, ...rings]) {
     object.frustumCulled = false;
     scene.add(object);
   }

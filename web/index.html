@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>The Diamond</title>
-  <meta name="description" content="The Diamond: an interactive 3D model.">
+  <meta name="description" content="The Diamond: an interactive 3D model, a contemplative mandala in a modern visual language.">
   <meta property="og:title" content="The Diamond">
   <meta property="og:description" content="An interactive 3D model.">
   <meta property="og:type" content="website">
@@ -27,10 +27,24 @@
   </script>
 </head>
 <body>
-  <main id="stage" role="img" aria-label="The Diamond, a 3D model. It opens as a torus, which you can drag or turn with the arrow keys; click, tap, press Enter or zoom in to open it into the diamond. The diamond first appears solid inside a slightly translucent sphere, surrounded by Indra's net, a grid of faint copies of the diamond. Drag to orbit, and scroll or pinch to zoom; arrow keys orbit and plus or minus zoom. Zooming out stops at this first view; zooming out again folds the diamond back into the torus. Zooming in past the innermost sphere carries you into BEING, from where you look out as a light cone: drag or arrow keys to look around, scroll, pinch or plus and minus to narrow or widen the cone, and widen it past its widest to step back out. Outside, more names of axis points appear as you zoom in; from BEING, the name of the region you face is shown, and narrowing the cone moves the focus outward from Zone 1 to Zones 2 and 3."></main>
-  <p id="hint" class="hint" aria-hidden="true">Drag to turn. Click, tap or zoom in to open.</p>
-  <p id="caption" class="caption" role="status"><span class="caption__angle">Light cone from BEING <span id="cone-angle" aria-hidden="true">220</span>&deg;</span> Wider: open awareness, up to 220&deg; like human vision. Narrower: focused attention. A design choice that makes a statement about experience.</p>
-  <p id="fallback" class="fallback" hidden>The Diamond needs a browser with WebGL enabled.</p>
+  <a class="skip" href="#stage">Skip to the model</a>
+  <main id="stage" tabindex="0" aria-label="Interactive Diamond. Drag to turn or look. Scroll, pinch, or use plus and minus to move continuously from the torus, through the outside view, into BEING, then to narrow the cone outward through the model. Press R to return outside."></main>
+  <header class="masthead">
+    <div class="identity"><span class="eyebrow">A PHILOSOPHICAL INSTRUMENT</span><h1>The Diamond</h1><p>A contemplative mandala · view from BEING</p></div>
+    <nav class="view-switch" aria-label="Viewpoint"><button id="outside" class="view-button" aria-pressed="true">Outside</button><button id="within" class="view-button" aria-pressed="false">From BEING <span aria-hidden="true">↗</span></button></nav>
+  </header>
+  <section class="route-panel" aria-label="Direction of view" hidden>
+    <label for="route">LOOK TOWARD</label><select id="route" aria-label="Choose direction to look toward"></select><button id="origin" title="Widen the cone to its full extent">Widen to full cone</button>
+  </section>
+  <footer class="instrument">
+    <div class="travel-readout" aria-live="polite"><span id="view-name">Outside view</span><span id="view-detail">Responsiveness, Involvement, Fixation. Ripples mark the crossings.</span></div>
+    <div class="journey" aria-label="Journey progress"><div class="journey-line"><span id="journey-fill"></span></div><div class="journey-marks"><span>Torus</span><span>Outside</span><span>BEING 220°</span><span>24°</span></div></div>
+    <p id="hint">Drag to turn · Scroll or pinch to move</p>
+    <div class="zoom-buttons" aria-label="Travel controls"><button id="backward" aria-label="Move backward" title="Move backward (−)">−</button><button id="forward" aria-label="Move forward" title="Move forward (+)">+</button></div>
+  </footer>
+  <button class="about-button" id="about" aria-label="About The Diamond" aria-expanded="false">i</button>
+  <aside class="about-panel" hidden><button id="close-about" aria-label="Close notes">×</button><h2>The view from BEING</h2><p>The eye stays at BEING. Drag to pan and tilt the cone around the spheres. Pinch or scroll to narrow the cone as it moves outward through the names, then widen it to return toward the centre.</p><p>Names keep a fixed size in the model, so narrowing magnifies them. Closer layers dissolve as the cone passes them; farther layers remain faintly present.</p><p>Three concentric ripples mark each axis–sphere crossing. They are larger on larger spheres.</p><p>Vocabulary. The three spheres are Responsiveness, Involvement and Fixation: how tightly a position is held, not how much of anything there is. The three axes are Rejecting and Grasping (across), Self-diminishment and Self-elevation (up and down in the equator), and Insistence on continuance and on disappearance (the long axis, with Permanence and Erasure at its tips). Birth, Death and BEING are unchanged, and Birth is not Permanence, nor Death Erasure.</p><p class="note">A contemplative mandala in a modern visual language: a proposal, not a traditional Buddhist system and not a measurement. Landmark coordinates are unchanged.</p></aside>
+  <p id="fallback" role="alert" hidden>The Diamond needs a browser with WebGL enabled. Try a browser with hardware acceleration turned on.</p>
   <noscript><p class="fallback">The Diamond needs JavaScript and WebGL.</p></noscript>
   <script type="module" src="main.js"></script>
 </body>

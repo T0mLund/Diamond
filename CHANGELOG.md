@@ -564,3 +564,24 @@ names the third-person view should show: *"All axis-point names"*.
 ### Numerical values
 
 - None changed.
+
+---
+
+## Unreleased — display vocabulary and continuous navigation (2026-10-19)
+
+Site-only change under `web/`; no spec, schema or geometry change. See
+`docs/decision-notes/2026-10-19_mandala_vocabulary_and_cone_navigation.md`.
+
+- Display captions replaced by the contemplative-mandala vocabulary
+  (Responsiveness / Involvement / Fixation; Permanence and Erasure at the axial
+  tips; Craving, Hostility, Inflation, Abasement at the equatorial vertices).
+  The time axis is now zoned. Birth, Death and BEING unchanged.
+- The view from BEING is rooted at the origin: pan and tilt rotate the cone,
+  narrowing it moves the focus outward; all directions' labels are present.
+- One continuous zoom replaces the level-0 stop; the page still opens as the torus.
+- Frozen-ripple markers (three concentric circles, larger on larger spheres)
+  replace the rotating dots; far-side label opacity 90 / 61.5 / 33 %;
+  label collisions are displaced with leader lines rather than hidden.
+- Opening: gold lines fade to grey; spheres emerge from the centre.
+- Birth and Death carry black point markers.
+- `focus-labels.js` removed (unused); `main.js` rewritten. `#debug` not carried over.
