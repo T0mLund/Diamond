@@ -7,7 +7,7 @@
 //   1. Closing.  The walls of the central hole come together at the
 //      centre and fuse into a line of no volume: the Z axis.
 //   2. Stretching.  Birth and Death rise and descend along that line,
-//      drawing Obliteration and Awakening out into the apices, while the
+//      drawing Erasure and Permanence out into the apices, while the
 //      round body settles onto the square bipyramid.
 //
 // Every curve is a point on one surface, given by a meridian parameter
@@ -40,7 +40,7 @@ export function buildOpening({ equatorRadius: E, apexHeight: H, equatorAzimuths 
     const rho1 = outer ? (R + r) * Math.max(0, c) : 0;
     const z1 = r * sn;
     // 2. Diamond: straight edges from the apices to the square equator;
-    //    the inner wall is the axis from Awakening to Obliteration.
+    //    the inner wall is the axis from Permanence to Erasure.
     let rho2;
     let z2;
     if (outer) {

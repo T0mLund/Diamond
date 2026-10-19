@@ -12,7 +12,7 @@ export const shellRadius = (n) => SHELLS[n - 1].radius;
 // Only the three zone spheres are drawn: Shells 1, 2 and 3 (user decisions
 // 2026-10-14: "there should just be three nested spheres visible", and
 // 2026-10-15: "Shell 1, 2, 3 are the only ones that would remain visible
-// under any circumstance"). Shell 4 anchors Awakening and Obliteration and
+// under any circumstance"). Shell 4 anchors Permanence and Erasure (formerly Awakening and Obliteration) and
 // Shell 5 anchors Birth and Death; neither is ever drawn.
 export const DRAWN_SHELLS = [1, 2, 3];
 
@@ -22,19 +22,19 @@ export const DRAWN_SHELLS = [1, 2, 3];
 //   limit: true → Birth and Death, a category of their own (user decision
 //                 2026-10-15). Seen only from outside, never from BEING.
 export const LANDMARKS = [
-  { slug: 'love',         name: 'Love',         pos: [ 1, 0, 0],                    shell: 3,    hull: true  },
-  { slug: 'hate',         name: 'Hate',         pos: [-1, 0, 0],                    shell: 3,    hull: true  },
-  { slug: 'future',       name: 'Future',       pos: [ 0, 1, 0],                    shell: 3,    hull: true  },
-  { slug: 'past',         name: 'Past',         pos: [ 0, -1, 0],                   shell: 3,    hull: true  },
-  { slug: 'obliteration', name: 'Obliteration', pos: [ 0, 0, shellRadius(4)],       shell: 4,    hull: true  },
-  { slug: 'awakening',    name: 'Awakening',    pos: [ 0, 0, -shellRadius(4)],      shell: 4,    hull: true  },
+  { slug: 'craving',      name: 'Craving',              pos: [ 1, 0, 0],                    shell: 3,    hull: true  },
+  { slug: 'hostility',    name: 'Hostility',            pos: [-1, 0, 0],                    shell: 3,    hull: true  },
+  { slug: 'inflation',    name: 'Inflation',          pos: [ 0, 1, 0],                    shell: 3,    hull: true  },
+  { slug: 'abasement',    name: 'Abasement',            pos: [ 0, -1, 0],                   shell: 3,    hull: true  },
+  { slug: 'erasure',      name: 'Erasure',       pos: [ 0, 0, shellRadius(4)],       shell: 4,    hull: true  },
+  { slug: 'permanence',   name: 'Permanence',    pos: [ 0, 0, -shellRadius(4)],      shell: 4,    hull: true  },
   { slug: 'being',        name: 'BEING',        pos: [ 0, 0, 0],                    shell: null, hull: false, zone: null },
   { slug: 'birth',        name: 'Birth',        pos: [ 0, 0, -shellRadius(5)],      shell: 5,    hull: false, zone: null, limit: true },
   { slug: 'death',        name: 'Death',        pos: [ 0, 0, shellRadius(5)],       shell: 5,    hull: false, zone: null, limit: true },
 ];
 
-// Axes. X and Y end at their landmarks on Shell 3 (Love / Hate, Future /
-// Past); Z runs through the apices to Birth and Death on Shell 5 (user
+// Axes. X and Y end at their landmarks on Shell 3 (Craving / Hostility,
+// Inflation / Abasement); Z runs through the apices to Birth and Death on Shell 5 (user
 // decision 2026-10-14: the axes stop at the four equatorial landmarks).
 export const AXIS_EXTENT = { x: shellRadius(3), y: shellRadius(3), z: shellRadius(5) };
 
